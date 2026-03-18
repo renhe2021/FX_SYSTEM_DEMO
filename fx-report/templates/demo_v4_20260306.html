@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX Research Report — 产品汇报</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: 'Noto Sans SC', 'Inter', -apple-system, sans-serif;
+    background: #F0F2F5; color: #1a1a2e;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Slide 容器 ── */
+.slide {
+    width: 960px; min-height: 540px;
+    margin: 32px auto; padding: 48px 56px;
+    background: #fff; border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    position: relative; overflow: hidden;
+    page-break-after: always;
+}
+
+/* ── 封面 ── */
+.slide-cover {
+    display: flex; flex-direction: column;
+    justify-content: center; min-height: 540px;
+}
+.slide-cover .cover-brand {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.15em;
+    color: #0052D9; text-transform: uppercase; margin-bottom: 20px;
+}
+.slide-cover h1 {
+    font-size: 32px; font-weight: 700; color: #0F172A;
+    line-height: 1.3; margin-bottom: 12px;
+}
+.slide-cover h1 span { color: #0052D9; }
+.slide-cover .cover-sub {
+    font-size: 16px; color: #64748B; font-weight: 400;
+    line-height: 1.6; margin-bottom: 32px; max-width: 620px;
+}
+.slide-cover .cover-meta { font-size: 13px; color: #94A3B8; }
+
+/* ── Slide 标题 ── */
+.slide-title {
+    font-size: 22px; font-weight: 700; color: #0F172A;
+    margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
+}
+.slide-title .num {
+    font-family: 'Inter', monospace; font-size: 13px; font-weight: 700;
+    color: #fff; background: #0052D9; border-radius: 6px;
+    padding: 3px 10px; letter-spacing: 0.05em;
+}
+
+/* ── 通用 ── */
+p { font-size: 14px; color: #334155; line-height: 1.7; margin-bottom: 10px; }
+ul { margin: 6px 0 12px 20px; font-size: 14px; color: #334155; line-height: 1.8; }
+li { margin-bottom: 4px; }
+li strong { color: #0F172A; }
+.text-muted { color: #94A3B8; }
+.text-blue { color: #0052D9; font-weight: 600; }
+
+/* ── Grid ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+.g-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.g-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+
+/* ── 卡片 ── */
+.card {
+    border: 1px solid #E8ECF0; border-radius: 8px;
+    padding: 16px; background: #fff;
+}
+.card-title { font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 6px; }
+.card-desc { font-size: 13px; color: #64748B; line-height: 1.6; }
+.card-tag {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px; margin-bottom: 8px;
+    letter-spacing: 0.05em;
+}
+.tag-done { background: #D1FAE5; color: #065F46; }
+
+/* ── 数字卡片 ── */
+.num-card {
+    text-align: center; padding: 16px 12px;
+    border: 1px solid #E8ECF0; border-radius: 8px; background: #FAFBFF;
+}
+.num-card .nv {
+    font-family: 'Inter', sans-serif; font-size: 28px;
+    font-weight: 700; color: #0052D9;
+}
+.num-card .nl { font-size: 11px; color: #64748B; margin-top: 2px; letter-spacing: 0.06em; }
+
+/* ── 截图/占位符 ── */
+.screenshot-box {
+    border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden;
+    background: #F8FAFC;
+}
+.screenshot-box img { width: 100%; display: block; }
+.screenshot-box .cap {
+    padding: 8px 12px; font-size: 11px; color: #94A3B8;
+    border-top: 1px solid #E2E8F0;
+}
+.placeholder {
+    border: 2px dashed #CBD5E1; border-radius: 8px;
+    height: 200px; display: flex; align-items: center; justify-content: center;
+    background: #F8FAFC; color: #94A3B8; font-size: 13px; text-align: center;
+}
+.placeholder-lg { height: 280px; }
+
+/* ── 表格 ── */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+    background: #F1F5F9; color: #475569; padding: 8px 12px;
+    text-align: left; font-weight: 600; font-size: 12px;
+    border-bottom: 2px solid #E2E8F0;
+}
+tbody td {
+    padding: 7px 12px; border-bottom: 1px solid #F1F5F9; color: #334155;
+}
+tbody tr:hover td { background: #FAFBFF; }
+
+/* ── 时间线 ── */
+.tl { position: relative; padding-left: 24px; margin: 8px 0; }
+.tl::before {
+    content: ''; position: absolute; left: 6px; top: 4px; bottom: 4px;
+    width: 2px; background: #E2E8F0;
+}
+.tl-item { position: relative; margin-bottom: 16px; }
+.tl-item::before {
+    content: ''; position: absolute; left: -22px; top: 5px;
+    width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff;
+}
+.tl-item.done::before { background: #059669; box-shadow: 0 0 0 2px #059669; }
+.tl-item.now::before { background: #0052D9; box-shadow: 0 0 0 3px rgba(0,82,217,0.25); }
+.tl-item.next::before { background: #CBD5E1; box-shadow: 0 0 0 2px #CBD5E1; }
+.tl-time { font-family: 'Inter', monospace; font-size: 11px; color: #94A3B8; font-weight: 500; }
+.tl-label { font-size: 13px; font-weight: 600; color: #0F172A; }
+.tl-sub { font-size: 12px; color: #64748B; }
+
+/* ── 页码 ── */
+.page-num {
+    position: absolute; bottom: 16px; right: 24px;
+    font-family: 'Inter', monospace; font-size: 11px; color: #CBD5E1;
+}
+
+/* ── 分隔线 ── */
+.sep { border: none; border-top: 1px solid #E8ECF0; margin: 20px 0; }
+
+/* ── Note ── */
+.note {
+    background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px;
+    padding: 10px 14px; font-size: 13px; color: #92400E;
+}
+
+/* ── 流程 ── */
+.flow-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; font-size: 14px; color: #334155;
+}
+.flow-step .step-num {
+    width: 28px; height: 28px; border-radius: 50%; background: #0052D9;
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+}
+.flow-arrow {
+    text-align: center; color: #CBD5E1; font-size: 16px; padding: 2px 0;
+}
+
+@media print {
+    body { background: #fff; }
+    .slide { box-shadow: none; margin: 0; border-radius: 0; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================== SLIDE 0: 封面 ============================== -->
+<div class="slide slide-cover">
+    <div class="cover-brand">TENPAY GLOBAL &middot; FX TEAM</div>
+    <h1><span>FX Research Report</span><br>外汇研报平台</h1>
+    <p class="cover-sub">
+        一个给跨境支付客户做定制化外汇研报的工具。<br>
+        根据客户画像自动拉数据、搜新闻、生成分析报告。
+    </p>
+    <p class="cover-meta">
+        Tenpay Global FX 团队 &middot; 2026 年 3 月 &middot; 内部汇报
+    </p>
+    <span class="page-num"></span>
+</div>
+
+<!-- ============================== SLIDE 1: 背景 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">01</span>为什么做这个</div>
+    <div class="g2">
+        <div>
+            <p><strong>遇到的问题：</strong></p>
+            <ul>
+                <li>客户越来越多地问走廊汇率走势，我们没有标准化的研报可以给</li>
+                <li>每次给客户做市场分析要花好几个小时，人工拼凑，不可复用</li>
+                <li>不同客户关心不同的走廊和币对，没有办法快速定制</li>
+                <li>团队对各市场的研究散落在各处，新人很难快速上手</li>
+            </ul>
+        </div>
+        <div>
+            <p><strong>想法：</strong></p>
+            <ul>
+                <li>建一套系统，按客户画像自动生成定制化研报</li>
+                <li>把数据拉取、新闻搜索、报告排版全部自动化</li>
+                <li>不同客户看到的是不同走廊的分析</li>
+                <li>目前已经搭完了，可以跑了</li>
+            </ul>
+        </div>
+    </div>
+    <span class="page-num">1</span>
+</div>
+
+<!-- ============================== SLIDE 2: 整体流程 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">02</span>怎么用 — 整体流程</div>
+    <p style="margin-bottom:16px;">从选客户到出报告，大概 3 分钟：</p>
+
+    <div style="max-width:700px; margin: 0 auto;">
+        <div class="flow-step">
+            <div class="step-num">1</div>
+            <div><strong>选一个客户</strong> — 从预设画像里选（越南 PSP、菲律宾 PSP 等），或者在 Client Portal 里新建</div>
+        </div>
+        <div class="flow-arrow">&darr;</div>
+        <div class="flow-step">
+            <div class="step-num">2</div>
+            <div><strong>系统自动拉数据</strong> — 根据这个客户关心的走廊和币对，从 5 个数据源拉实时汇率、波动率</div>
+        </div>
+        <div class="flow-arrow">&darr;</div>
+        <div class="flow-step">
+            <div class="step-num">3</div>
+            <div><strong>AI 搜新闻 + 生成摘要</strong> — Perplexity 搜该客户相关的市场新闻，Claude 生成执行摘要</div>
+        </div>
+        <div class="flow-arrow">&darr;</div>
+        <div class="flow-step">
+            <div class="step-num">4</div>
+            <div><strong>自动生成报告</strong> — 7 个章节可选，10 类图表自动生成，HTML/PDF 输出，可直接发给客户</div>
+        </div>
+    </div>
+
+    <div class="note" style="margin-top:20px;">
+        选不同客户，拉的数据、搜的新闻、生成的内容都不一样——这是「客户画像驱动」的核心。
+    </div>
+    <span class="page-num">2</span>
+</div>
+
+<!-- ============================== SLIDE 3: 客户管理 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">03</span>客户管理 + 画像</div>
+    <div class="g-2-1">
+        <div>
+            <p><strong>已有 7 个预设客户画像：</strong></p>
+            <table>
+                <thead><tr><th>客户</th><th>地区</th><th>关注走廊</th></tr></thead>
+                <tbody>
+                    <tr><td>Vietnam PSP</td><td>越南</td><td>USD/CNH/JPY/KRW → VND</td></tr>
+                    <tr><td>Philippines PSP</td><td>菲律宾</td><td>USD/SGD/CNH/EUR → PHP</td></tr>
+                    <tr><td>Indonesia PSP</td><td>印尼</td><td>USD/SGD/CNH/MYR → IDR</td></tr>
+                    <tr><td>Thailand PSP</td><td>泰国</td><td>USD/CNH/JPY/EUR → THB</td></tr>
+                    <tr><td>Malaysia PSP</td><td>马来</td><td>USD/SGD/CNH/EUR → MYR</td></tr>
+                    <tr><td>Brazil PSP</td><td>巴西</td><td>USD/CNH/EUR → BRL</td></tr>
+                    <tr><td>Global Overview</td><td>全球</td><td>主要 + 新兴市场 24 币对</td></tr>
+                </tbody>
+            </table>
+
+            <hr class="sep">
+
+            <p><strong>Client Portal（客户门户）：</strong></p>
+            <ul>
+                <li>80+ 字段的完整客户档案</li>
+                <li>KYC/AML 合规信息、走廊配置、风控参数</li>
+                <li>联系人管理、报告偏好设置</li>
+                <li>新增/编辑/删除，客户 ID 自动生成</li>
+                <li>按地区、类型、等级筛选</li>
+            </ul>
+        </div>
+        <div>
+            <div class="screenshot-box">
+                <img src="/static/images/step1_select_client.png" alt="客户选择界面"/>
+                <div class="cap">客户画像选择界面</div>
+            </div>
+            <div class="placeholder" style="margin-top:12px; height:160px;">
+                [截图] Client Portal 客户详情页<br>
+                <span style="font-size:11px;">汇报时补充</span>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">3</span>
+</div>
+
+<!-- ============================== SLIDE 4: 数据 + AI ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">04</span>数据聚合 + AI 分析</div>
+    <div class="g2">
+        <div>
+            <div class="card" style="margin-bottom:14px;">
+                <div class="card-title">多源数据聚合</div>
+                <div class="card-desc">
+                    5 个数据源，系统自动按优先级切换：
+                    <ul style="margin:6px 0 0 16px; font-size:12px;">
+                        <li>Bloomberg Terminal（有接入时优先）</li>
+                        <li>ECB / Frankfurter（欧央行汇率）</li>
+                        <li>ExchangeRate-API（160+ 币种）</li>
+                        <li>Alpha Vantage（日线 + 经济指标）</li>
+                        <li>手动 JSON（兜底 / 离线测试）</li>
+                    </ul>
+                    覆盖 24 个币对，自动算 1D/1W/1M/YTD 变动。
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">走廊数据构建</div>
+                <div class="card-desc">
+                    根据客户画像自动计算走廊汇率。<br>
+                    支持直接查找、反转、交叉汇率三种方式。<br>
+                    例：JPYVND = USDVND &divide; USDJPY
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="card" style="margin-bottom:14px;">
+                <div class="card-title">AI 新闻搜索（Perplexity）</div>
+                <div class="card-desc">
+                    根据客户关心的走廊和国家，自动生成搜索提示词。<br>
+                    搜回来的新闻带标题、摘要、情绪标注（Bullish/Bearish/Neutral）。<br>
+                    每个国家有 4 条预设 query，也可以自定义。
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">AI 执行摘要（Claude）</div>
+                <div class="card-desc">
+                    把新闻 + 汇率数据 + 客户上下文喂给 Claude，生成：
+                    <ul style="margin:6px 0 0 16px; font-size:12px;">
+                        <li>Executive Summary（整体概述）</li>
+                        <li>Market View（市场观点）</li>
+                        <li>Risk Assessment（风险评估）</li>
+                        <li>Outlook（展望）</li>
+                    </ul>
+                    支持中英双语，可以加自定义分析需求（如"聚焦对冲策略""关注监管变化"等）。
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">4</span>
+</div>
+
+<!-- ============================== SLIDE 5: 报告引擎 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">05</span>报告生成</div>
+    <div class="g-2-1">
+        <div>
+            <p><strong>7 个章节可选（按需勾选）：</strong></p>
+            <table>
+                <thead><tr><th>#</th><th>章节</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>执行摘要</td><td>AI 生成的整体概述</td></tr>
+                    <tr><td>2</td><td>走廊分析</td><td>该客户具体走廊的汇率、点差、趋势</td></tr>
+                    <tr><td>3</td><td>市场概览</td><td>全球 / 区域汇率变动一览</td></tr>
+                    <tr><td>4</td><td>波动率分析</td><td>隐含波动率期限结构、各币种对比</td></tr>
+                    <tr><td>5</td><td>资金流分析</td><td>按币种 / 业务线的交易量分布</td></tr>
+                    <tr><td>6</td><td>宏观展望</td><td>央行利率决议、经济数据日历、AI 新闻</td></tr>
+                    <tr><td>7</td><td>风险监控</td><td>近期风险事件及影响评估</td></tr>
+                </tbody>
+            </table>
+
+            <hr class="sep">
+            <p><strong>图表自动生成（10 类）：</strong></p>
+            <p style="font-size:12px;">汇率变动热力图、关注币对热力图、波动率期限结构、波动率对比柱状图、资金流饼图、资金流业务线图、风险事件时间线、走廊交易量图、走廊点差图、走廊季节性图</p>
+        </div>
+        <div>
+            <div class="placeholder placeholder-lg">
+                [截图] 生成后的报告<br>
+                — 封面 + 执行摘要<br><br>
+                <span style="font-size:11px;">汇报时补充</span>
+            </div>
+        </div>
+    </div>
+    <p style="font-size:12px; color:#64748B; margin-top:12px;">输出格式：HTML（可浏览器打印 PDF）或原生 PDF。中英双语。已产出 15+ 份报告。</p>
+    <span class="page-num">5</span>
+</div>
+
+<!-- ============================== SLIDE 6: 报告效果 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">06</span>报告效果示例</div>
+    <p>以 Vietnam PSP 客户为例，系统自动生成的报告效果：</p>
+    <div class="g2" style="margin-top:12px;">
+        <div>
+            <div class="placeholder placeholder-lg">
+                [截图] 报告 — 走廊分析章节<br>
+                汇率表格 + 走廊交易量图<br><br>
+                <span style="font-size:11px;">汇报时现场截图</span>
+            </div>
+        </div>
+        <div>
+            <div class="placeholder placeholder-lg">
+                [截图] 报告 — 图表部分<br>
+                热力图 / 波动率图 / 资金流图<br><br>
+                <span style="font-size:11px;">汇报时现场截图</span>
+            </div>
+        </div>
+    </div>
+    <div class="note" style="margin-top:16px;">
+        可以现场 demo：打开系统，选一个客户，跑一遍完整流程看效果。
+    </div>
+    <span class="page-num">6</span>
+</div>
+
+<!-- ============================== SLIDE 7: 当前进展 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">07</span>当前进展</div>
+    <table>
+        <thead><tr><th style="width:25%">功能模块</th><th>已完成内容</th><th style="width:60px">状态</th></tr></thead>
+        <tbody>
+            <tr>
+                <td rowspan="3" style="vertical-align:top;font-weight:700;">客户管理</td>
+                <td>7 个预设客户画像（越南/菲律宾/印尼/泰国/马来/巴西/全球）</td>
+                <td style="color:#059669;font-weight:600;">Done</td>
+            </tr>
+            <tr><td>Client Portal — 80+ 字段客户档案 CRUD，KYC/AML，走廊配置，联系人</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr><td>按地区/类型/等级筛选、统计仪表板、客户 ID 自动生成</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr>
+                <td rowspan="2" style="vertical-align:top;font-weight:700;">数据聚合</td>
+                <td>5 个数据源接入（Bloomberg/ECB/ExchangeRate-API/Alpha Vantage/Manual），自动优先级切换</td>
+                <td style="color:#059669;font-weight:600;">Done</td>
+            </tr>
+            <tr><td>24 币对覆盖，走廊汇率自动计算（直接/反转/交叉），缓存机制</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr>
+                <td rowspan="2" style="vertical-align:top;font-weight:700;">AI 分析</td>
+                <td>Perplexity 按客户走廊搜新闻，情绪标注，去重</td>
+                <td style="color:#059669;font-weight:600;">Done</td>
+            </tr>
+            <tr><td>Claude 生成执行摘要（4 字段），支持自定义分析需求，中英双语</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr>
+                <td rowspan="2" style="vertical-align:top;font-weight:700;">报告引擎</td>
+                <td>7 个章节可选，10 类 Plotly 图表自动生成，HTML/PDF 输出</td>
+                <td style="color:#059669;font-weight:600;">Done</td>
+            </tr>
+            <tr><td>中英双语 UI + 报告内容，品牌设计，已产出 15+ 份报告</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+        </tbody>
+    </table>
+    <p style="margin-top:14px; font-size:13px; color:#64748B;">
+        全部自建代码。已为 Global、Vietnam、Philippines、Malaysia 等客户跑通完整流程。
+    </p>
+    <span class="page-num">7</span>
+</div>
+
+<!-- ============================== SLIDE 8: 商业价值 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">08</span>商业价值 — 待讨论</div>
+    <p style="margin-bottom:16px;">以下是初步想法，具体怎么用需要和业务侧对齐：</p>
+    <div class="g2">
+        <div class="card" style="border-style:dashed;">
+            <div class="card-title">给客户发研报 → 增值服务</div>
+            <div class="card-desc">
+                定制化研报可以作为跨境支付的增值服务。客户看到我们不只是换汇管道，还有专业的外汇分析能力。<br>
+                <strong>需要确认：哪些客户适合先试？什么形式发？</strong>
+            </div>
+        </div>
+        <div class="card" style="border-style:dashed;">
+            <div class="card-title">团队内部研究沉淀</div>
+            <div class="card-desc">
+                各市场的走廊分析、宏观事件、汇率趋势不再散落在各处。新人入职能快速了解各市场情况。<br>
+                <strong>先内部用起来，看反馈再决定下一步。</strong>
+            </div>
+        </div>
+        <div class="card" style="border-style:dashed;">
+            <div class="card-title">效率提升</div>
+            <div class="card-desc">
+                人工做一份走廊分析要几个小时，这个系统几分钟出一份。<br>
+                <strong>具体提升幅度要实际用了才知道。</strong>
+            </div>
+        </div>
+        <div class="card" style="border-style:dashed;">
+            <div class="card-title">未来可能的方向</div>
+            <div class="card-desc">
+                如果客户反馈好，可以考虑做分级（基础版 + 高级版），但这个比较远。<br>
+                <strong>不急，先把工具用起来再说。</strong>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">8</span>
+</div>
+
+<!-- ============================== SLIDE 9: 下一步 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">09</span>下一步</div>
+    <div class="g-2-1">
+        <div class="tl">
+            <div class="tl-item done">
+                <div class="tl-time">2026.01 - 03 &middot; 已完成</div>
+                <div class="tl-label">系统搭建 + 跑通</div>
+                <div class="tl-sub">客户管理、数据聚合、AI 分析、报告引擎全部开发完成</div>
+            </div>
+            <div class="tl-item now">
+                <div class="tl-time">近期</div>
+                <div class="tl-label">内部先用起来 + 客户试发</div>
+                <div class="tl-sub">
+                    &bull; 选 2-3 个客户试发研报，收集反馈<br>
+                    <span class="text-blue">&bull; 需要 BD involve — 确认试发客户名单</span>
+                </div>
+            </div>
+            <div class="tl-item next">
+                <div class="tl-time">Q2</div>
+                <div class="tl-label">自动化 + 常规化</div>
+                <div class="tl-sub">
+                    &bull; 定时自动生成 + 邮件分发<br>
+                    &bull; 根据反馈迭代内容和格式<br>
+                    <span class="text-blue">&bull; 需要开发资源 — 邮件、调度、前端</span>
+                </div>
+            </div>
+            <div class="tl-item next">
+                <div class="tl-time">Q3+</div>
+                <div class="tl-label">看情况扩展</div>
+                <div class="tl-sub">
+                    &bull; 客户自助查看历史报告<br>
+                    &bull; 如果反馈好，考虑产品化<br>
+                    <span class="text-blue">&bull; 需要开发 + BD 持续参与</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="card" style="background:#F8FAFC;">
+                <div class="card-title">近期需要的配合</div>
+                <div class="card-desc">
+                    <strong>1. BD 团队</strong><br>
+                    确认哪几个客户适合先试发研报，对接方式怎么定<br><br>
+                    <strong>2. 开发资源（Q2）</strong><br>
+                    自动化分发需要邮件系统 + 定时调度，一个人做比较慢
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">9</span>
+</div>
+
+<!-- ============================== SLIDE 10: 尾页 ============================== -->
+<div class="slide slide-cover" style="min-height:400px;">
+    <h1 style="font-size:26px;"><span>Demo Time</span></h1>
+    <p class="cover-sub" style="font-size:15px;">
+        可以现场演示：选一个客户 → 拉数据 → 搜新闻 → 生成报告。
+    </p>
+    <p class="cover-meta">
+        Tenpay Global FX 团队 &middot; 2026.03 &middot; Confidential
+    </p>
+    <span class="page-num">10</span>
+</div>
+
+<script>
+console.log('FX Research Report · Briefing v4 (fx-report only) · 2026-03-06');
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram name="FX Research Hub Architecture" id="fx-arch-v3">
+    <mxGraphModel dx="1200" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Step 1 -->
+        <mxCell id="s1" value="&lt;b&gt;STEP 1&lt;/b&gt;&lt;br&gt;选择客户&lt;br&gt;&lt;font style=&quot;font-size:10px;color:#666&quot;&gt;画像 · 走廊 · Tier 分级&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#E8F5E9;strokeColor=#66BB6A;fontColor=#2E7D32;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="100" width="170" height="88" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 2 -->
+        <mxCell id="s2" value="&lt;b&gt;STEP 2&lt;/b&gt;&lt;br&gt;数据聚合&lt;br&gt;&lt;font style=&quot;font-size:10px;color:#666&quot;&gt;5 源汇率 · 走廊过滤&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#E3F2FD;strokeColor=#64B5F6;fontColor=#1565C0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="250" y="100" width="190" height="88" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 3 -->
+        <mxCell id="s3" value="&lt;b&gt;STEP 3&lt;/b&gt;&lt;br&gt;AI 分析 + 知识库&lt;br&gt;&lt;font style=&quot;font-size:10px;color:#666&quot;&gt;新闻搜索 · 评论生成 · 可编辑&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#EDE7F6;strokeColor=#B39DDB;fontColor=#5E35B1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="500" y="100" width="210" height="88" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 4 -->
+        <mxCell id="s4" value="&lt;b&gt;OUTPUT&lt;/b&gt;&lt;br&gt;定制化研报&lt;br&gt;&lt;font style=&quot;font-size:10px;color:rgba(255,255,255,0.85)&quot;&gt;投行级 · PDF/HTML · 中英双语&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#0052D9;strokeColor=#0052D9;fontColor=#FFFFFF;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="770" y="90" width="200" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a12" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0052D9;strokeWidth=2;" edge="1" source="s1" target="s2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a23" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0052D9;strokeWidth=2;" edge="1" source="s2" target="s3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a34" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0052D9;strokeWidth=2;" edge="1" source="s3" target="s4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

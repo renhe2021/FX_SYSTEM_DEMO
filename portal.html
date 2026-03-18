@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX_SYSTEM Portal</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #232733;
+  --border: #2d3348;
+  --text: #e4e6f0;
+  --text2: #8b8fa8;
+  --accent: #6c7cff;
+  --accent2: #4f5bcc;
+  --green: #34d399;
+  --green-bg: rgba(52,211,153,.12);
+  --red: #f87171;
+  --red-bg: rgba(248,113,113,.08);
+  --yellow: #fbbf24;
+  --yellow-bg: rgba(251,191,36,.1);
+  --blue: #60a5fa;
+  --blue-bg: rgba(96,165,250,.1);
+  --pricing: #f59e0b;
+  --reporting: #6c7cff;
+  --quant: #34d399;
+  --data: #60a5fa;
+  --agent: #e879f9;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  background: linear-gradient(135deg, #1a1d27 0%, #252a3a 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 40px 24px;
+}
+.header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+.header h1 span { color: var(--accent); }
+.header p {
+  color: var(--text2);
+  font-size: 14px;
+}
+
+/* ── Status Bar ── */
+.status-bar {
+  max-width: 1400px;
+  margin: 20px auto 0;
+  padding: 0 40px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.stat-chip.total { background: var(--surface2); color: var(--text); }
+.stat-chip.running { background: var(--green-bg); color: var(--green); }
+.stat-chip.stopped { background: var(--red-bg); color: var(--red); }
+.stat-chip.notebook { background: var(--blue-bg); color: var(--blue); }
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot.green { background: var(--green); }
+.dot.red { background: var(--red); }
+.dot.blue { background: var(--blue); }
+.dot.gray { background: var(--text2); }
+
+/* ── Category Section ── */
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 40px 60px;
+}
+.category {
+  margin-bottom: 32px;
+}
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.category-dot {
+  width: 10px; height: 10px;
+  border-radius: 3px;
+}
+.category-dot.pricing { background: var(--pricing); }
+.category-dot.reporting { background: var(--reporting); }
+.category-dot.quant { background: var(--quant); }
+.category-dot.data { background: var(--data); }
+.category-dot.agent { background: var(--agent); }
+.category-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ── Cards Grid ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.card-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+.card-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+.card-status.running {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.card-status.stopped {
+  background: var(--surface2);
+  color: var(--text2);
+}
+.card-status.notebook {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+.card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.card .name-en {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 10px;
+}
+.card .desc {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.card .data-tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--text2);
+  margin-bottom: 14px;
+}
+
+/* Features */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.feature-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid transparent;
+}
+
+/* Actions */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.btn {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent2);
+}
+.btn-open {
+  background: var(--green);
+  color: #0f1117;
+}
+.btn-open:hover:not(:disabled) {
+  background: #2cc48a;
+}
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--border);
+}
+.btn-stop {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid rgba(248,113,113,.2);
+}
+.btn-stop:hover:not(:disabled) {
+  background: rgba(248,113,113,.2);
+}
+
+/* Port badge */
+.port-badge {
+  font-size: 11px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--text2);
+  background: var(--bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 1000;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all .3s;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: var(--green); color: #0f1117; }
+.toast.error { background: var(--red); color: #fff; }
+.toast.info { background: var(--accent); color: #fff; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .header { padding: 20px; }
+  .main { padding: 16px 20px; }
+  .status-bar { padding: 0 20px; }
+  .cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>🏠 <span>FX_SYSTEM</span> Portal</h1>
+    <p>Tenpay Global FX Platform — 所有工具集中管理</p>
+  </div>
+</div>
+
+<div class="status-bar" id="statusBar"></div>
+
+<div class="main" id="moduleContainer">
+  <div style="text-align:center; padding:60px; color:var(--text2);">
+    <div class="spinner" style="width:24px;height:24px;border-width:3px;margin:0 auto 12px;border-color:rgba(108,124,255,.3);border-top-color:var(--accent);"></div>
+    加载模块信息...
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+let modules = [];
+
+async function loadModules() {
+  try {
+    const res = await fetch(`${API}/api/modules`);
+    const data = await res.json();
+    modules = data.modules;
+    render();
+  } catch(e) {
+    document.getElementById('moduleContainer').innerHTML =
+      `<div style="text-align:center;padding:60px;color:var(--red);">加载失败: ${e.message}</div>`;
+  }
+}
+
+function render() {
+  renderStatus();
+  renderCards();
+}
+
+function renderStatus() {
+  const total = modules.length;
+  const running = modules.filter(m => m.running).length;
+  const webApps = modules.filter(m => m.port).length;
+  const notebooks = modules.filter(m => !m.port).length;
+
+  document.getElementById('statusBar').innerHTML = `
+    <div class="stat-chip total">全部 ${total} 个模块</div>
+    <div class="stat-chip running"><span class="dot green"></span> ${running} 运行中</div>
+    <div class="stat-chip stopped"><span class="dot red"></span> ${webApps - running} 未启动</div>
+    <div class="stat-chip notebook"><span class="dot blue"></span> ${notebooks} Notebook/CLI</div>
+    <div style="flex:1"></div>
+    <button class="btn btn-secondary" onclick="refreshAll()" style="flex:none;padding:6px 14px;font-size:12px;">🔄 刷新状态</button>
+  `;
+}
+
+function renderCards() {
+  // Group by category
+  const categories = {};
+  const categoryOrder = ['pricing', 'reporting', 'quant', 'data', 'agent'];
+
+  modules.forEach(m => {
+    if (!categories[m.category]) {
+      categories[m.category] = { label: m.category_label, modules: [] };
+    }
+    categories[m.category].modules.push(m);
+  });
+
+  let html = '';
+  categoryOrder.forEach(cat => {
+    if (!categories[cat]) return;
+    const c = categories[cat];
+    html += `
+      <div class="category">
+        <div class="category-header">
+          <div class="category-dot ${cat}"></div>
+          <h2>${c.label}</h2>
+        </div>
+        <div class="cards">
+          ${c.modules.map(m => cardHTML(m)).join('')}
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('moduleContainer').innerHTML = html;
+}
+
+function cardHTML(m) {
+  const isRunning = m.running;
+  const isWeb = !!m.port;
+
+  const statusClass = isRunning ? 'running' : (isWeb ? 'stopped' : 'notebook');
+  const statusText = isRunning ? '● 运行中' : (isWeb ? '○ 未启动' : '📓 Notebook/CLI');
+
+  const featuresHtml = (m.features || []).map(f =>
+    `<span class="feature-tag">${f}</span>`
+  ).join('');
+
+  let actionsHtml = '';
+  if (isWeb) {
+    if (isRunning) {
+      actionsHtml = `
+        <button class="btn btn-open" onclick="openModule('${m.id}', ${m.port})">🔗 打开</button>
+        <button class="btn btn-stop" onclick="stopModule('${m.id}')">⏹ 停止</button>
+      `;
+    } else {
+      actionsHtml = `
+        <button class="btn btn-primary" id="btn-${m.id}" onclick="launchModule('${m.id}')">🚀 启动</button>
+      `;
+    }
+  } else {
+    actionsHtml = `
+      <button class="btn btn-secondary" disabled>无 Web 服务</button>
+    `;
+  }
+
+  const portBadge = m.port ? `<span class="port-badge">:${m.port}</span>` : '';
+
+  return `
+    <div class="card" id="card-${m.id}">
+      <div class="card-top">
+        <div class="card-icon">${m.icon}</div>
+        <div class="card-status ${statusClass}">${statusText}</div>
+      </div>
+      <h3>${m.name}${portBadge}</h3>
+      <div class="name-en">${m.name_en}</div>
+      <div class="desc">${m.description}</div>
+      <div class="data-tag">📂 ${m.data_format}</div>
+      <div class="features">${featuresHtml}</div>
+      <div class="card-actions">${actionsHtml}</div>
+    </div>
+  `;
+}
+
+async function launchModule(id) {
+  const btn = document.getElementById(`btn-${id}`);
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> 启动中...';
+  }
+
+  try {
+    const res = await fetch(`${API}/api/launch/${id}`, { method: 'POST' });
+    const data = await res.json();
+
+    if (data.error) {
+      showToast(data.error, 'error');
+    } else if (data.status === 'started' || data.status === 'already_running') {
+      showToast(`${id} 已启动 → ${data.url}`, 'success');
+      setTimeout(() => loadModules(), 500);
+    } else {
+      showToast(`正在启动 ${id}...`, 'info');
+      setTimeout(() => loadModules(), 3000);
+    }
+  } catch(e) {
+    showToast(`启动失败: ${e.message}`, 'error');
+  }
+
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = '🚀 启动';
+  }
+}
+
+async function stopModule(id) {
+  try {
+    const res = await fetch(`${API}/api/stop/${id}`, { method: 'POST' });
+    const data = await res.json();
+    showToast(`${id}: ${data.status}`, 'info');
+    setTimeout(() => loadModules(), 1000);
+  } catch(e) {
+    showToast(`停止失败: ${e.message}`, 'error');
+  }
+}
+
+function openModule(id, port) {
+  window.open(`http://localhost:${port}`, '_blank');
+}
+
+async function refreshAll() {
+  showToast('刷新中...', 'info');
+  await loadModules();
+  showToast('状态已刷新', 'success');
+}
+
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// 初始加载
+loadModules();
+
+// 每 15 秒自动刷新状态
+setInterval(loadModules, 15000);
+</script>
+</body>
+</html>

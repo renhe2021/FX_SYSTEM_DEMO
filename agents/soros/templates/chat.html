@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soros FX Agent v2.0</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1c1c28;
+  --border: #2a2a3a;
+  --text: #e8e8f0;
+  --text2: #8888a0;
+  --gold: #d4a853;
+  --gold-dim: rgba(212,168,83,.15);
+  --gold-glow: rgba(212,168,83,.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Georgia','Times New Roman',serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #1a1510 0%, #13131a 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 28px;
+  display: flex; align-items: center; gap: 16px;
+}
+.avatar {
+  width:56px; height:56px; border-radius:50%;
+  background: linear-gradient(135deg, var(--gold) 0%, #b8922f 100%);
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; color:#0a0a0f; font-weight:700;
+  box-shadow: 0 0 20px var(--gold-glow);
+  flex-shrink:0;
+}
+.header-info h1 { font-size:22px; font-weight:700; color:var(--gold); letter-spacing:0.5px; display:flex; align-items:center; gap:8px; }
+.header-info h1 .badge { font-size:10px; background:var(--gold-dim); color:var(--gold); padding:2px 6px; border-radius:4px; }
+.header-info p { font-size:12px; color:var(--text2); margin-top:2px; font-style:italic; }
+
+/* Memory indicator */
+.memory-bar {
+  background:var(--surface2); padding:8px 24px; font-size:11px; color:var(--text2);
+  display:flex; gap:16px; border-bottom:1px solid var(--border);
+}
+.memory-bar span { display:flex; align-items:center; gap:4px; }
+.memory-bar .dot { width:6px; height:6px; border-radius:50%; background:var(--gold); }
+
+/* Chat area */
+.chat-area {
+  flex:1; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:16px;
+}
+.msg { max-width:85%; animation: fadeIn .3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.msg.assistant {
+  align-self:flex-start;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:2px 16px 16px 16px;
+  padding:16px 20px;
+  position:relative;
+}
+.msg.assistant::before {
+  content:'';position:absolute;left:-3px;top:12px;width:6px;height:6px;
+  background:var(--gold);border-radius:50%;
+}
+.msg.user {
+  align-self:flex-end;
+  background: linear-gradient(135deg, #2a2a3a 0%, #1c1c28 100%);
+  border:1px solid #3a3a4a;
+  border-radius:16px 2px 16px 16px;
+  padding:14px 18px;
+}
+.msg p { font-size:15px; line-height:1.75; }
+.msg.assistant p { color:var(--text); }
+.msg.user p { color:#d0d0e0; }
+.msg .meta { font-size:11px; color:var(--text2); margin-top:8px; display:flex; justify-content:space-between; }
+
+/* Tool call indicator */
+.tool-call {
+  background:var(--surface2); border:1px solid var(--gold); border-radius:8px;
+  padding:8px 12px; margin:8px 0; font-size:12px; color:var(--gold);
+  font-family:monospace;
+}
+
+/* Welcome */
+.welcome {
+  text-align:center; padding:60px 20px; color:var(--text2);
+}
+.welcome .big-icon { font-size:64px; margin-bottom:16px; display:block; }
+.welcome h2 { color:var(--gold); font-size:24px; margin-bottom:8px; }
+.welcome p { font-size:14px; line-height:1.6; max-width:500px; margin:0 auto; }
+.suggestions { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:20px; }
+.suggestion {
+  background:var(--surface); border:1px solid var(--border); border-radius:20px;
+  padding:8px 16px; font-size:12px; color:var(--text); cursor:pointer;
+  transition:all .2s; font-family:inherit;
+}
+.suggestion:hover { border-color:var(--gold); color:var(--gold); background:var(--gold-dim); }
+
+/* Input */
+.input-area {
+  padding:16px 24px 20px; border-top:1px solid var(--border);
+  background:var(--surface);
+}
+.input-row { display:flex; gap:10px; max-width:900px; margin:0 auto; }
+.input-row textarea {
+  flex:1; background:var(--bg); color:var(--text); border:1px solid var(--border);
+  border-radius:12px; padding:12px 16px; font-size:15px; font-family:inherit;
+  resize:none; outline:none; min-height:48px; max-height:120px;
+  transition: border-color .2s;
+}
+.input-row textarea:focus { border-color:var(--gold); }
+.input-row textarea::placeholder { color:var(--text2); font-style:italic; }
+.send-btn {
+  width:48px; height:48px; border-radius:12px; border:none;
+  background:linear-gradient(135deg, var(--gold) 0%, #b8922f 100%);
+  color:#0a0a0f; font-size:20px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s; flex-shrink:0;
+}
+.send-btn:hover { transform:scale(1.05); box-shadow:0 0 16px var(--gold-glow); }
+.send-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
+.typing-indicator { display:inline-block; }
+.typing-indicator span {
+  display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:var(--gold); margin:0 2px; animation:bounce 1.4s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay:.2s; }
+.typing-indicator span:nth-child(3) { animation-delay:.4s; }
+@keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
+
+/* Tool buttons */
+.tool-buttons { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.tool-btn {
+  background:var(--surface2); border:1px solid var(--border); border-radius:8px;
+  padding:6px 12px; font-size:11px; color:var(--text2); cursor:pointer;
+  transition:all .2s;
+}
+.tool-btn:hover { border-color:var(--gold); color:var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="avatar">GS</div>
+  <div class="header-info">
+    <h1>George Soros <span class="badge">v2.0</span></h1>
+    <p>"Markets are constantly in a state of uncertainty and flux, and money is made by discounting the obvious and betting on the unexpected."</p>
+  </div>
+</div>
+
+<div class="memory-bar">
+  <span><span class="dot"></span> Memory: ON</span>
+  <span><span class="dot"></span> Tools: 7 Available</span>
+  <span><span class="dot"></span> Reflexivity: Enabled</span>
+</div>
+
+<div class="chat-area" id="chatArea">
+  <div class="welcome">
+    <span class="big-icon">🦅</span>
+    <h2>The Man Who Broke the Bank of England</h2>
+    <p>我是乔治·索罗斯。问我任何关于外汇市场、央行政策、宏观交易的问题。<br>我会用我 60 年的市场经验来分析。</p>
+    <div class="suggestions">
+      <button class="suggestion" onclick="sendSuggestion(this)">美元现在处于周期的什么阶段？</button>
+      <button class="suggestion" onclick="sendSuggestion(this)">EUR/USD 最近走势如何？</button>
+      <button class="suggestion" onclick="sendSuggestion(this)">人民币汇率有什么分析？</button>
+      <button class="suggestion" onclick="sendSuggestion(this)">亚洲货币会重演 1997 年危机吗？</button>
+    </div>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-row">
+    <textarea id="userInput" placeholder="向索罗斯提问..." rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">&#10148;</button>
+  </div>
+  <div class="tool-buttons">
+    <button class="tool-btn" onclick="quickTool('get_spot_rates')">📊 查汇率</button>
+    <button class="tool-btn" onclick="quickTool('get_vol_data')">📈 查波动率</button>
+    <button class="tool-btn" onclick="quickTool('get_news')">📰 查新闻</button>
+    <button class="tool-btn" onclick="quickTool('get_economic_calendar')">📅 经济日历</button>
+  </div>
+</div>
+
+<script>
+const chatArea = document.getElementById('chatArea');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+let sessionId = 'soros_' + Date.now();
+let isStreaming = false;
+
+function quickTool(tool) {
+  const toolQuestions = {
+    'get_spot_rates': '请给我 USD/CNH, EUR/USD, GBP/USD 的当前汇率',
+    'get_vol_data': '请给我主要货币对的波动率数据',
+    'get_news': '最近外汇市场有什么重要新闻？',
+    'get_economic_calendar': '本周有什么重要经济数据发布？'
+  };
+  userInput.value = toolQuestions[tool];
+  sendMessage();
+}
+
+function sendSuggestion(el) {
+  userInput.value = el.textContent;
+  sendMessage();
+}
+
+async function sendMessage() {
+  const text = userInput.value.trim();
+  if (!text || isStreaming) return;
+
+  const welcome = chatArea.querySelector('.welcome');
+  if (welcome) welcome.remove();
+
+  appendMsg('user', text);
+  userInput.value = '';
+  userInput.style.height = 'auto';
+
+  const assistantDiv = appendMsg('assistant', '<div class="typing-indicator"><span></span><span></span><span></span></div>');
+  
+  isStreaming = true;
+  sendBtn.disabled = true;
+
+  try {
+    const resp = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: text, session_id: sessionId }),
+    });
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    const pEl = assistantDiv.querySelector('p');
+    let typingRemoved = false;
+
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, {stream:true});
+      const lines = chunk.split('\n');
+      for (const line of lines) {
+        if (!line.startsWith('data:')) continue;
+        const dataStr = line.slice(5).trimStart();
+        try {
+          const data = JSON.parse(dataStr);
+          if (data.content) {
+            if (!typingRemoved) {
+              const ti = assistantDiv.querySelector('.typing-indicator');
+              if (ti) ti.remove();
+              typingRemoved = true;
+            }
+            fullText += data.content;
+            pEl.innerHTML = formatText(fullText);
+            chatArea.scrollTop = chatArea.scrollHeight;
+          }
+          if (data.done) break;
+        } catch(e) {}
+      }
+    }
+    // 确保清除 typing indicator
+    const ti = assistantDiv.querySelector('.typing-indicator');
+    if (ti) ti.remove();
+    if (!fullText) pEl.innerHTML = '<em style="color:var(--text2)">（无响应）</em>';
+    
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.innerHTML = '<span>' + new Date().toLocaleTimeString('zh-CN') + '</span><span>v2.0</span>';
+    assistantDiv.appendChild(meta);
+
+  } catch(e) {
+    assistantDiv.querySelector('p').innerHTML = '<span style="color:#f87171">连接错误: ' + e.message + '</span>';
+  }
+
+  isStreaming = false;
+  sendBtn.disabled = false;
+  userInput.focus();
+}
+
+function appendMsg(role, html) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.innerHTML = '<p>' + (role === 'user' ? escapeHtml(html) : html) + '</p>';
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
+  return div;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatText(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*\*/g, '')
+    .replace(/\*/g, '')
+    .replace(/`(.+?)`/g, '<code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:13px;">$1</code>')
+    .replace(/\n/g, '<br>');
+}
+</script>
+</body>
+</html>

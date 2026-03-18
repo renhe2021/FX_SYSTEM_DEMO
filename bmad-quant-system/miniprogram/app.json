@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/strategies/strategies",
+    "pages/backtest/backtest",
+    "pages/report/report"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "navigationBarTitleText": "BMAD量化系统",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#3b82f6",
+    "backgroundColor": "#fff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/strategies/strategies",
+        "text": "策略",
+        "iconPath": "images/strategy.png",
+        "selectedIconPath": "images/strategy-active.png"
+      },
+      {
+        "pagePath": "pages/backtest/backtest",
+        "text": "回测",
+        "iconPath": "images/chart.png",
+        "selectedIconPath": "images/chart-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

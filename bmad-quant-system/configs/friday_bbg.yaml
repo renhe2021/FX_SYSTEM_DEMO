@@ -1,0 +1,30 @@
+name: Friday Night Strategy - BBG
+version: 1.0.0
+log_level: INFO
+data_source:
+  type: local_csv
+  symbol: USDCNH Curncy
+  frequency: 15m
+  days_back: 360
+  local_file:
+    path: './usdcnh_intraday.csv'
+strategy:
+  name: Friday Night Strategy
+  type: FridayNightStrategy
+  enabled: true
+  parameters:
+    entry_day: 4
+    entry_hour: 22
+    entry_minute: 30
+    hold_hours: 3.5
+    direction: long
+    position_size: 100000
+backtest:
+  initial_capital: 1000000
+  position_size: 100000
+  commission_rate: 5.0e-05
+  slippage: 0.0001
+risk:
+  stop_loss_pct: 0.01
+  take_profit_pct: 0.02
+  max_drawdown_pct: 0.2

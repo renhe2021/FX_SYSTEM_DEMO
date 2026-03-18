@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FX Markup Pricing — 加价分析工具 V4</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+body{background:#0f172a;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;margin:0}
+.card{background:#1e293b;border-radius:10px;border:1px solid #334155}
+.metric-card{transition:transform .15s;cursor:default}.metric-card:hover{transform:translateY(-2px)}
+.btn{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;border:none}
+.btn-primary{background:#3b82f6;color:#fff}.btn-primary:hover{background:#2563eb}
+.btn-secondary{background:#475569;color:#e2e8f0}.btn-secondary:hover{background:#64748b}
+.btn-success{background:#10b981;color:#fff}.btn-success:hover{background:#059669}
+.btn-warning{background:#f59e0b;color:#1e293b}.btn-warning:hover{background:#d97706}
+.btn-sm{padding:4px 10px;font-size:11px}
+input[type=number],input[type=text]{background:#0f172a;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:5px 8px;font-size:12px}
+input[type=range]{cursor:pointer}
+input:focus{outline:none;border-color:#3b82f6}
+select{background:#0f172a;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:5px 8px;font-size:12px}
+.tab-btn{padding:8px 20px;border-radius:8px 8px 0 0;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #334155;border-bottom:none;background:#1e293b;color:#94a3b8;transition:all .15s}
+.tab-btn.active{background:#334155;color:#f1f5f9;border-color:#475569}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#334155;padding:6px 10px;text-align:right;font-weight:600;color:#94a3b8;border-bottom:2px solid #475569;white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:5px 10px;border-bottom:1px solid #1e293b;text-align:right;font-family:'Consolas','Courier New',monospace;white-space:nowrap}
+td:first-child{text-align:left;font-family:'Segoe UI',system-ui,sans-serif}
+tr:hover td{background:#1e293b80}
+.positive{color:#10b981}.negative{color:#ef4444}
+.glow-blue{box-shadow:0 0 20px rgba(59,130,246,0.15)}.glow-green{box-shadow:0 0 20px rgba(16,185,129,0.15)}.glow-amber{box-shadow:0 0 20px rgba(245,158,11,0.15)}
+.markup-input{width:60px;text-align:center;padding:3px 4px;font-size:11px}
+.entity-btn{padding:6px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid #475569;background:#1e293b;color:#94a3b8;transition:all .2s}
+.entity-btn.active{border-color:#3b82f6;color:#3b82f6;background:#1e293b}
+.entity-btn:hover{border-color:#3b82f6;color:#e2e8f0}
+.ccy-markup-row{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:#0f172a;margin-bottom:4px}
+.ccy-markup-row:hover{background:#1e293b}
+.vol-bar{height:20px;border-radius:3px;background:linear-gradient(90deg,#1e40af,#3b82f6);min-width:2px}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="px-6 py-3 border-b border-slate-700" style="background:linear-gradient(135deg,#1e293b,#0f172a)">
+  <div class="flex items-center justify-between mx-auto" style="max-width:1600px">
+    <div>
+      <h1 class="text-lg font-bold text-white">FX Markup Pricing 加价分析工具</h1>
+      <p class="text-xs text-slate-400 mt-0.5">Revenue = 交易量 × Markup(BPS) × 1e-4 | Markup 由你输入</p>
+    </div>
+    <div class="flex gap-3 items-center">
+      <!-- 主体切换 -->
+      <div class="flex gap-1" id="entity-switcher">
+        <div class="entity-btn active" data-entity="summary" onclick="switchEntity('summary',this)">全量</div>
+        <div class="entity-btn" data-entity="mso" onclick="switchEntity('mso',this)">MSO</div>
+        <div class="entity-btn" data-entity="svf" onclick="switchEntity('svf',this)">SVF</div>
+      </div>
+      <span class="text-xs text-slate-500" id="month-label">—</span>
+      <span class="text-xs text-slate-600" id="status-text">Loading...</span>
+      <button class="btn btn-secondary btn-sm" onclick="resetAll()">Reset (清零)</button>
+    </div>
+  </div>
+</div>
+
+<div class="px-6 py-4 mx-auto" style="max-width:1600px">
+
+<!-- KPI Cards -->
+<div class="grid grid-cols-4 gap-3 mb-4" id="kpi-row">
+  <div class="card p-3 metric-card glow-blue">
+    <div class="text-xs text-slate-500">月交易量 (CNY, 真实数据)</div>
+    <div class="text-lg font-bold text-blue-400" id="kpi-volume">—</div>
+  </div>
+  <div class="card p-3 metric-card">
+    <div class="text-xs text-slate-500">加权平均 Markup</div>
+    <div class="text-lg font-bold text-slate-300" id="kpi-avg-markup">—</div>
+  </div>
+  <div class="card p-3 metric-card glow-green">
+    <div class="text-xs text-slate-500">月度加价收入 (CNY)</div>
+    <div class="text-xl font-bold text-emerald-400" id="kpi-revenue">—</div>
+  </div>
+  <div class="card p-3 metric-card glow-amber">
+    <div class="text-xs text-slate-500">年化加价收入 (CNY)</div>
+    <div class="text-xl font-bold text-amber-400" id="kpi-annual">—</div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="flex gap-1 mb-0">
+  <div class="tab-btn active" onclick="switchTab('ccy-markup',this)">按币种加价 ⭐</div>
+  <div class="tab-btn" onclick="switchTab('reverse-calc',this)">目标反算 🎯</div>
+  <div class="tab-btn" onclick="switchTab('vol-weight',this)">波动率加权</div>
+  <div class="tab-btn" onclick="switchTab('overview',this)">Overview</div>
+  <div class="tab-btn" onclick="switchTab('markup-matrix',this)">完整矩阵</div>
+  <div class="tab-btn" onclick="switchTab('biz-detail',this)">业务线明细</div>
+  <div class="tab-btn" onclick="switchTab('ccy-detail',this)">币种明细</div>
+  <div class="tab-btn" onclick="switchTab('scenario',this)">场景计算</div>
+</div>
+
+<!-- ═══ Tab: 按币种加价 (核心 tab) ═══ -->
+<div id="tab-ccy-markup" class="card p-4" style="border-radius:0 10px 10px 10px">
+  <div class="flex justify-between items-center mb-3">
+    <div>
+      <h3 class="text-sm font-bold text-slate-300">按币种对设置 Markup (BPS)</h3>
+      <p class="text-xs text-slate-500 mt-1">在右侧输入框设置每个币种的加价(BPS)，大币种可以设低一些，小币种可以设高一些</p>
+    </div>
+    <div class="flex gap-2 items-center">
+      <span class="text-xs text-slate-500">快捷统一设置:</span>
+      <input type="number" id="quick-uniform-bps" value="5" step="0.5" min="0" style="width:70px">
+      <span class="text-xs text-slate-500">BPS</span>
+      <button class="btn btn-warning btn-sm" onclick="quickFillAll()">统一填入</button>
+      <button class="btn btn-success btn-sm" onclick="applyCcyMarkups()">计算 Revenue</button>
+    </div>
+  </div>
+  <div id="ccy-markup-list"></div>
+  <div class="mt-3 grid grid-cols-2 gap-4">
+    <div class="card p-3"><div id="chart-ccy-markup-rev" style="height:350px"></div></div>
+    <div class="card p-3"><div id="chart-ccy-markup-vol" style="height:350px"></div></div>
+  </div>
+</div>
+
+<!-- ═══ Tab: 目标反算 ═══ -->
+<div id="tab-reverse-calc" class="card p-4 hidden" style="border-radius:0 10px 10px 10px">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h3 class="text-sm font-bold text-slate-300">目标收入反算 — 倒推加价方案</h3>
+      <p class="text-xs text-slate-500 mt-1">输入目标月增收金额，勾选想要对比的加价方案，点击反算</p>
+    </div>
+    <div class="flex gap-2 items-center">
+      <span class="text-xs text-slate-400">目标月增收:</span>
+      <span class="text-sm text-slate-500">¥</span>
+      <input type="text" id="rev-target-input" value="3,000,000" style="width:130px" oninput="fmtAccounting(this)" onfocus="fmtAccounting(this)">
+      <span class="text-xs text-slate-500">元</span>
+      <button class="btn btn-primary" onclick="runReverseCalc()" style="padding:8px 24px">反算方案</button>
+    </div>
+  </div>
+
+  <!-- 方案选择器 -->
+  <div class="mb-4" style="border:1px solid #334155;border-radius:10px;padding:14px;background:#0f172a">
+    <div class="text-xs font-bold text-slate-400 mb-3">选择要计算的方案 (至少选一个)</div>
+    <div class="flex gap-4 flex-wrap">
+      <label class="flex items-center gap-2 cursor-pointer" style="min-width:180px">
+        <input type="checkbox" id="plan-chk-uniform" value="uniform" checked class="plan-checkbox" style="accent-color:#3b82f6;width:16px;height:16px">
+        <span style="font-size:16px">📊</span>
+        <div>
+          <div class="text-xs font-bold text-blue-400">统一加价</div>
+          <div class="text-xs text-slate-500">所有币种同一 BPS</div>
+        </div>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer" style="min-width:180px">
+        <input type="checkbox" id="plan-chk-vol_weight" value="vol_weight" class="plan-checkbox" style="accent-color:#10b981;width:16px;height:16px">
+        <span style="font-size:16px">📈</span>
+        <div>
+          <div class="text-xs font-bold text-emerald-400">波动率加权</div>
+          <div class="text-xs text-slate-500" id="vol-weight-hint">需先拉取 BBG 数据</div>
+        </div>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer" style="min-width:180px">
+        <input type="checkbox" id="plan-chk-big_only" value="big_only" checked class="plan-checkbox" style="accent-color:#f59e0b;width:16px;height:16px">
+        <span style="font-size:16px">🏦</span>
+        <div>
+          <div class="text-xs font-bold text-amber-400">只加大币种</div>
+          <div class="text-xs text-slate-500">USD/HKD/EUR/MOP</div>
+        </div>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer" style="min-width:180px">
+        <input type="checkbox" id="plan-chk-small_only" value="small_only" checked class="plan-checkbox" style="accent-color:#8b5cf6;width:16px;height:16px">
+        <span style="font-size:16px">💱</span>
+        <div>
+          <div class="text-xs font-bold text-purple-400">只加小币种</div>
+          <div class="text-xs text-slate-500">非 USD/HKD/MOP</div>
+        </div>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer" style="min-width:180px">
+        <input type="checkbox" id="plan-chk-tiered" value="tiered" checked class="plan-checkbox" style="accent-color:#ec4899;width:16px;height:16px">
+        <span style="font-size:16px">📶</span>
+        <div>
+          <div class="text-xs font-bold text-pink-400">阶梯式加价</div>
+          <div class="text-xs text-slate-500">稳定币种低、其余 3 倍</div>
+        </div>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer" style="min-width:180px">
+        <input type="checkbox" id="plan-chk-stealth" value="stealth" checked class="plan-checkbox" style="accent-color:#06b6d4;width:16px;height:16px" onchange="toggleStealthOpts()">
+        <span style="font-size:16px">🥷</span>
+        <div>
+          <div class="text-xs font-bold text-cyan-400">隐蔽式加价</div>
+          <div class="text-xs text-slate-500">大币种少加、小币种多加</div>
+        </div>
+      </label>
+    </div>
+    <!-- 隐蔽式加价选项 -->
+    <div id="stealth-options" class="mt-3" style="background:#06b6d415;border:1px solid #06b6d444;border-radius:8px;padding:14px">
+      <div class="flex items-center gap-2 mb-3">
+        <span style="font-size:14px">🥷</span>
+        <span class="text-xs font-bold text-cyan-400">隐蔽式加价参数</span>
+      </div>
+      <!-- 第一行: 上限 + 随机度 -->
+      <div class="flex items-center gap-4 mb-3 flex-wrap">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-400">单币种加价上限</span>
+          <input type="number" id="stealth-max-bps" value="20" step="1" min="1" max="100" style="width:70px;text-align:center">
+          <span class="text-xs text-slate-500">BPS</span>
+        </div>
+        <div style="width:1px;height:20px;background:#334155"></div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-400">随机扰动</span>
+          <input type="range" id="stealth-randomness" min="0" max="1" step="0.1" value="0" style="width:120px;accent-color:#06b6d4" oninput="document.getElementById('stealth-rand-label').textContent=Math.round(this.value*100)+'%'">
+          <span class="text-xs text-cyan-400 font-bold" id="stealth-rand-label" style="min-width:32px">0%</span>
+          <span class="text-xs text-slate-500">越大越随机，使结果不那么 "工整"</span>
+        </div>
+      </div>
+      <!-- 第二行: 手动锁定币种 -->
+      <div class="mb-2">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xs text-slate-400">🔒 手动锁定币种加价 (可选，优化器会固定这些值，剩余币种自动分配)</span>
+          <button class="btn btn-sm" style="background:#06b6d422;color:#06b6d4;border:1px solid #06b6d444;font-size:10px;padding:2px 8px" onclick="addStealthPin()">+ 添加锁定</button>
+        </div>
+        <div id="stealth-pinned-list" class="flex gap-2 flex-wrap"></div>
+      </div>
+    </div>
+    <!-- 波动率提示 -->
+    <div id="vol-weight-warning" class="mt-3" style="display:none;background:#f59e0b15;border:1px solid #f59e0b44;border-radius:8px;padding:10px 14px">
+      <div class="flex items-center gap-2">
+        <span style="font-size:16px">⚠️</span>
+        <div>
+          <div class="text-xs font-bold text-amber-400">波动率加权需要 BBG 数据</div>
+          <div class="text-xs text-slate-400 mt-0.5">请先到「波动率加权」Tab → Step 1 拉取数据，拉取完成后回来勾选此方案</div>
+        </div>
+        <button class="btn btn-warning btn-sm" onclick="switchTab('vol-weight',document.querySelectorAll('.tab-btn')[2])" style="margin-left:auto;white-space:nowrap">去拉取数据 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="grid grid-cols-3 gap-3 mb-4" id="rev-calc-kpi">
+    <div class="card p-3 metric-card glow-blue">
+      <div class="text-xs text-slate-500">目标月增收</div>
+      <div class="text-xl font-bold text-blue-400" id="rev-kpi-target">¥300.00万</div>
+    </div>
+    <div class="card p-3 metric-card glow-amber">
+      <div class="text-xs text-slate-500">目标年增收</div>
+      <div class="text-xl font-bold text-amber-400" id="rev-kpi-annual">¥3,600.00万</div>
+    </div>
+    <div class="card p-3 metric-card">
+      <div class="text-xs text-slate-500">月总交易量</div>
+      <div class="text-lg font-bold text-slate-300" id="rev-kpi-volume">—</div>
+    </div>
+  </div>
+
+  <!-- 方案对比卡片 -->
+  <div id="rev-plans-container" class="mb-4"></div>
+
+  <!-- 方案明细表 -->
+  <div id="rev-plan-detail" class="mb-4"></div>
+
+  <!-- 图表 -->
+  <div class="grid grid-cols-2 gap-4">
+    <div class="card p-3"><div id="chart-rev-compare" style="height:400px"></div></div>
+    <div class="card p-3"><div id="chart-rev-ccy-compare" style="height:400px"></div></div>
+  </div>
+</div>
+
+<!-- ═══ Tab: 波动率加权 ═══ -->
+<div id="tab-vol-weight" class="card p-4 hidden" style="border-radius:0 10px 10px 10px">
+
+  <!-- ── Step 1: 拉取数据 ── -->
+  <div class="mb-4" style="border:1px solid #334155;border-radius:10px;padding:16px;background:#0f172a">
+    <div class="flex justify-between items-center mb-3">
+      <div class="flex items-center gap-3">
+        <span style="background:#3b82f6;color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px">Step 1</span>
+        <div>
+          <h3 class="text-sm font-bold text-slate-300">拉取波动率数据</h3>
+          <p class="text-xs text-slate-500 mt-0.5">从 Bloomberg 实时拉取过去 4 个月的 10 分钟 K 线数据，计算各币种年化已实现波动率</p>
+        </div>
+      </div>
+      <div class="flex gap-2 items-center">
+        <button class="btn btn-primary" onclick="fetchVolData()" id="btn-fetch-vol" style="padding:8px 24px">
+          拉取 BBG 波动率数据 (4个月 × 10min)
+        </button>
+        <span class="text-xs text-slate-500" id="vol-fetch-status">未拉取</span>
+      </div>
+    </div>
+
+    <!-- 数据拉取状态 KPI -->
+    <div class="grid grid-cols-5 gap-3 mb-3" id="vol-data-kpi" style="display:none">
+      <div class="card p-2" style="background:#1e293b">
+        <div class="text-xs text-slate-500">数据范围</div>
+        <div class="text-sm font-bold text-blue-400" id="vd-kpi-range">—</div>
+      </div>
+      <div class="card p-2" style="background:#1e293b">
+        <div class="text-xs text-slate-500">Bar 间隔</div>
+        <div class="text-sm font-bold text-slate-300">10 分钟</div>
+      </div>
+      <div class="card p-2" style="background:#1e293b">
+        <div class="text-xs text-slate-500">币种数量</div>
+        <div class="text-sm font-bold text-slate-300" id="vd-kpi-ccys">—</div>
+      </div>
+      <div class="card p-2" style="background:#1e293b">
+        <div class="text-xs text-slate-500">拉取时间</div>
+        <div class="text-sm font-bold text-emerald-400" id="vd-kpi-time">—</div>
+      </div>
+      <div class="card p-2" style="background:#1e293b">
+        <div class="text-xs text-slate-500">平均数据点</div>
+        <div class="text-sm font-bold text-amber-400" id="vd-kpi-pts">—</div>
+      </div>
+    </div>
+
+    <!-- 波动率数据表 -->
+    <div id="vol-raw-data-table" style="display:none"></div>
+  </div>
+
+  <!-- ── 公式说明 ── -->
+  <div class="mb-4" style="border:1px solid #334155;border-radius:10px;padding:16px;background:#1e293b">
+    <div class="flex items-center gap-2 mb-3">
+      <span style="font-size:16px">📐</span>
+      <h3 class="text-sm font-bold text-slate-300">加价计算公式</h3>
+    </div>
+    <div style="font-family:'Consolas','Courier New',monospace;font-size:13px;line-height:2;color:#e2e8f0;background:#0f172a;padding:16px;border-radius:8px;border:1px solid #334155">
+      <div style="color:#94a3b8;font-size:11px;margin-bottom:8px">// 第一步：计算各币种年化已实现波动率</div>
+      <div><span style="color:#f59e0b">σ_i</span> = StdDev( ln(P_t / P_{t-1}) ) × √(bars_per_year)</div>
+      <div style="color:#64748b;font-size:11px;margin-left:30px">其中 P_t = (High + Low) / 2 的 10 分钟 MID 价格, bars_per_year = 252 × 22h × 6 = 33,264</div>
+      <div style="margin-top:10px;color:#94a3b8;font-size:11px">// 第二步：计算交易量加权平均波动率</div>
+      <div><span style="color:#10b981">σ̄</span> = Σ( Volume_i × σ_i ) / Σ( Volume_i )</div>
+      <div style="margin-top:10px;color:#94a3b8;font-size:11px">// 第三步：按波动率比例分配 markup，使加权平均 = 目标 BPS</div>
+      <div><span style="color:#3b82f6">Markup_i</span> = Target_BPS × ( <span style="color:#f59e0b">σ_i</span> / <span style="color:#10b981">σ̄</span> )</div>
+      <div style="margin-top:10px;color:#94a3b8;font-size:11px">// 验证：交易量加权平均 markup = 目标</div>
+      <div>Σ( Volume_i × <span style="color:#3b82f6">Markup_i</span> ) / Σ( Volume_i ) = <span style="color:#ec4899">Target_BPS</span> ✓</div>
+      <div style="margin-top:10px;color:#94a3b8;font-size:11px">// 收入计算</div>
+      <div><span style="color:#10b981">Revenue_i</span> = Volume_i × <span style="color:#3b82f6">Markup_i</span> × 10<sup style="font-size:9px">-4</sup></div>
+    </div>
+    <div class="text-xs text-slate-500 mt-2">
+      逻辑：波动率高的币种交易成本高、风险大，应加更高 markup；波动率低的大币种（如 USD/HKD）少加。最终保证加权平均精确等于你的目标 BPS。
+    </div>
+  </div>
+
+  <!-- ── Step 2: 计算加价 ── -->
+  <div class="mb-4" style="border:1px solid #334155;border-radius:10px;padding:16px;background:#0f172a">
+    <div class="flex justify-between items-center mb-3">
+      <div class="flex items-center gap-3">
+        <span style="background:#10b981;color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px">Step 2</span>
+        <div>
+          <h3 class="text-sm font-bold text-slate-300">计算加价建议</h3>
+          <p class="text-xs text-slate-500 mt-0.5">基于已拉取的波动率数据，输入目标加权平均 BPS，计算各币种应加多少</p>
+        </div>
+      </div>
+      <div class="flex gap-2 items-center">
+        <span class="text-xs text-slate-400">目标加权平均:</span>
+        <input type="number" id="vol-target-bps" value="0.5" step="0.1" min="0.1" max="20" style="width:70px">
+        <span class="text-xs text-slate-500">BPS</span>
+        <button class="btn btn-primary btn-sm" onclick="loadVolSuggestion()" id="btn-vol-calc" disabled style="opacity:0.5">计算加价建议</button>
+        <button class="btn btn-success btn-sm" onclick="applyVolSuggestion()" id="btn-vol-apply" disabled style="opacity:0.5">应用到加价</button>
+      </div>
+    </div>
+
+    <!-- 计算结果 KPI -->
+    <div class="grid grid-cols-4 gap-3 mb-4" id="vol-kpi-row">
+      <div class="card p-3 metric-card glow-blue" style="background:#1e293b">
+        <div class="text-xs text-slate-500">目标加权平均 Markup</div>
+        <div class="text-lg font-bold text-blue-400" id="vol-kpi-target">0.50 BPS</div>
+      </div>
+      <div class="card p-3 metric-card" style="background:#1e293b">
+        <div class="text-xs text-slate-500">实际加权平均 Markup</div>
+        <div class="text-lg font-bold text-slate-300" id="vol-kpi-actual">—</div>
+      </div>
+      <div class="card p-3 metric-card glow-green" style="background:#1e293b">
+        <div class="text-xs text-slate-500">预估月度收入</div>
+        <div class="text-xl font-bold text-emerald-400" id="vol-kpi-monthly">—</div>
+      </div>
+      <div class="card p-3 metric-card glow-amber" style="background:#1e293b">
+        <div class="text-xs text-slate-500">预估年化收入</div>
+        <div class="text-xl font-bold text-amber-400" id="vol-kpi-annual">—</div>
+      </div>
+    </div>
+
+    <!-- 建议表格 -->
+    <div class="mb-4" id="vol-suggest-table"></div>
+  </div>
+
+  <!-- 图表 -->
+  <div class="grid grid-cols-2 gap-4">
+    <div class="card p-3"><div id="chart-vol-scatter" style="height:380px"></div></div>
+    <div class="card p-3"><div id="chart-vol-markup-bar" style="height:380px"></div></div>
+  </div>
+</div>
+
+<!-- ═══ Tab: Overview ═══ -->
+<div id="tab-overview" class="card p-4 hidden" style="border-radius:0 10px 10px 10px">
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <div class="card p-3"><div id="chart-biz-volume" style="height:360px"></div></div>
+    <div class="card p-3"><div id="chart-ccy-volume" style="height:360px"></div></div>
+  </div>
+  <div class="grid grid-cols-2 gap-4">
+    <div class="card p-3"><div id="chart-biz-rev" style="height:320px"></div></div>
+    <div class="card p-3"><div id="chart-ccy-rev" style="height:320px"></div></div>
+  </div>
+  <div class="mt-4">
+    <div class="card p-3"><div id="chart-rev-heatmap" style="height:350px"></div></div>
+  </div>
+</div>
+
+<!-- ═══ Tab: Markup Matrix ═══ -->
+<div id="tab-markup-matrix" class="card p-4 hidden" style="border-radius:0 10px 10px 10px">
+  <div class="flex justify-between items-center mb-3">
+    <h3 class="text-sm font-bold text-slate-300">Markup 配置矩阵 (BPS) — 可直接编辑每个单元格</h3>
+    <div class="flex gap-2">
+      <button class="btn btn-success btn-sm" onclick="applyMatrixMarkups()">Apply & Calculate</button>
+    </div>
+  </div>
+  <div class="overflow-x-auto" id="markup-matrix-container"></div>
+  <div class="mt-3 text-xs text-slate-500">绿色底色 = 有交易量。修改后点 Apply 重新计算。</div>
+</div>
+
+<!-- ═══ Tab: Biz Detail ═══ -->
+<div id="tab-biz-detail" class="card p-4 hidden" style="border-radius:0 10px 10px 10px">
+  <h3 class="text-sm font-bold text-slate-300 mb-3">业务线加价明细</h3>
+  <div id="biz-detail-table"></div>
+</div>
+
+<!-- ═══ Tab: CCY Detail ═══ -->
+<div id="tab-ccy-detail" class="card p-4 hidden" style="border-radius:0 10px 10px 10px">
+  <h3 class="text-sm font-bold text-slate-300 mb-3">币种加价明细</h3>
+  <div id="ccy-detail-table"></div>
+</div>
+
+<!-- ═══ Tab: Scenario ═══ -->
+<div id="tab-scenario" class="card p-4 hidden" style="border-radius:0 10px 10px 10px">
+  <h3 class="text-sm font-bold text-slate-300 mb-3">场景计算器</h3>
+  <div class="grid grid-cols-3 gap-4 mb-4">
+    <div class="card p-3">
+      <h4 class="text-xs font-bold text-slate-400 mb-2">统一加价</h4>
+      <div class="flex gap-2 items-center mb-2">
+        <input type="number" id="uniform-bps" value="5" step="0.5" min="0" style="width:80px">
+        <span class="text-xs text-slate-500">BPS</span>
+        <button class="btn btn-primary btn-sm" onclick="applyUniform()">Apply</button>
+      </div>
+    </div>
+    <div class="card p-3">
+      <h4 class="text-xs font-bold text-slate-400 mb-2">按业务线设置</h4>
+      <div class="flex gap-2 items-center mb-2">
+        <select id="biz-select" style="width:120px"></select>
+        <input type="number" id="biz-bps" value="5" step="0.5" min="0" style="width:60px">
+        <button class="btn btn-primary btn-sm" onclick="applyBiz()">Apply</button>
+      </div>
+    </div>
+    <div class="card p-3">
+      <h4 class="text-xs font-bold text-slate-400 mb-2">按币种设置</h4>
+      <div class="flex gap-2 items-center mb-2">
+        <select id="ccy-select" style="width:80px"></select>
+        <input type="number" id="ccy-bps" value="5" step="0.5" min="0" style="width:60px">
+        <button class="btn btn-primary btn-sm" onclick="applyCcy()">Apply</button>
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center gap-4 mb-3">
+    <h4 class="text-xs font-bold text-slate-400">统一加价扫描 (Revenue vs Markup)</h4>
+    <input type="number" id="scan-min" value="0" step="0.5" style="width:60px">
+    <span class="text-xs text-slate-500">~</span>
+    <input type="number" id="scan-max" value="20" step="1" style="width:60px">
+    <button class="btn btn-primary btn-sm" onclick="runScan()">Scan</button>
+  </div>
+  <div class="card p-3"><div id="chart-scan" style="height:380px"></div></div>
+</div>
+
+</div>
+
+<script>
+const DARK={paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{color:'#94a3b8',size:11},xaxis:{gridcolor:'#334155',zerolinecolor:'#475569'},yaxis:{gridcolor:'#334155',zerolinecolor:'#475569'},margin:{t:45,b:55,l:90,r:30}};
+const COLORS=['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16','#f97316','#14b8a6','#a78bfa','#fb7185','#38bdf8'];
+let currentData=null, currentEntity='summary';
+
+function fmt$(v){if(Math.abs(v)>=1e8)return'¥'+(v/1e8).toFixed(2)+'亿';if(Math.abs(v)>=1e4)return'¥'+(v/1e4).toFixed(2)+'万';if(Math.abs(v)>=1e3)return'¥'+(v/1e3).toFixed(1)+'千';return'¥'+v.toFixed(0)}
+function fmtV(v){if(v>=1e8)return(v/1e8).toFixed(2)+'亿';if(v>=1e4)return(v/1e4).toFixed(1)+'万';return v.toFixed(0)}
+
+// 千分位格式化：输入框自动加逗号
+function fmtAccounting(el){
+  // 保存光标位置
+  const pos=el.selectionStart;
+  const oldLen=el.value.length;
+  // 去掉非数字字符（保留小数点）
+  let raw=el.value.replace(/[^\d.]/g,'');
+  if(!raw){el.value='';return;}
+  // 分离整数和小数
+  const parts=raw.split('.');
+  parts[0]=parts[0].replace(/^0+(?=\d)/,'');
+  // 整数部分加千分位
+  parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  el.value=parts.length>1?parts[0]+'.'+parts[1]:parts[0];
+  // 调整光标
+  const newLen=el.value.length;
+  const newPos=Math.max(0,pos+(newLen-oldLen));
+  el.setSelectionRange(newPos,newPos);
+}
+// 从格式化字符串中提取纯数字
+function parseAccounting(str){return parseFloat((str||'0').replace(/,/g,''))||0;}
+
+async function api(url,opts){
+  document.getElementById('status-text').textContent='Loading...';
+  try{const r=await fetch(url,opts);const j=await r.json();document.getElementById('status-text').textContent='Ready';return j}
+  catch(e){document.getElementById('status-text').textContent='Error';console.error(e);return{success:false}}
+}
+
+function switchTab(name,el){
+  document.querySelectorAll('[id^=tab-]').forEach(e=>e.classList.add('hidden'));
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ─── Entity Switch ───
+async function switchEntity(entity,el){
+  currentEntity=entity;
+  document.querySelectorAll('.entity-btn').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  await loadEntityData();
+}
+
+async function loadEntityData(){
+  const info=await api('/api/info?entity='+currentEntity);
+  if(info.success){
+    const lbl={'summary':'全量','mso':'MSO','svf':'SVF'}[currentEntity]||currentEntity;
+    document.getElementById('month-label').textContent=info.month+' | '+lbl+' | ¥'+fmtV(info.month_total)+' | '+info.cell_count+'组合';
+    fillSelects(info.businesses, info.ccys);
+  }
+  await calcAll();
+  await loadCcyMarkupTab();
+  renderMarkupMatrix();
+}
+
+function fillSelects(bizs, ccys){
+  const bizSel=document.getElementById('biz-select');
+  bizSel.innerHTML='';
+  bizs.forEach(b=>{const o=document.createElement('option');o.value=b;o.textContent=b;bizSel.appendChild(o)});
+  const ccySel=document.getElementById('ccy-select');
+  ccySel.innerHTML='';
+  ccys.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;ccySel.appendChild(o)});
+}
+
+// ─── KPI ───
+function renderKPI(t){
+  document.getElementById('kpi-volume').textContent='¥'+fmtV(t.volume);
+  document.getElementById('kpi-avg-markup').textContent=t.avg_markup_bps+' BPS';
+  document.getElementById('kpi-revenue').textContent=fmt$(t.revenue);
+  document.getElementById('kpi-annual').textContent=fmt$(t.annual_revenue);
+}
+
+// ─── 按币种加价 Tab ───
+async function loadCcyMarkupTab(){
+  const r=await api('/api/ccy_volumes?entity='+currentEntity);
+  if(!r.success)return;
+  const ccys=r.ccys;
+  const maxVol=Math.max(...ccys.map(c=>c.volume));
+
+  let html='<div style="display:grid;grid-template-columns:100px 1fr 200px 80px 100px;gap:0;font-size:12px;padding:4px 12px;color:#64748b;font-weight:600;margin-bottom:4px"><div>币种</div><div>交易量占比</div><div style="text-align:right">月交易量 (CNY)</div><div style="text-align:center">Markup</div><div style="text-align:center">月收入</div></div>';
+
+  ccys.forEach((c,i)=>{
+    const pct=(c.volume/maxVol*100).toFixed(0);
+    const rev=c.volume*c.current_markup_bps*1e-4;
+    html+=`<div class="ccy-markup-row" style="display:grid;grid-template-columns:100px 1fr 200px 80px 100px;align-items:center">
+      <div style="font-weight:700;color:${COLORS[i%COLORS.length]}">${c.ccy}</div>
+      <div><div class="vol-bar" style="width:${Math.max(pct,1)}%;background:${COLORS[i%COLORS.length]}40"></div></div>
+      <div style="text-align:right;color:#94a3b8">¥${fmtV(c.volume)}</div>
+      <div style="text-align:center"><input type="number" class="ccy-markup-input" data-ccy="${c.ccy}" value="${c.current_markup_bps}" step="0.5" min="0" style="width:60px;text-align:center"></div>
+      <div style="text-align:center;color:#10b981;font-weight:600" id="ccy-rev-${c.ccy}">${fmt$(rev)}</div>
+    </div>`;
+  });
+
+  document.getElementById('ccy-markup-list').innerHTML=html;
+
+  // 实时预览：输入变化时计算 revenue 预览
+  document.querySelectorAll('.ccy-markup-input').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const ccy=inp.dataset.ccy;
+      const bps=parseFloat(inp.value)||0;
+      const ccyObj=ccys.find(c=>c.ccy===ccy);
+      if(ccyObj){
+        const rev=ccyObj.volume*bps*1e-4;
+        document.getElementById('ccy-rev-'+ccy).textContent=fmt$(rev);
+      }
+      updateCcyTotal(ccys);
+    });
+  });
+}
+
+function updateCcyTotal(ccys){
+  let totalRev=0;
+  document.querySelectorAll('.ccy-markup-input').forEach(inp=>{
+    const ccy=inp.dataset.ccy;
+    const bps=parseFloat(inp.value)||0;
+    const ccyObj=ccys.find(c=>c.ccy===ccy);
+    if(ccyObj)totalRev+=ccyObj.volume*bps*1e-4;
+  });
+  document.getElementById('kpi-revenue').textContent=fmt$(totalRev);
+  document.getElementById('kpi-annual').textContent=fmt$(totalRev*12);
+  const totalVol=ccys.reduce((s,c)=>s+c.volume,0);
+  const avgBps=totalVol>0?totalRev/(totalVol*1e-4):0;
+  document.getElementById('kpi-avg-markup').textContent=avgBps.toFixed(2)+' BPS';
+}
+
+function quickFillAll(){
+  const bps=parseFloat(document.getElementById('quick-uniform-bps').value)||0;
+  document.querySelectorAll('.ccy-markup-input').forEach(inp=>{
+    inp.value=bps;
+    inp.dispatchEvent(new Event('input'));
+  });
+}
+
+async function applyCcyMarkups(){
+  const ccyMarkups={};
+  document.querySelectorAll('.ccy-markup-input').forEach(inp=>{
+    ccyMarkups[inp.dataset.ccy]=parseFloat(inp.value)||0;
+  });
+  const r=await api('/api/update_markup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity,ccy_markups:ccyMarkups})});
+  if(r.success){
+    currentData=r;
+    renderKPI(r.totals);
+    renderOverview(r);
+    renderBizDetail(r);
+    renderCcyDetail(r);
+    renderCcyMarkupCharts(r);
+  }
+}
+
+function renderCcyMarkupCharts(data){
+  const cs=data.ccy_summary;
+  const ccyNames=Object.keys(cs).sort((a,b)=>cs[b].revenue-cs[a].revenue);
+
+  Plotly.newPlot('chart-ccy-markup-rev',[{
+    x:ccyNames,y:ccyNames.map(c=>cs[c].revenue/1e4),type:'bar',
+    marker:{color:ccyNames.map((_,i)=>COLORS[i%COLORS.length])},
+    text:ccyNames.map(c=>fmt$(cs[c].revenue)),textposition:'outside',textfont:{size:10,color:'#94a3b8'},
+  }],{...DARK,title:{text:'月度加价收入 by 币种',font:{size:13,color:'#e2e8f0'}},yaxis:{...DARK.yaxis,ticksuffix:'万',tickformat:',.1f'}},{responsive:true});
+
+  const ccyVol=Object.keys(cs).sort((a,b)=>cs[a].volume-cs[b].volume);
+  Plotly.newPlot('chart-ccy-markup-vol',[{
+    x:ccyVol,y:ccyVol.map(c=>cs[c].volume/1e8),type:'bar',
+    marker:{color:ccyVol.map((_,i)=>COLORS[i%COLORS.length])},
+    text:ccyVol.map(c=>'¥'+fmtV(cs[c].volume)+'<br>'+cs[c].avg_markup_bps+'BPS'),textposition:'outside',textfont:{size:9,color:'#94a3b8'},
+  }],{...DARK,title:{text:'月交易量 & Markup by 币种',font:{size:13,color:'#e2e8f0'}},yaxis:{...DARK.yaxis,ticksuffix:'亿',tickformat:',.1f'}},{responsive:true});
+}
+
+// ─── Overview Charts ───
+// Y轴用"亿"为单位，避免长数字重叠
+const yAxisYi={...DARK.yaxis,ticksuffix:'亿',tickformat:',.1f',title:{text:'(亿 CNY)',font:{size:10,color:'#64748b'}}};
+const yAxisWan={...DARK.yaxis,ticksuffix:'万',tickformat:',.1f',title:{text:'(万 CNY)',font:{size:10,color:'#64748b'}}};
+
+function renderOverview(data){
+  const bs=data.biz_summary, cs=data.ccy_summary;
+
+  // 1) 交易量 by 业务线 (升序)
+  const bizVol=Object.keys(bs).sort((a,b)=>bs[a].volume-bs[b].volume);
+  Plotly.newPlot('chart-biz-volume',[{
+    x:bizVol,y:bizVol.map(b=>bs[b].volume/1e8),type:'bar',
+    marker:{color:bizVol.map((_,i)=>COLORS[i%COLORS.length])},
+    text:bizVol.map(b=>'¥'+fmtV(bs[b].volume)),textposition:'outside',textfont:{size:10,color:'#94a3b8'},
+  }],{...DARK,title:{text:'月度交易量 by 业务线 (真实数据)',font:{size:13,color:'#e2e8f0'}},yaxis:yAxisYi,xaxis:{...DARK.xaxis,tickangle:-30}},{responsive:true});
+
+  // 2) 交易量 by 币种 (升序)
+  const ccyVol=Object.keys(cs).sort((a,b)=>cs[a].volume-cs[b].volume);
+  Plotly.newPlot('chart-ccy-volume',[{
+    x:ccyVol,y:ccyVol.map(c=>cs[c].volume/1e8),type:'bar',
+    marker:{color:ccyVol.map((_,i)=>COLORS[i%COLORS.length])},
+    text:ccyVol.map(c=>'¥'+fmtV(cs[c].volume)),textposition:'outside',textfont:{size:10,color:'#94a3b8'},
+  }],{...DARK,title:{text:'月度交易量 by 币种 (真实数据)',font:{size:13,color:'#e2e8f0'}},yaxis:yAxisYi},{responsive:true});
+
+  // 3) 加价收入 by 业务线 (降序)
+  const bizRev=Object.keys(bs).sort((a,b)=>bs[b].revenue-bs[a].revenue);
+  Plotly.newPlot('chart-biz-rev',[
+    {x:bizRev,y:bizRev.map(b=>bs[b].revenue/1e4),type:'bar',
+     marker:{color:bizRev.map((_,i)=>COLORS[i%COLORS.length])},
+     text:bizRev.map(b=>fmt$(bs[b].revenue)),textposition:'outside',textfont:{size:10,color:'#94a3b8'}},
+  ],{...DARK,title:{text:'月度加价收入 by 业务线 (需先设置 Markup)',font:{size:13,color:'#e2e8f0'}},yaxis:yAxisWan,xaxis:{...DARK.xaxis,tickangle:-30}},{responsive:true});
+
+  // 4) 加价收入 by 币种 (降序)
+  const ccyRev=Object.keys(cs).sort((a,b)=>cs[b].revenue-cs[a].revenue);
+  Plotly.newPlot('chart-ccy-rev',[
+    {x:ccyRev,y:ccyRev.map(c=>cs[c].revenue/1e4),type:'bar',
+     marker:{color:ccyRev.map((_,i)=>COLORS[i%COLORS.length])},
+     text:ccyRev.map(c=>fmt$(cs[c].revenue)),textposition:'outside',textfont:{size:10,color:'#94a3b8'}},
+  ],{...DARK,title:{text:'月度加价收入 by 币种 (需先设置 Markup)',font:{size:13,color:'#e2e8f0'}},yaxis:yAxisWan},{responsive:true});
+
+  renderRevHeatmap();
+}
+
+async function renderRevHeatmap(){
+  const r=await api('/api/matrices?entity='+currentEntity);
+  if(!r.success)return;
+  const p=r.volume;
+  // 用 log10 色阶，避免大值压平小值
+  const zRaw=p.matrix.map(row=>row.map(v=>v||0));
+  const zLog=zRaw.map(row=>row.map(v=>v>0?Math.log10(v):0));
+  const textData=zRaw.map(row=>row.map(v=>v>0?'¥'+fmtV(v):''));
+  Plotly.newPlot('chart-rev-heatmap',[{
+    z:zLog,x:p.ccys,y:p.businesses,type:'heatmap',
+    colorscale:[[0,'#1e293b'],[0.25,'#1e3a5f'],[0.5,'#065f46'],[0.75,'#10b981'],[1,'#34d399']],
+    text:textData,texttemplate:'%{text}',
+    hovertemplate:'%{y} × %{x}<br>交易量: %{text}<extra></extra>',
+    showscale:false,
+  }],{...DARK,title:{text:'交易量 Heatmap (业务×币种, log色阶)',font:{size:13,color:'#e2e8f0'}},margin:{...DARK.margin,l:140,r:40}},{responsive:true});
+}
+
+// ─── Markup Matrix ───
+async function renderMarkupMatrix(){
+  const r=await api('/api/matrices?entity='+currentEntity);
+  if(!r.success)return;
+  const mk=r.markup,vol=r.volume;
+  const bizs=mk.businesses,ccys=mk.ccys;
+
+  let html='<table><thead><tr><th style="text-align:left">业务 \\ 币种</th>';
+  ccys.forEach(c=>{html+=`<th>${c}</th>`});
+  html+='<th>业务量</th></tr></thead><tbody>';
+
+  bizs.forEach((biz,bi)=>{
+    html+=`<tr><td style="font-weight:600;font-size:12px">${biz}</td>`;
+    let bizVol=0;
+    ccys.forEach((ccy,ci)=>{
+      const m=mk.matrix[bi][ci];
+      const v=vol.matrix[bi][ci];
+      bizVol+=v;
+      if(m!==null && v>0){
+        html+=`<td><input type="number" class="markup-input" data-biz="${biz}" data-ccy="${ccy}" value="${m.toFixed(1)}" step="0.5" min="0" style="background:#0d3320;border-color:#065f46"></td>`;
+      }else{
+        html+=`<td class="text-slate-600">—</td>`;
+      }
+    });
+    html+=`<td class="text-slate-500">¥${fmtV(bizVol)}</td>`;
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  document.getElementById('markup-matrix-container').innerHTML=html;
+}
+
+async function applyMatrixMarkups(){
+  const inputs=document.querySelectorAll('.markup-input');
+  const batch={};
+  inputs.forEach(inp=>{
+    const biz=inp.dataset.biz, ccy=inp.dataset.ccy;
+    const val=parseFloat(inp.value);
+    if(!isNaN(val)){
+      if(!batch[biz])batch[biz]={};
+      batch[biz][ccy]=val;
+    }
+  });
+  const r=await api('/api/update_markup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity,batch})});
+  if(r.success){currentData=r;renderKPI(r.totals);renderOverview(r);renderBizDetail(r);renderCcyDetail(r);loadCcyMarkupTab()}
+}
+
+// ─── Biz Detail Table ───
+function renderBizDetail(data){
+  const bs=data.biz_summary;
+  const bizs=Object.keys(bs).sort((a,b)=>bs[b].revenue-bs[a].revenue);
+  let html='<table><thead><tr><th style="text-align:left">业务线</th><th>月交易量 (CNY)</th><th>加权 Markup</th><th>月度收入</th><th>年化收入</th><th>收入占比</th></tr></thead><tbody>';
+  const totalRev=data.totals.revenue;
+  bizs.forEach(biz=>{
+    const s=bs[biz];
+    const pct=totalRev>0?(s.revenue/totalRev*100).toFixed(1):'—';
+    html+=`<tr>
+      <td style="font-weight:600">${biz}</td>
+      <td>¥${fmtV(s.volume)}</td>
+      <td class="text-blue-400">${s.avg_markup_bps} BPS</td>
+      <td class="text-emerald-400" style="font-weight:700">${fmt$(s.revenue)}</td>
+      <td class="text-amber-400">${fmt$(s.annual_revenue)}</td>
+      <td>${pct}%</td>
+    </tr>`;
+  });
+  const t=data.totals;
+  html+=`<tr style="background:#334155;font-weight:700">
+    <td>TOTAL</td><td>¥${fmtV(t.volume)}</td><td class="text-blue-400">${t.avg_markup_bps} BPS</td>
+    <td class="text-emerald-400">${fmt$(t.revenue)}</td><td class="text-amber-400">${fmt$(t.annual_revenue)}</td><td>100%</td>
+  </tr>`;
+  html+='</tbody></table>';
+  document.getElementById('biz-detail-table').innerHTML=html;
+}
+
+// ─── CCY Detail Table ───
+function renderCcyDetail(data){
+  const cs=data.ccy_summary;
+  const ccys=Object.keys(cs).sort((a,b)=>cs[b].revenue-cs[a].revenue);
+  let html='<table><thead><tr><th style="text-align:left">币种</th><th>月交易量 (CNY)</th><th>加权 Markup</th><th>月度收入</th><th>年化收入</th><th>收入占比</th></tr></thead><tbody>';
+  const totalRev=data.totals.revenue;
+  ccys.forEach(ccy=>{
+    const s=cs[ccy];
+    const pct=totalRev>0?(s.revenue/totalRev*100).toFixed(1):'—';
+    html+=`<tr>
+      <td style="font-weight:600">${ccy}</td>
+      <td>¥${fmtV(s.volume)}</td>
+      <td class="text-blue-400">${s.avg_markup_bps} BPS</td>
+      <td class="text-emerald-400" style="font-weight:700">${fmt$(s.revenue)}</td>
+      <td class="text-amber-400">${fmt$(s.annual_revenue)}</td>
+      <td>${pct}%</td>
+    </tr>`;
+  });
+  const t=data.totals;
+  html+=`<tr style="background:#334155;font-weight:700">
+    <td>TOTAL</td><td>¥${fmtV(t.volume)}</td><td class="text-blue-400">${t.avg_markup_bps} BPS</td>
+    <td class="text-emerald-400">${fmt$(t.revenue)}</td><td class="text-amber-400">${fmt$(t.annual_revenue)}</td><td>100%</td>
+  </tr>`;
+  html+='</tbody></table>';
+  document.getElementById('ccy-detail-table').innerHTML=html;
+}
+
+// ─── Scenario ───
+async function applyUniform(){
+  const bps=parseFloat(document.getElementById('uniform-bps').value)||0;
+  const r=await api('/api/update_markup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity,uniform:bps})});
+  if(r.success){currentData=r;renderKPI(r.totals);renderOverview(r);renderBizDetail(r);renderCcyDetail(r);renderMarkupMatrix();loadCcyMarkupTab()}
+}
+
+async function applyBiz(){
+  const biz=document.getElementById('biz-select').value;
+  const bps=parseFloat(document.getElementById('biz-bps').value)||0;
+  if(!biz)return;
+  const r=await api('/api/update_markup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity,biz:{business:biz,markup_bps:bps}})});
+  if(r.success){currentData=r;renderKPI(r.totals);renderOverview(r);renderBizDetail(r);renderCcyDetail(r);renderMarkupMatrix();loadCcyMarkupTab()}
+}
+
+async function applyCcy(){
+  const ccy=document.getElementById('ccy-select').value;
+  const bps=parseFloat(document.getElementById('ccy-bps').value)||0;
+  if(!ccy)return;
+  const r=await api('/api/update_markup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity,ccy:{ccy:ccy,markup_bps:bps}})});
+  if(r.success){currentData=r;renderKPI(r.totals);renderOverview(r);renderBizDetail(r);renderCcyDetail(r);renderMarkupMatrix();loadCcyMarkupTab()}
+}
+
+async function runScan(){
+  const body={
+    entity:currentEntity,
+    min_bps:parseFloat(document.getElementById('scan-min').value)||0,
+    max_bps:parseFloat(document.getElementById('scan-max').value)||20,
+    step:0.5,
+  };
+  const r=await api('/api/scan_uniform',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.success)return;
+  const scan=r.scan;
+  const x=scan.map(s=>s.markup_bps);
+  Plotly.newPlot('chart-scan',[
+    {x,y:scan.map(s=>s.revenue),type:'scatter',mode:'lines+markers',name:'月度 Revenue',
+     line:{color:'#3b82f6',width:2.5},marker:{size:4},fill:'tozeroy',fillcolor:'rgba(59,130,246,0.05)'},
+    {x,y:scan.map(s=>s.annual_revenue),type:'scatter',mode:'lines',name:'年化 Revenue',
+     line:{color:'#10b981',width:2,dash:'dot'},yaxis:'y2'},
+  ],{...DARK,
+    title:{text:'统一加价扫描: Revenue = Volume × Markup × 1e-4',font:{size:13,color:'#e2e8f0'}},
+    xaxis:{...DARK.xaxis,title:'Uniform Markup (BPS)'},
+    yaxis:{...DARK.yaxis,title:'月度 Revenue (CNY)',tickprefix:'¥',tickformat:',.0f'},
+    yaxis2:{overlaying:'y',side:'right',title:'年化 Revenue (CNY)',tickprefix:'¥',tickformat:',.0f',gridcolor:'transparent',font:{color:'#10b981'}},
+    legend:{orientation:'h',y:1.12}
+  },{responsive:true});
+}
+
+// ─── Calc All ───
+async function calcAll(){
+  const r=await api('/api/calc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity})});
+  if(r.success){currentData=r;renderKPI(r.totals);renderOverview(r);renderBizDetail(r);renderCcyDetail(r);renderCcyMarkupCharts(r)}
+}
+
+async function resetAll(){
+  const r=await api('/api/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity})});
+  if(r.success){currentData=r;renderKPI(r.totals);renderOverview(r);renderBizDetail(r);renderCcyDetail(r);renderMarkupMatrix();loadCcyMarkupTab()}
+}
+
+// ─── 目标反算 ───
+let reverseCalcData=null;
+let selectedPlanIdx=0;
+
+// 波动率 checkbox 联动
+document.addEventListener('DOMContentLoaded',()=>{
+  const volChk=document.getElementById('plan-chk-vol_weight');
+  if(volChk){
+    volChk.addEventListener('change',()=>{
+      const warn=document.getElementById('vol-weight-warning');
+      if(volChk.checked && !volDataLoaded){
+        warn.style.display='block';
+      }else{
+        warn.style.display='none';
+      }
+    });
+  }
+});
+
+function getSelectedPlans(){
+  const selected=[];
+  document.querySelectorAll('.plan-checkbox:checked').forEach(chk=>{
+    selected.push(chk.value);
+  });
+  return selected;
+}
+
+function toggleStealthOpts(){
+  const chk=document.getElementById('plan-chk-stealth');
+  document.getElementById('stealth-options').style.display=chk.checked?'block':'none';
+}
+
+// 隐蔽式 — 币种锁定管理
+const stealthPinnedCcys=new Map(); // ccy -> bps
+
+function addStealthPin(){
+  // 获取可用币种（排除已锁定的）
+  const allCcys=['USD','HKD','EUR','GBP','MOP','SGD','JPY','CAD','THB','AUD','SEK','NZD','CHF'];
+  const available=allCcys.filter(c=>!stealthPinnedCcys.has(c));
+  if(available.length===0){alert('所有币种都已锁定');return;}
+  const ccy=available[0];
+  stealthPinnedCcys.set(ccy, 5);
+  renderStealthPins();
+}
+
+function removeStealthPin(ccy){
+  stealthPinnedCcys.delete(ccy);
+  renderStealthPins();
+}
+
+function updateStealthPinCcy(oldCcy, newCcy){
+  const bps=stealthPinnedCcys.get(oldCcy)||5;
+  stealthPinnedCcys.delete(oldCcy);
+  stealthPinnedCcys.set(newCcy, bps);
+  renderStealthPins();
+}
+
+function updateStealthPinBps(ccy, bps){
+  stealthPinnedCcys.set(ccy, parseFloat(bps)||0);
+}
+
+function renderStealthPins(){
+  const allCcys=['USD','HKD','EUR','GBP','MOP','SGD','JPY','CAD','THB','AUD','SEK','NZD','CHF'];
+  const el=document.getElementById('stealth-pinned-list');
+  let html='';
+  stealthPinnedCcys.forEach((bps,ccy)=>{
+    const opts=allCcys.filter(c=>c===ccy||!stealthPinnedCcys.has(c)).map(c=>`<option value="${c}" ${c===ccy?'selected':''}>${c}</option>`).join('');
+    html+=`<div class="flex items-center gap-1" style="background:#0f172a;padding:4px 8px;border-radius:6px;border:1px solid #334155">
+      <select onchange="updateStealthPinCcy('${ccy}',this.value)" style="width:70px;font-size:11px">${opts}</select>
+      <input type="number" value="${bps}" step="0.5" min="0" max="100" style="width:55px;text-align:center;font-size:11px" onchange="updateStealthPinBps('${ccy}',this.value)">
+      <span class="text-xs text-slate-500">BPS</span>
+      <span style="cursor:pointer;color:#ef4444;font-size:14px;margin-left:2px" onclick="removeStealthPin('${ccy}')" title="移除">×</span>
+    </div>`;
+  });
+  el.innerHTML=html;
+}
+
+function getStealthPinned(){
+  const obj={};
+  stealthPinnedCcys.forEach((bps,ccy)=>{obj[ccy]=bps;});
+  return obj;
+}
+
+async function runReverseCalc(){
+  const selected=getSelectedPlans();
+  if(selected.length===0){alert('请至少勾选一种加价方案');return;}
+
+  // 如果选了波动率但没拉数据，提示
+  if(selected.includes('vol_weight') && !volDataLoaded){
+    document.getElementById('vol-weight-warning').style.display='block';
+    // 仍然可以继续算，后端会返回提示卡片
+  }
+
+  const target=parseAccounting(document.getElementById('rev-target-input').value);
+  document.getElementById('rev-kpi-target').textContent=fmt$(target);
+  document.getElementById('rev-kpi-annual').textContent=fmt$(target*12);
+
+  const stealthMaxBps=parseFloat(document.getElementById('stealth-max-bps').value)||20;
+  const stealthRandomness=parseFloat(document.getElementById('stealth-randomness').value)||0;
+  const stealthPinned=getStealthPinned();
+
+  const r=await api('/api/reverse_calc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    entity:currentEntity,
+    target_monthly_rev:target,
+    selected_plans:selected,
+    stealth_max_bps:stealthMaxBps,
+    stealth_randomness:stealthRandomness,
+    stealth_pinned:stealthPinned,
+  })});
+  if(!r.success){alert(r.error||'反算失败');return;}
+  reverseCalcData=r;
+  selectedPlanIdx=0;
+  document.getElementById('rev-kpi-volume').textContent='¥'+fmtV(r.total_volume);
+
+  // 更新波动率 checkbox hint
+  if(r.vol_data_available){
+    document.getElementById('vol-weight-hint').textContent='✓ 数据已就绪';
+    document.getElementById('vol-weight-hint').style.color='#10b981';
+  }
+
+  renderReversePlans(r);
+}
+
+function renderReversePlans(data){
+  const plans=data.plans;
+  const colorMap={'uniform':'#3b82f6','vol_weight':'#10b981','big_only':'#f59e0b','small_only':'#8b5cf6','tiered':'#ec4899','stealth':'#06b6d4'};
+  const iconMap={'uniform':'📊','vol_weight':'📈','big_only':'🏦','small_only':'💱','tiered':'📶','stealth':'🥷'};
+
+  const cols=Math.min(plans.length,6);
+  let html=`<div class="grid gap-3" style="grid-template-columns:repeat(${cols},1fr)">`;
+  plans.forEach((p,i)=>{
+    const color=colorMap[p.id]||'#3b82f6';
+    const icon=iconMap[p.id]||'📊';
+    const isActive=i===selectedPlanIdx;
+    const border=isActive?`border:2px solid ${color}`:'border:1px solid #334155';
+    const glow=isActive?`box-shadow:0 0 15px ${color}33`:'';
+    const needsData=p.needs_vol_data;
+
+    if(needsData){
+      // 波动率无数据的特殊卡片
+      html+=`<div class="card p-3" style="${border};${glow};opacity:0.7">
+        <div class="flex items-center gap-2 mb-2">
+          <span style="font-size:18px">${icon}</span>
+          <span class="text-xs font-bold" style="color:${color}">${p.name}</span>
+        </div>
+        <div class="text-xs text-amber-400 mb-2" style="min-height:32px">⚠️ ${p.desc}</div>
+        <div class="text-xs text-slate-500 mt-1">请先到「波动率加权」Tab 拉取数据</div>
+        <button class="btn btn-warning btn-sm mt-2 w-full" onclick="event.stopPropagation();switchTab('vol-weight',document.querySelectorAll('.tab-btn')[2])">去拉取数据 →</button>
+      </div>`;
+    }else{
+      const bpsList=Object.values(p.ccys).map(c=>c.markup_bps).filter(b=>b>0);
+      const maxBps=bpsList.length?Math.max(...bpsList):0;
+      const minBps=bpsList.length?Math.min(...bpsList):0;
+
+      html+=`<div class="card p-3 cursor-pointer" style="${border};${glow}" onclick="selectPlan(${i})">
+        <div class="flex items-center gap-2 mb-2">
+          <span style="font-size:18px">${icon}</span>
+          <span class="text-xs font-bold" style="color:${color}">${p.name}</span>
+        </div>
+        <div class="text-xs text-slate-500 mb-2" style="min-height:32px">${p.desc}</div>
+        <div class="text-xs text-slate-400">加权平均</div>
+        <div class="text-lg font-bold" style="color:${color}">${p.avg_bps} BPS</div>
+        <div class="text-xs text-slate-500 mt-1">范围: ${minBps.toFixed(1)} ~ ${maxBps.toFixed(1)} BPS</div>`;
+      if(p.id==='stealth' && p.big_avg_bps!==undefined){
+        html+=`<div class="text-xs mt-1" style="color:#94a3b8">大币种均: <span style="color:#10b981;font-weight:700">${p.big_avg_bps} BPS</span> | 小币种均: <span style="color:#f59e0b;font-weight:700">${p.small_avg_bps} BPS</span></div>`;
+      }
+      html+=`<div class="text-xs text-emerald-400 mt-1 font-bold">${fmt$(p.monthly_rev)}/月</div>
+        <button class="btn btn-sm mt-2 w-full" style="background:${color}22;color:${color};border:1px solid ${color}44" onclick="event.stopPropagation();applyPlan(${i})">应用此方案</button>
+      </div>`;
+    }
+  });
+  html+='</div>';
+  document.getElementById('rev-plans-container').innerHTML=html;
+
+  // 找第一个有数据的方案来展示明细
+  const validPlans=plans.filter(p=>!p.needs_vol_data);
+  if(validPlans.length>0){
+    const detailPlan=plans[selectedPlanIdx]?.needs_vol_data?validPlans[0]:plans[selectedPlanIdx];
+    renderPlanDetail(detailPlan);
+  }
+  renderReverseCharts(data);
+}
+
+function selectPlan(idx){
+  selectedPlanIdx=idx;
+  if(reverseCalcData) renderReversePlans(reverseCalcData);
+}
+
+async function applyPlan(idx){
+  if(!reverseCalcData)return;
+  const plan=reverseCalcData.plans[idx];
+  const ccyMarkups={};
+  for(const [ccy,info] of Object.entries(plan.ccys)){
+    ccyMarkups[ccy]=info.markup_bps;
+  }
+  const r=await api('/api/apply_plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity,ccy_markups:ccyMarkups})});
+  if(r.success){
+    currentData=r;
+    renderKPI(r.totals);
+    renderOverview(r);
+    renderBizDetail(r);
+    renderCcyDetail(r);
+    renderMarkupMatrix();
+    loadCcyMarkupTab();
+    renderCcyMarkupCharts(r);
+  }
+}
+
+function renderPlanDetail(plan){
+  const sorted=Object.values(plan.ccys).sort((a,b)=>b.volume-a.volume);
+  let html=`<div class="text-xs font-bold text-slate-400 mb-2">${plan.name} — 各币种明细</div>`;
+  html+='<table><thead><tr><th style="text-align:left">币种</th><th>月交易量</th><th>占比</th><th style="color:#3b82f6">加价 (BPS)</th><th>预估月收入</th><th>预估年收入</th></tr></thead><tbody>';
+  let totalRev=0;
+  sorted.forEach(c=>{
+    totalRev+=c.monthly_revenue;
+    const bpsColor=c.markup_bps>0?(c.markup_bps>5?'text-red-400':c.markup_bps>2?'text-amber-400':'text-blue-400'):'text-slate-600';
+    const pinIcon=c.pinned?'<span title="手动锁定" style="font-size:10px">🔒</span> ':'';
+    html+=`<tr>
+      <td style="font-weight:700">${c.ccy}</td>
+      <td>¥${fmtV(c.volume)}</td>
+      <td>${c.volume_pct}%</td>
+      <td class="${bpsColor}" style="font-weight:700;font-size:14px">${pinIcon}${c.markup_bps.toFixed(2)} BPS</td>
+      <td class="text-emerald-400">${fmt$(c.monthly_revenue)}</td>
+      <td class="text-amber-400">${fmt$(c.monthly_revenue*12)}</td>
+    </tr>`;
+  });
+  html+=`<tr style="background:#334155;font-weight:700">
+    <td>TOTAL</td><td>¥${fmtV(sorted.reduce((s,c)=>s+c.volume,0))}</td><td>100%</td>
+    <td class="text-blue-400">${plan.avg_bps} BPS</td>
+    <td class="text-emerald-400">${fmt$(totalRev)}</td>
+    <td class="text-amber-400">${fmt$(totalRev*12)}</td>
+  </tr>`;
+  html+='</tbody></table>';
+  document.getElementById('rev-plan-detail').innerHTML=html;
+}
+
+function renderReverseCharts(data){
+  const plans=data.plans.filter(p=>!p.needs_vol_data);
+  if(plans.length===0)return;
+  const colorMap={'uniform':'#3b82f6','vol_weight':'#10b981','big_only':'#f59e0b','small_only':'#8b5cf6','tiered':'#ec4899','stealth':'#06b6d4'};
+  const planNames=plans.map(p=>p.name);
+  const planColors=plans.map(p=>colorMap[p.id]||'#3b82f6');
+
+  Plotly.newPlot('chart-rev-compare',[
+    {x:planNames,y:plans.map(p=>p.avg_bps),type:'bar',name:'加权平均 BPS',
+     marker:{color:planColors},
+     text:plans.map(p=>p.avg_bps+' BPS'),textposition:'outside',textfont:{size:11,color:'#e2e8f0'}},
+  ],{...DARK,
+    title:{text:'各方案加权平均 Markup 对比',font:{size:13,color:'#e2e8f0'}},
+    yaxis:{...DARK.yaxis,title:{text:'加权平均 Markup (BPS)',font:{size:11,color:'#94a3b8'}}},
+    annotations:[{
+      x:0.5,y:1.05,xref:'paper',yref:'paper',
+      text:`目标月增收: ${fmt$(data.target_monthly_rev)}`,
+      showarrow:false,font:{size:12,color:'#f59e0b'},
+    }],
+  },{responsive:true});
+
+  const allCcys=[...new Set(plans.flatMap(p=>Object.keys(p.ccys)))];
+  allCcys.sort((a,b)=>{
+    const va=plans[0].ccys[a]?.volume||0;
+    const vb=plans[0].ccys[b]?.volume||0;
+    return vb-va;
+  });
+
+  const traces=plans.map((p,i)=>({
+    x:allCcys,
+    y:allCcys.map(c=>p.ccys[c]?.markup_bps||0),
+    type:'bar',
+    name:p.name,
+    marker:{color:planColors[i]+'99'},
+  }));
+
+  Plotly.newPlot('chart-rev-ccy-compare',traces,{...DARK,
+    title:{text:'各方案 × 各币种 Markup 对比',font:{size:13,color:'#e2e8f0'}},
+    yaxis:{...DARK.yaxis,title:{text:'Markup (BPS)',font:{size:11,color:'#94a3b8'}}},
+    barmode:'group',
+    legend:{orientation:'h',y:1.15,font:{size:10,color:'#94a3b8'}},
+  },{responsive:true});
+}
+
+// ─── 波动率加权 ───
+let volSuggestionData=null;
+let volDataLoaded=false;
+let volRawData=null;
+
+async function fetchVolData(){
+  document.getElementById('btn-fetch-vol').disabled=true;
+  document.getElementById('btn-fetch-vol').textContent='正在拉取 BBG 数据 (约30-60秒)...';
+  document.getElementById('vol-fetch-status').textContent='拉取中...';
+  document.getElementById('vol-fetch-status').style.color='#f59e0b';
+
+  const r=await api('/api/vol_data');
+
+  document.getElementById('btn-fetch-vol').disabled=false;
+  document.getElementById('btn-fetch-vol').textContent='拉取 BBG 波动率数据 (4个月 × 10min)';
+
+  if(!r.success){
+    document.getElementById('vol-fetch-status').textContent='拉取失败';
+    document.getElementById('vol-fetch-status').style.color='#ef4444';
+    return;
+  }
+
+  volRawData=r.vol_data;
+  volDataLoaded=true;
+
+  // 启用 Step 2 按钮
+  document.getElementById('btn-vol-calc').disabled=false;
+  document.getElementById('btn-vol-calc').style.opacity='1';
+  document.getElementById('btn-vol-apply').disabled=false;
+  document.getElementById('btn-vol-apply').style.opacity='1';
+
+  // 更新状态
+  const fetchTime=volRawData._fetch_time||'未知';
+  document.getElementById('vol-fetch-status').textContent='✓ 已拉取 ('+fetchTime+')';
+  document.getElementById('vol-fetch-status').style.color='#10b981';
+
+  // 展示数据 KPI
+  document.getElementById('vol-data-kpi').style.display='grid';
+  const ccyKeys=Object.keys(volRawData).filter(k=>k!=='_fetch_time');
+  const dataPoints=ccyKeys.map(c=>volRawData[c].data_points||0);
+  const avgPts=dataPoints.length?Math.round(dataPoints.reduce((a,b)=>a+b,0)/dataPoints.length):0;
+  document.getElementById('vd-kpi-ccys').textContent=ccyKeys.length+'个';
+  document.getElementById('vd-kpi-time').textContent=fetchTime;
+  document.getElementById('vd-kpi-pts').textContent=avgPts.toLocaleString()+'点';
+  document.getElementById('vd-kpi-range').textContent='120天 (4个月)';
+
+  // 渲染波动率原始数据表
+  renderVolRawTable(volRawData, ccyKeys);
+}
+
+function renderVolRawTable(data, ccyKeys){
+  const sorted=ccyKeys.sort((a,b)=>(data[b].realized_vol_pct||0)-(data[a].realized_vol_pct||0));
+  let html='<div class="text-xs font-bold text-slate-400 mb-2">各币种波动率数据 (按波动率降序)</div>';
+  html+='<table><thead><tr><th style="text-align:left">币种</th><th>年化波动率</th><th>10min 均幅 (BPS)</th><th>10min 最大幅 (BPS)</th><th>数据点数</th><th>数据来源</th><th>数据周期</th><th>最新价</th></tr></thead><tbody>';
+  sorted.forEach(ccy=>{
+    const v=data[ccy];
+    const volPct=(v.realized_vol_pct||0);
+    const volColor=volPct>5?'text-red-400':volPct>2?'text-amber-400':'text-emerald-400';
+    html+=`<tr>
+      <td style="font-weight:700">${ccy}</td>
+      <td class="${volColor}" style="font-weight:700;font-size:14px">${volPct.toFixed(2)}%</td>
+      <td>${(v.avg_move_bps||0).toFixed(2)}</td>
+      <td>${(v.max_move_bps||0).toFixed(1)}</td>
+      <td>${(v.data_points||0).toLocaleString()}</td>
+      <td class="text-slate-500" style="font-size:10px">${v.data_source||'—'}</td>
+      <td class="text-slate-500">${v.data_period||'—'}</td>
+      <td>${v.last_price||'—'}</td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  const el=document.getElementById('vol-raw-data-table');
+  el.innerHTML=html;
+  el.style.display='block';
+}
+
+async function loadVolSuggestion(){
+  if(!volDataLoaded){alert('请先点击 Step 1「拉取 BBG 波动率数据」');return;}
+  const target=parseFloat(document.getElementById('vol-target-bps').value)||0.5;
+  document.getElementById('vol-kpi-target').textContent=target.toFixed(2)+' BPS';
+  const r=await api('/api/vol_suggest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity,target_bps:target})});
+  if(!r.success){alert(r.error||'计算失败');return;}
+  volSuggestionData=r;
+  renderVolSuggestion(r);
+}
+
+async function applyVolSuggestion(){
+  if(!volDataLoaded){alert('请先点击 Step 1「拉取 BBG 波动率数据」');return;}
+  const target=parseFloat(document.getElementById('vol-target-bps').value)||0.5;
+  const r=await api('/api/apply_vol_suggest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entity:currentEntity,target_bps:target})});
+  if(r.success){
+    currentData=r;
+    renderKPI(r.totals);
+    renderOverview(r);
+    renderBizDetail(r);
+    renderCcyDetail(r);
+    renderMarkupMatrix();
+    loadCcyMarkupTab();
+    if(r.vol_suggestion) renderVolSuggestion(r.vol_suggestion);
+  }
+}
+
+function renderVolSuggestion(data){
+  const s=data.summary;
+  const ccys=data.ccys;
+  document.getElementById('vol-kpi-actual').textContent=s.actual_weighted_avg_bps.toFixed(4)+' BPS';
+  document.getElementById('vol-kpi-monthly').textContent=fmt$(s.total_monthly_revenue);
+  document.getElementById('vol-kpi-annual').textContent=fmt$(s.total_annual_revenue);
+
+  // 表格：按交易量降序
+  const sorted=Object.values(ccys).sort((a,b)=>b.volume-a.volume);
+  let html='<table><thead><tr><th style="text-align:left">币种</th><th>月交易量</th><th>占比</th><th>年化波动率</th><th>分钟均幅(BPS)</th><th style="color:#3b82f6">建议 Markup</th><th>预估月收入</th><th>数据来源</th></tr></thead><tbody>';
+  sorted.forEach(c=>{
+    const volColor=c.realized_vol_pct>3?'text-red-400':c.realized_vol_pct>1.5?'text-amber-400':'text-emerald-400';
+    html+=`<tr>
+      <td style="font-weight:700">${c.ccy}</td>
+      <td>¥${fmtV(c.volume)}</td>
+      <td>${c.volume_pct}%</td>
+      <td class="${volColor}" style="font-weight:700">${c.realized_vol_pct.toFixed(2)}%</td>
+      <td>${c.avg_move_bps.toFixed(1)}</td>
+      <td class="text-blue-400" style="font-weight:700;font-size:14px">${c.suggested_markup_bps.toFixed(2)} BPS</td>
+      <td class="text-emerald-400">${fmt$(c.monthly_revenue)}</td>
+      <td class="text-slate-500" style="font-size:10px">${c.data_source||'—'}</td>
+    </tr>`;
+  });
+  html+=`<tr style="background:#334155;font-weight:700">
+    <td>TOTAL</td><td>¥${fmtV(s.total_volume)}</td><td>100%</td>
+    <td>${s.vol_weighted_avg_pct.toFixed(2)}%</td><td>—</td>
+    <td class="text-blue-400">${s.actual_weighted_avg_bps.toFixed(2)} BPS</td>
+    <td class="text-emerald-400">${fmt$(s.total_monthly_revenue)}</td><td>—</td>
+  </tr>`;
+  html+='</tbody></table>';
+  document.getElementById('vol-suggest-table').innerHTML=html;
+
+  // 图1: 散点图 — 波动率 vs 建议markup，气泡大小=交易量
+  const maxVol=Math.max(...sorted.map(c=>c.volume));
+  Plotly.newPlot('chart-vol-scatter',[{
+    x:sorted.map(c=>c.realized_vol_pct),
+    y:sorted.map(c=>c.suggested_markup_bps),
+    mode:'markers+text',
+    type:'scatter',
+    text:sorted.map(c=>c.ccy),
+    textposition:'top center',
+    textfont:{size:11,color:'#e2e8f0'},
+    marker:{
+      size:sorted.map(c=>Math.max(10,Math.sqrt(c.volume/maxVol)*60)),
+      color:sorted.map(c=>c.realized_vol_pct),
+      colorscale:[[0,'#3b82f6'],[0.5,'#f59e0b'],[1,'#ef4444']],
+      showscale:true,
+      colorbar:{title:{text:'Vol%',font:{size:10,color:'#94a3b8'}},tickfont:{color:'#94a3b8'}},
+      line:{width:1,color:'#1e293b'},
+    },
+    hovertemplate:'%{text}<br>Vol: %{x:.2f}%<br>Markup: %{y:.2f} BPS<extra></extra>',
+  }],{...DARK,
+    title:{text:'波动率 vs 建议Markup (气泡大小=交易量)',font:{size:13,color:'#e2e8f0'}},
+    xaxis:{...DARK.xaxis,title:{text:'年化波动率 (%)',font:{size:11,color:'#94a3b8'}}},
+    yaxis:{...DARK.yaxis,title:{text:'建议 Markup (BPS)',font:{size:11,color:'#94a3b8'}}},
+  },{responsive:true});
+
+  // 图2: 双轴柱状图 — markup + 波动率
+  const byVol=Object.values(ccys).sort((a,b)=>a.realized_vol_pct-b.realized_vol_pct);
+  Plotly.newPlot('chart-vol-markup-bar',[
+    {x:byVol.map(c=>c.ccy),y:byVol.map(c=>c.realized_vol_pct),type:'bar',name:'年化波动率(%)',
+     marker:{color:'rgba(59,130,246,0.4)'},yaxis:'y'},
+    {x:byVol.map(c=>c.ccy),y:byVol.map(c=>c.suggested_markup_bps),type:'scatter',mode:'lines+markers',name:'建议Markup(BPS)',
+     line:{color:'#10b981',width:3},marker:{size:8,color:'#10b981'},yaxis:'y2'},
+  ],{...DARK,
+    title:{text:'波动率排序 & 建议 Markup',font:{size:13,color:'#e2e8f0'}},
+    yaxis:{...DARK.yaxis,title:{text:'年化波动率 (%)',font:{size:10,color:'#3b82f6'}},side:'left'},
+    yaxis2:{overlaying:'y',side:'right',title:{text:'Markup (BPS)',font:{size:10,color:'#10b981'}},
+      gridcolor:'transparent',tickfont:{color:'#10b981'}},
+    legend:{orientation:'h',y:1.12,font:{color:'#94a3b8'}},
+    barmode:'group',
+  },{responsive:true});
+}
+
+// ─── Init ───
+(async function(){
+  await loadEntityData();
+})();
+</script>
+</body>
+</html>

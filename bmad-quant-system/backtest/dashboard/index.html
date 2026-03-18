@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekend Pre-Lock Backtest Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root { --accent: #6366f1; --accent2: #8b5cf6; --green: #10b981; --red: #ef4444; --amber: #f59e0b; --bg: #0f172a; --card: #1e293b; --border: #334155; --text: #e2e8f0; --muted: #94a3b8; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+        .card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .btn-outline { border: 1px solid var(--border); background: transparent; }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+        .positive { color: var(--green); }
+        .negative { color: var(--red); }
+        .step-bar { display: flex; gap: 0; position: relative; }
+        .step-item { flex: 1; text-align: center; padding: 12px 8px; cursor: pointer; position: relative; transition: all 0.3s; border-bottom: 3px solid transparent; }
+        .step-item.active { border-bottom-color: var(--accent); color: var(--accent); }
+        .step-item.completed { border-bottom-color: var(--green); color: var(--green); }
+        .step-item.disabled { opacity: 0.35; cursor: not-allowed; }
+        .step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); font-size: 13px; font-weight: 600; margin-bottom: 4px; transition: all 0.3s; }
+        .step-item.active .step-num { border-color: var(--accent); background: var(--accent); color: white; }
+        .step-item.completed .step-num { border-color: var(--green); background: var(--green); color: white; }
+        .file-item { padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+        .file-item:hover { background: rgba(99,102,241,0.08); border-color: var(--accent); }
+        .file-item.selected { background: rgba(99,102,241,0.15); border-color: var(--accent); }
+        .config-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; }
+        .config-tag:hover { border-color: var(--accent); }
+        .config-tag.selected { background: rgba(99,102,241,0.2); border-color: var(--accent); color: var(--accent); }
+        .config-tag .remove { opacity: 0.5; cursor: pointer; }
+        .config-tag .remove:hover { opacity: 1; color: var(--red); }
+        #loading { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.7); z-index: 999; justify-content: center; align-items: center; flex-direction: column; gap: 12px; }
+        #loading.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .data-table th { position: sticky; top: 0; background: var(--card); z-index: 10; padding: 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--muted); font-weight: 500; }
+        .data-table td { padding: 6px 8px; border-bottom: 1px solid rgba(51,65,85,0.5); }
+        .data-table tr:hover { background: rgba(99,102,241,0.05); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        input[type=range] { accent-color: var(--accent); }
+        input[type=number], select, input[type=text] { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 13px; }
+        input[type=number]:focus, select:focus, input[type=text]:focus { outline: none; border-color: var(--accent); }
+        .metric-card { transition: transform 0.15s; }
+        .metric-card:hover { transform: translateY(-2px); }
+        .tab-btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; transition: all 0.2s; cursor: pointer; border: 1px solid transparent; }
+        .tab-btn.active { border-color: var(--accent); background: rgba(99,102,241,0.15); color: var(--accent); }
+        .tab-btn:not(.active) { color: var(--muted); }
+        .tab-btn:not(.active):hover { color: var(--text); background: rgba(99,102,241,0.05); }
+        .badge-ok { background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+        .badge-warn { background: rgba(245,158,11,0.15); color: #f59e0b; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+        .badge-err { background: rgba(239,68,68,0.15); color: #ef4444; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+        /* AI Analysis Panel */
+        .ai-panel { background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.06) 100%); border: 1px solid rgba(99,102,241,0.25); border-radius: 12px; }
+        .ai-content { font-size: 13px; line-height: 1.7; color: #cbd5e1; white-space: pre-wrap; word-wrap: break-word; }
+        .ai-content strong, .ai-content b { color: #a5b4fc; }
+        .ai-cursor { display: inline-block; width: 2px; height: 14px; background: #6366f1; animation: blink 0.8s infinite; vertical-align: text-bottom; margin-left: 2px; }
+        @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+        .btn-ai { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%); color: white; font-weight: 600; transition: all 0.3s; }
+        .btn-ai:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(99,102,241,0.3); }
+        .btn-ai:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+        .llm-settings-row input, .llm-settings-row select { font-size: 12px; padding: 4px 8px; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="loading"><div class="spinner"></div><div id="loading-text" class="text-sm text-slate-400">Loading...</div></div>
+
+    <nav class="bg-slate-900/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-[1500px] mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-lg font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Weekend Pre-Lock Dashboard</h1>
+            <div id="status-bar" class="flex items-center gap-3 text-xs text-slate-400">
+                <span id="status-signals" class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-600"></span> Signals</span>
+                <span id="status-prices" class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-600"></span> Prices</span>
+                <span id="status-grid" class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-600"></span> Grid</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-[1500px] mx-auto px-4 mt-4">
+        <div class="card step-bar">
+            <div class="step-item active" data-step="1" onclick="goStep(1)"><div class="step-num">1</div><div class="text-xs font-medium mt-1">Load & Verify Signals</div></div>
+            <div class="step-item disabled" data-step="2" onclick="goStep(2)"><div class="step-num">2</div><div class="text-xs font-medium mt-1">Load Market Data</div></div>
+            <div class="step-item disabled" data-step="3" onclick="goStep(3)"><div class="step-num">3</div><div class="text-xs font-medium mt-1">Grid Search</div></div>
+            <div class="step-item disabled" data-step="4" onclick="goStep(4)"><div class="step-num">4</div><div class="text-xs font-medium mt-1">Compare & Visualise</div></div>
+        </div>
+    </div>
+
+    <div class="max-w-[1500px] mx-auto px-4 py-4">
+
+        <!-- ============= STEP 1: Load & Verify Signals ============= -->
+        <div id="step-1" class="step-panel">
+            <div class="card p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold">Step 1: Load & Verify Signal File</h2>
+                        <p class="text-xs text-slate-400 mt-1">Select a signal CSV, load it, then verify data quality</p>
+                    </div>
+                    <button onclick="refreshSignalFiles()" class="btn-outline text-xs px-3 py-1.5 rounded-lg text-slate-300">Refresh</button>
+                </div>
+                <div id="signal-file-list" class="space-y-2 mb-4"><div class="text-sm text-slate-500">Loading files...</div></div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-load-signal" onclick="loadSelectedSignal()" disabled class="btn-primary text-white px-6 py-2 rounded-lg font-medium text-sm transition-all">Load Signal File</button>
+                    <button id="btn-process-signal" onclick="processSelectedSignal()" disabled class="btn-outline text-xs px-5 py-2 rounded-lg text-emerald-400 border-emerald-500/40 hover:border-emerald-400 font-medium transition-all">Process Raw → Backtest-Ready</button>
+                </div>
+            </div>
+
+            <!-- Process Result (shown after processing) -->
+            <div id="process-result" class="card p-6 mt-4 hidden">
+                <div class="flex items-center gap-3 mb-3">
+                    <h3 class="text-sm font-bold text-emerald-400">Signal Processing Result</h3>
+                    <span class="badge-ok">Processed</span>
+                </div>
+                <div id="process-stats" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4"></div>
+                <div id="process-details" class="text-xs text-slate-400 space-y-1 mb-4"></div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-load-processed" onclick="loadProcessedSignal()" class="btn-primary text-white px-5 py-2 rounded-lg font-medium text-sm transition-all">Load Processed File</button>
+                    <span class="text-xs text-slate-500">Auto-saved to data/signals/ — click to load into backtester</span>
+                </div>
+            </div>
+
+            <!-- Signal Summary (shown after load) -->
+            <div id="signal-preview" class="card p-6 mt-4 hidden">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-bold text-slate-300">Signal Data Summary</h3>
+                    <button onclick="validateSignals()" class="btn-outline text-xs px-4 py-1.5 rounded-lg text-amber-400 border-amber-500/30 hover:border-amber-400">Verify Data Quality</button>
+                </div>
+                <div id="signal-stats" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4"></div>
+            </div>
+
+            <!-- Verification Report (shown after validate) -->
+            <div id="signal-validation" class="card p-6 mt-4 hidden">
+                <div class="flex items-center gap-3 mb-4">
+                    <h3 class="text-sm font-bold text-slate-300">Verification Report</h3>
+                    <span id="validation-badge"></span>
+                </div>
+                <!-- Errors / Warnings / Info -->
+                <div id="validation-messages" class="mb-4"></div>
+                <!-- Distribution Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-slate-800/40 rounded-lg p-3"><div id="chart-pred-hist" style="height:220px"></div></div>
+                    <div class="bg-slate-800/40 rounded-lg p-3"><div id="chart-conf-hist" style="height:220px"></div></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-slate-800/40 rounded-lg p-3"><div id="chart-weekly-counts" style="height:220px"></div></div>
+                    <div class="bg-slate-800/40 rounded-lg p-3"><div id="chart-weekly-pred" style="height:220px"></div></div>
+                </div>
+                <!-- Derived market config -->
+                <div id="market-config-hint" class="bg-slate-800/40 rounded-lg p-4 mb-4 hidden">
+                    <h4 class="text-xs font-semibold text-indigo-400 mb-2">Derived Market Data Configuration</h4>
+                    <div id="market-config-info" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+                </div>
+                <!-- AI Analysis Section -->
+                <div class="ai-panel p-5 mb-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                            <h4 class="text-sm font-bold text-indigo-300">AI Signal Analysis</h4>
+                            <span id="llm-status" class="text-[10px] text-slate-500"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleLlmSettings()" class="text-[10px] text-slate-500 hover:text-indigo-400 transition-colors">Settings</button>
+                            <button id="btn-ai-analyze" onclick="runLlmAnalysis()" class="btn-ai text-xs px-4 py-1.5 rounded-lg" disabled>
+                                Analyze with AI
+                            </button>
+                        </div>
+                    </div>
+                    <!-- LLM Settings (collapsible) -->
+                    <div id="llm-settings" class="hidden mb-3 bg-slate-800/50 rounded-lg p-3">
+                        <div class="llm-settings-row grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                            <div>
+                                <label class="text-slate-500 text-[10px]">Base URL</label>
+                                <input id="llm-base-url" type="text" class="w-full mt-0.5" placeholder="https://api.deepseek.com">
+                            </div>
+                            <div>
+                                <label class="text-slate-500 text-[10px]">Model</label>
+                                <input id="llm-model" type="text" class="w-full mt-0.5" placeholder="deepseek-chat">
+                            </div>
+                            <div>
+                                <label class="text-slate-500 text-[10px]">API Key</label>
+                                <input id="llm-api-key" type="password" class="w-full mt-0.5" placeholder="sk-...">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="saveLlmSettings()" class="btn-outline text-[10px] px-3 py-1 rounded text-indigo-400 border-indigo-500/30 hover:border-indigo-400 w-full">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- AI Output -->
+                    <div id="ai-output" class="hidden">
+                        <div id="ai-content" class="ai-content max-h-[400px] overflow-y-auto p-3 bg-slate-900/50 rounded-lg"></div>
+                    </div>
+                    <div id="ai-placeholder" class="text-xs text-slate-600 text-center py-3">
+                        Click "Analyze with AI" to get an intelligent analysis of your signal data
+                    </div>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <button onclick="goStep(2)" class="btn-primary text-white px-6 py-2 rounded-lg font-medium text-sm">Next: Load Market Data &rarr;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============= STEP 2: Load Market Data ============= -->
+        <div id="step-2" class="step-panel hidden">
+            <div class="card p-6">
+                <h2 class="text-lg font-bold mb-1">Step 2: Load Market Data</h2>
+                <p class="text-xs text-slate-400 mb-4">Choose how to get market data: download config, load existing intraday, or use pre-processed CSV</p>
+
+                <!-- Source Tabs -->
+                <div class="flex gap-2 mb-5 flex-wrap">
+                    <button id="tab-download" onclick="switchPriceSource('download')" class="tab-btn active">Download Raw Data (BBG)</button>
+                    <button id="tab-intraday" onclick="switchPriceSource('intraday')" class="tab-btn">Load Intraday Data</button>
+                    <button id="tab-csv" onclick="switchPriceSource('csv')" class="tab-btn">Pre-processed CSV</button>
+                </div>
+
+                <!-- Download Config Panel -->
+                <div id="price-source-download">
+                    <div class="bg-slate-800/50 rounded-xl p-5 mb-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-xs font-semibold text-indigo-400">Bloomberg Raw Intraday Data Download</h4>
+                            <span id="bbg-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-700 text-slate-400">Checking...</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mb-3">Downloads full bid/ask intraday bars for each signal week (Fri 20:00 ~ Sat 05:00 Beijing). No preprocessing — raw market data only. Load into engine via "Load Intraday Data" tab afterwards.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">BBG Ticker</label>
+                                <input type="text" id="dl-ticker" value="USDCNH Curncy" class="w-full">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">Frequency</label>
+                                <select id="dl-freq" class="w-full">
+                                    <option value="1m" selected>1 min</option>
+                                    <option value="5m">5 min</option>
+                                    <option value="15m">15 min</option>
+                                    <option value="30m">30 min</option>
+                                    <option value="1h">1 hour</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">Start Date</label>
+                                <input type="text" id="dl-start" value="" class="w-full" placeholder="YYYY-MM-DD">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">End Date</label>
+                                <input type="text" id="dl-end" value="" class="w-full" placeholder="YYYY-MM-DD">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">Time Window (Beijing)</label>
+                                <div class="text-xs text-slate-400">Fri 20:00 &rarr; Sat 05:00 (per signal week)</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">Exit Reference Time</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="dl-exit-hour" value="2" min="0" max="23" step="1" class="w-16">
+                                    <span class="text-slate-500 self-center">:</span>
+                                    <input type="number" id="dl-exit-minute" value="0" min="0" max="59" step="1" class="w-16">
+                                    <span class="text-[10px] text-slate-500 self-center ml-1">Saturday Beijing</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">Signal Weeks</label>
+                                <div id="dl-weeks-count" class="text-xs text-slate-400">-</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <input type="checkbox" id="dl-force-refetch" class="accent-indigo-500">
+                            <label for="dl-force-refetch" class="text-xs text-slate-400">Force re-download all weeks (ignore cached data)</label>
+                        </div>
+
+                        <!-- Download Button -->
+                        <div class="flex flex-wrap gap-3 mb-4">
+                            <button id="btn-bbg-download" onclick="startBBGDownload()" class="btn-primary text-sm px-6 py-2.5 rounded-lg text-white font-medium flex items-center gap-2 transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download from Bloomberg
+                            </button>
+                            <button onclick="copyConfigToClipboard()" class="btn-outline text-xs px-3 py-2 rounded-lg text-slate-400 flex items-center gap-1.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                Copy Config
+                            </button>
+                            <button onclick="exportConfigJSON()" class="btn-outline text-xs px-3 py-2 rounded-lg text-slate-400 flex items-center gap-1.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                Export JSON
+                            </button>
+                            <button onclick="exportDownloadScript()" class="btn-outline text-xs px-3 py-2 rounded-lg text-slate-400 flex items-center gap-1.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                                Export Script
+                            </button>
+                        </div>
+
+                        <!-- Download Progress -->
+                        <div id="bbg-download-progress" class="hidden">
+                            <div class="bg-slate-900/60 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span id="bbg-progress-label" class="text-xs font-medium text-indigo-400">Connecting...</span>
+                                    <span id="bbg-progress-pct" class="text-xs font-mono text-slate-400">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-2 mb-2">
+                                    <div id="bbg-progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-300" style="width:0%"></div>
+                                </div>
+                                <div id="bbg-progress-detail" class="text-[10px] text-slate-500"></div>
+                            </div>
+                        </div>
+
+                        <!-- Download Result -->
+                        <div id="bbg-download-result" class="hidden">
+                            <div class="bg-emerald-900/20 border border-emerald-700/30 rounded-lg p-4">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span class="text-sm font-medium text-emerald-400">Download Complete</span>
+                                </div>
+                                <div id="bbg-result-detail" class="text-xs text-slate-400"></div>
+                            </div>
+                        </div>
+
+                        <!-- Error -->
+                        <div id="bbg-download-error" class="hidden">
+                            <div class="bg-red-900/20 border border-red-700/30 rounded-lg p-4">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    <span class="text-sm font-medium text-red-400">Download Failed</span>
+                                </div>
+                                <div id="bbg-error-detail" class="text-xs text-red-300/80"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Intraday Data Panel -->
+                <div id="price-source-intraday" class="hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-500">Select an intraday OHLCV file (minute-level CSV/Excel)</span>
+                        <button onclick="refreshIntradayFiles()" class="btn-outline text-xs px-3 py-1.5 rounded-lg text-slate-300">Refresh</button>
+                    </div>
+                    <div id="intraday-file-list" class="space-y-2 mb-4"><div class="text-sm text-slate-500">Loading files...</div></div>
+                    <div class="bg-slate-800/50 rounded-xl p-4 mb-4">
+                        <h4 class="text-xs font-semibold mb-3 text-amber-400">Price Extraction Settings</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">Exit Time (Saturday Beijing)</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="intra-exit-hour" value="2" min="0" max="23" step="1" class="w-16">
+                                    <span class="text-slate-500 self-center">:</span>
+                                    <input type="number" id="intra-exit-minute" value="0" min="0" max="59" step="1" class="w-16">
+                                </div>
+                            </div>
+                            <div class="col-span-2 flex items-end">
+                                <div class="text-[10px] text-slate-500 leading-relaxed">
+                                    <div><span class="text-indigo-400">Entry</span> = close price of bar nearest to signal_time</div>
+                                    <div><span class="text-purple-400">Exit</span> = close price of bar nearest to Saturday exit time</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="btn-load-intraday" onclick="loadSelectedIntraday()" disabled class="btn-primary text-white px-6 py-2 rounded-lg font-medium text-sm transition-all">Load & Extract Prices</button>
+                </div>
+
+                <!-- Pre-processed CSV Panel -->
+                <div id="price-source-csv" class="hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-500">Select a weekend price CSV (pre-computed entry/exit)</span>
+                        <button onclick="refreshPriceFiles()" class="btn-outline text-xs px-3 py-1.5 rounded-lg text-slate-300">Refresh</button>
+                    </div>
+                    <div id="price-file-list" class="space-y-2 mb-4"><div class="text-sm text-slate-500">Loading files...</div></div>
+                    <button id="btn-load-price" onclick="loadSelectedPrice()" disabled class="btn-primary text-white px-6 py-2 rounded-lg font-medium text-sm transition-all">Load Price File</button>
+                </div>
+            </div>
+
+            <!-- Price Preview + Visualisation -->
+            <div id="price-preview" class="card p-6 mt-4 hidden">
+                <h3 class="text-sm font-bold mb-3 text-slate-300">Price Data Summary</h3>
+                <div id="price-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4"></div>
+                <!-- Price Chart -->
+                <div class="bg-slate-800/40 rounded-lg p-3 mb-4">
+                    <div id="chart-price-entries" style="height:300px"></div>
+                </div>
+                <!-- Entry/Exit table -->
+                <div id="price-table-container" class="overflow-auto max-h-[450px] mb-4"></div>
+                <div class="flex justify-between mt-4">
+                    <button onclick="goStep(1)" class="btn-outline text-slate-300 px-5 py-2 rounded-lg text-sm">&larr; Back</button>
+                    <button onclick="goStep(3)" class="btn-primary text-white px-6 py-2 rounded-lg font-medium text-sm">Next: Grid Search &rarr;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============= STEP 3: Grid Search ============= -->
+        <div id="step-3" class="step-panel hidden">
+            <div class="card p-6">
+                <h2 class="text-lg font-bold mb-1">Step 3: Grid Search</h2>
+                <p class="text-xs text-slate-400 mb-4">Configure and run exhaustive parameter search</p>
+
+                <!-- Execution Mode Toggle -->
+                <div class="bg-slate-800/50 rounded-xl p-4 mb-6">
+                    <h4 class="text-xs font-semibold mb-3 text-emerald-400">Execution Mode</h4>
+                    <div class="flex gap-3 mb-3">
+                        <button id="exec-mode-single" onclick="setExecMode('single')" class="tab-btn active">Single Shot (Legacy)</button>
+                        <button id="exec-mode-tranche" onclick="setExecMode('tranche')" class="tab-btn">Tranche Execution</button>
+                    </div>
+                    <p id="exec-mode-desc" class="text-[10px] text-slate-500">
+                        Single Shot: one entry per week using the last signal in Fri 22:30 ~ Sat 01:30 window. Full notional at once.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-slate-800/50 rounded-xl p-4">
+                        <h4 class="text-sm font-semibold mb-3 text-indigo-400">Prediction Threshold Range</h4>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div><label class="block text-xs text-slate-500 mb-1">Min</label><input type="number" id="gs-pred-min" value="0.40" step="0.01" min="0" max="1"></div>
+                            <div><label class="block text-xs text-slate-500 mb-1">Max</label><input type="number" id="gs-pred-max" value="0.85" step="0.01" min="0" max="1"></div>
+                            <div><label class="block text-xs text-slate-500 mb-1">Step</label><input type="number" id="gs-pred-step" value="0.01" step="0.01" min="0.01" max="0.1"></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-4">
+                        <h4 class="text-sm font-semibold mb-3 text-purple-400">Confidence Threshold Range</h4>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div><label class="block text-xs text-slate-500 mb-1">Min</label><input type="number" id="gs-conf-min" value="0.00" step="0.01" min="0" max="1"></div>
+                            <div><label class="block text-xs text-slate-500 mb-1">Max</label><input type="number" id="gs-conf-max" value="1.00" step="0.01" min="0" max="1"></div>
+                            <div><label class="block text-xs text-slate-500 mb-1">Step</label><input type="number" id="gs-conf-step" value="0.01" step="0.01" min="0.01" max="0.1"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tranche Execution Config (hidden by default) -->
+                <div id="tranche-config" class="hidden mb-6">
+                    <div class="bg-gradient-to-r from-emerald-900/20 to-teal-900/20 border border-emerald-700/30 rounded-xl p-5">
+                        <h4 class="text-sm font-semibold mb-1 text-emerald-400">Tranche Execution Mode</h4>
+                        <p class="text-[10px] text-slate-500 mb-3">
+                            Long-only strategy. Trading window: Fri 22:30 ~ Sat 01:30 (every 30min, up to 7 slots).
+                            At each slot: if signal meets threshold → BUY at that time's ASK price; otherwise SKIP and accumulate to next slot.
+                            Unexecuted remainder is forfeited (time diversification trades off capital utilisation for risk control).
+                            Exit (reference) is always Sat 02:00 ASK price. All prices use ASK (buy side).
+                        </p>
+                        <div class="bg-slate-900/50 rounded-lg p-3 mb-4">
+                            <div class="text-[10px] text-slate-400 leading-relaxed">
+                                <div><span class="text-emerald-400 font-semibold">Time Slots:</span> Fri 22:30, 23:00, 23:30, Sat 00:00, 00:30, 01:00, 01:30 (N ≤ 7)</div>
+                                <div><span class="text-emerald-400 font-semibold">Skip Logic:</span> If prediction &lt; pred_th OR confidence &lt;= conf_th → skip, carry to next slot</div>
+                                <div><span class="text-emerald-400 font-semibold">Entry Price:</span> ASK price at each signal's time (long-only, buy side)</div>
+                                <div><span class="text-emerald-400 font-semibold">Exit Price:</span> Saturday 02:00 ASK price (same for all tranches)</div>
+                                <div><span class="text-emerald-400 font-semibold">Remainder:</span> Unexecuted capital is forfeited — no hindsight reallocation</div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-800/60 rounded-lg p-4">
+                            <h5 class="text-xs font-semibold text-amber-400 mb-3">Per-Tranche Size</h5>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-3">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="tranche-sizing" value="auto" checked onchange="updateTrancheSizing()" class="accent-emerald-500">
+                                        <span class="text-xs text-slate-300">Auto (Weekly ÷ N slots)</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="tranche-sizing" value="fixed" onchange="updateTrancheSizing()" class="accent-emerald-500">
+                                        <span class="text-xs text-slate-300">Fixed per tranche</span>
+                                    </label>
+                                </div>
+                                <div id="tranche-size-input-wrapper" class="flex items-center gap-2" style="opacity:0.4;pointer-events:none">
+                                    <input type="number" id="gs-tranche-size" value="7857143" step="100000" min="100000" max="100000000" class="w-40">
+                                    <span id="tranche-size-display" class="text-xs text-amber-300 font-mono">$7,857,143</span>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button onclick="setTrancheSizePreset(5e6)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">5M</button>
+                                    <button onclick="setTrancheSizePreset(8e6)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">8M</button>
+                                    <button onclick="setTrancheSizePreset(10e6)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">10M</button>
+                                </div>
+                            </div>
+                            <div id="tranche-size-hint" class="text-[10px] text-slate-500 mt-2">
+                                Auto mode: $55,000,000 ÷ 7 slots = $7,857,143 per tranche
+                            </div>
+                        </div>
+                        <!-- Stop Loss Config -->
+                        <div class="bg-slate-800/60 rounded-lg p-4 mt-3">
+                            <h5 class="text-xs font-semibold text-red-400 mb-3">Stop Loss (Intraday)</h5>
+                            <div class="flex items-center gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="sl-enabled" onchange="updateStopLossUI()" class="accent-red-500">
+                                    <span class="text-xs text-slate-300">Enable Stop Loss</span>
+                                </label>
+                                <div id="sl-input-wrapper" class="flex items-center gap-2" style="opacity:0.4;pointer-events:none">
+                                    <span class="text-xs text-slate-400">Threshold:</span>
+                                    <input type="number" id="gs-stop-loss-bps" value="10" step="1" min="1" max="100" class="w-20">
+                                    <span class="text-xs text-red-300 font-mono">bps</span>
+                                </div>
+                                <div class="flex gap-1" id="sl-presets" style="opacity:0.4;pointer-events:none">
+                                    <button onclick="setStopLossPreset(5)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">5</button>
+                                    <button onclick="setStopLossPreset(10)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">10</button>
+                                    <button onclick="setStopLossPreset(15)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">15</button>
+                                    <button onclick="setStopLossPreset(20)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">20</button>
+                                    <button onclick="setStopLossPreset(30)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">30</button>
+                                </div>
+                            </div>
+                            <div class="text-[10px] text-slate-500 mt-2">
+                                If (avg_entry_ask - current_bid) / avg_entry exceeds threshold → unwind ALL positions at BID and stop trading tonight.
+                                Requires intraday (1-min) market data loaded.
+                            </div>
+                        </div>
+                        <!-- Profit Taking Config -->
+                        <div class="bg-slate-800/60 rounded-lg p-4 mt-3">
+                            <h5 class="text-xs font-semibold text-emerald-400 mb-3">Profit Taking (Intraday)</h5>
+                            <div class="flex items-center gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="pt-enabled" onchange="updateProfitTakingUI()" class="accent-emerald-500">
+                                    <span class="text-xs text-slate-300">Enable Profit Taking</span>
+                                </label>
+                                <div id="pt-input-wrapper" class="flex items-center gap-2" style="opacity:0.4;pointer-events:none">
+                                    <span class="text-xs text-slate-400">Threshold:</span>
+                                    <input type="number" id="gs-profit-taking-bps" value="15" step="1" min="1" max="200" class="w-20">
+                                    <span class="text-xs text-emerald-300 font-mono">bps</span>
+                                </div>
+                                <div class="flex gap-1" id="pt-presets" style="opacity:0.4;pointer-events:none">
+                                    <button onclick="setProfitTakingPreset(5)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">5</button>
+                                    <button onclick="setProfitTakingPreset(10)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">10</button>
+                                    <button onclick="setProfitTakingPreset(15)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">15</button>
+                                    <button onclick="setProfitTakingPreset(20)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">20</button>
+                                    <button onclick="setProfitTakingPreset(30)" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">30</button>
+                                </div>
+                            </div>
+                            <div class="text-[10px] text-slate-500 mt-2">
+                                If (current_bid - avg_entry_ask) / avg_entry exceeds threshold → unwind ALL positions at BID to lock profit, stop trading tonight.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trade Size + Min Trades -->
+                <div class="bg-slate-800/50 rounded-xl p-4 mb-6">
+                    <h4 class="text-xs font-semibold mb-3 text-amber-400">Trade Size (Weekly Notional)</h4>
+                    <div class="flex items-center gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-500 mb-1">Weekly Notional (USD)</label>
+                            <input type="number" id="gs-trade-size" value="55000000" step="1000000" min="1000000" max="500000000" class="w-48">
+                        </div>
+                        <div class="flex gap-2 self-end pb-1">
+                            <button onclick="document.getElementById('gs-trade-size').value=10000000;formatTradeSize()" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">10M</button>
+                            <button onclick="document.getElementById('gs-trade-size').value=25000000;formatTradeSize()" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">25M</button>
+                            <button onclick="document.getElementById('gs-trade-size').value=55000000;formatTradeSize()" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">55M</button>
+                            <button onclick="document.getElementById('gs-trade-size').value=100000000;formatTradeSize()" class="text-[10px] px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300">100M</button>
+                        </div>
+                        <div id="trade-size-display" class="text-xs text-amber-300 font-mono self-end pb-1">$55,000,000</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 mb-4">
+                    <div><label class="block text-xs text-slate-500 mb-1">Min Trades</label><input type="number" id="gs-min-trades" value="0" min="0" max="50" class="w-20"></div>
+                    <div id="gs-estimate" class="text-xs text-slate-500 self-end pb-1"></div>
+                </div>
+                <button id="btn-run-grid" onclick="runGridSearch()" class="btn-primary text-white px-8 py-2.5 rounded-lg font-medium text-sm transition-all">Run Grid Search</button>
+            </div>
+            <div id="grid-summary" class="card p-6 mt-4 hidden">
+                <h3 class="text-sm font-bold mb-3 text-slate-300">Grid Search Results</h3>
+
+                <div class="mb-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xs text-slate-400">Heatmap Metric:</span>
+                        <select id="heatmap-metric" onchange="loadHeatmap()" class="text-xs">
+                            <option value="total_pnl">Total PnL</option><option value="sharpe">Sharpe Ratio</option>
+                            <option value="win_rate">Win Rate</option><option value="max_drawdown">Max Drawdown</option>
+                            <option value="num_trades">Num Trades</option><option value="profit_factor">Profit Factor</option>
+                            <option value="avg_exec_pct">Avg Execution %</option>
+                        </select>
+                    </div>
+                    <div id="chart-heatmap" style="height:450px"></div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xs text-slate-400">Sort by:</span>
+                        <select id="grid-sort" onchange="loadGridResults()" class="text-xs">
+                            <option value="sharpe">Sharpe</option><option value="total_pnl">PnL</option>
+                            <option value="win_rate">Win Rate</option><option value="profit_factor">Profit Factor</option>
+                        </select>
+                        <span class="text-xs text-slate-400 ml-2">Tip: Click rows to add to comparison</span>
+                    </div>
+                    <div id="grid-table-container" class="overflow-auto max-h-[500px]"></div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="goStep(2)" class="btn-outline text-slate-300 px-5 py-2 rounded-lg text-sm">&larr; Back</button>
+                    <button onclick="goStep(4)" class="btn-primary text-white px-6 py-2 rounded-lg font-medium text-sm" id="btn-goto-compare" disabled>
+                        Next: Compare Selected &rarr; <span id="compare-count" class="ml-1 bg-white/20 rounded-full px-2 py-0.5 text-xs">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============= STEP 4: Compare & Visualise ============= -->
+        <div id="step-4" class="step-panel hidden">
+            <div class="card p-6 mb-4">
+                <h2 class="text-lg font-bold mb-1">Step 4: Compare & Visualise</h2>
+                <p class="text-xs text-slate-400 mb-4">Compare selected configurations side by side</p>
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    <span class="text-xs text-slate-500">Selected:</span>
+                    <div id="selected-configs-tags" class="flex flex-wrap gap-2"></div>
+                    <button onclick="addManualConfig()" class="btn-outline text-xs px-3 py-1 rounded-lg text-slate-400">+ Add Custom</button>
+                </div>
+                <button onclick="runComparison()" class="btn-primary text-white px-8 py-2.5 rounded-lg font-medium text-sm" id="btn-compare">Run Comparison</button>
+            </div>
+            <div id="compare-results" class="hidden">
+                <div class="flex items-center gap-3 mb-4">
+                    <button id="btn-cny-toggle" onclick="toggleCNY()" class="btn-outline text-xs px-4 py-1.5 rounded-lg text-amber-400 border-amber-500/30 hover:border-amber-400 font-medium">
+                        Show in CNY (¥)
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs text-slate-500">USD/CNH Rate:</label>
+                        <input type="number" id="usdcnh-rate" value="7.25" step="0.01" min="1" max="20" class="w-20 text-xs">
+                    </div>
+                </div>
+                <div id="compare-kpi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4"></div>
+                <div class="card p-5 mb-4"><div id="chart-compare-equity" style="height:400px"></div></div>
+                <div class="card p-5 mb-4"><div id="chart-compare-drawdown" style="height:300px"></div></div>
+                <div class="card p-5 mb-4"><div id="chart-compare-pnl" style="height:350px"></div></div>
+                <div class="card p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3" id="trade-tab-btns"></div>
+                    <div id="trade-table-container" class="overflow-auto max-h-[500px]"></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="card p-4"><div id="chart-scatter-pred" style="height:350px"></div></div>
+                    <div class="card p-4"><div id="chart-scatter-conf" style="height:350px"></div></div>
+                </div>
+            </div>
+            <div class="flex justify-start mt-4">
+                <button onclick="goStep(3)" class="btn-outline text-slate-300 px-5 py-2 rounded-lg text-sm">&larr; Back to Grid Search</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ======================== STATE ========================
+let currentStep = 1;
+let selectedSignalFile = null;
+let selectedPriceFile = null;
+let selectedIntradayFile = null;
+let priceSourceMode = 'download';
+let signalSummary = null;
+let validationReport = null;
+let priceSummary = null;
+let selectedConfigs = [];
+let comparisonResults = [];
+let oracleData = null;  // God's eye view oracle data
+let executionMode = 'single';  // 'single' or 'tranche'
+let gridFilterOptions = null;  // tranche filter options from grid search
+let showCNY = false;  // toggle for CNY display
+let activeTradeTabIdx = 0;  // currently active trade tab
+const COLORS = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#84cc16'];
+const PLOTLY_DARK = {
+    paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+    font:{color:'#94a3b8'},
+    xaxis:{gridcolor:'rgba(51,65,85,0.5)', tickfont:{color:'#94a3b8'}},
+    yaxis:{gridcolor:'rgba(51,65,85,0.5)', tickfont:{color:'#94a3b8'}},
+};
+
+// ======================== UTIL ========================
+function showLoading(t) { document.getElementById('loading-text').textContent=t||'Loading...'; document.getElementById('loading').classList.add('active'); }
+function hideLoading() { document.getElementById('loading').classList.remove('active'); }
+
+async function api(url, opts) {
+    const res = await fetch(url, opts);
+    const text = await res.text();
+    try { return JSON.parse(text); }
+    catch(e) { console.error('API not JSON:', text.slice(0,500)); return {success:false, error:'Server error: '+text.slice(0,200)}; }
+}
+
+// ======================== STEPPER ========================
+function goStep(n) {
+    if (n >= 2 && !signalSummary) { alert('Please load signal file first'); return; }
+    if (n >= 3 && !priceSummary) { alert('Please load market data first'); return; }
+    if (n >= 4 && selectedConfigs.length === 0) { alert('Please select at least one configuration'); return; }
+    currentStep = n;
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.add('hidden'));
+    document.getElementById('step-' + n).classList.remove('hidden');
+    document.querySelectorAll('.step-item').forEach(s => {
+        const step = parseInt(s.dataset.step);
+        s.classList.remove('active','completed','disabled');
+        if (step === n) s.classList.add('active');
+        else if (step < n) s.classList.add('completed');
+        else s.classList.add('disabled');
+    });
+    if (n === 1) refreshSignalFiles();
+    if (n === 2) { switchPriceSource(priceSourceMode); }
+    if (n === 4) renderConfigTags();
+    updateStepperState();
+}
+
+function updateStepperState() {
+    document.querySelectorAll('.step-item').forEach(s => {
+        const step = parseInt(s.dataset.step);
+        if (step === currentStep || step < currentStep) return;
+        let unlocked = false;
+        if (step === 2 && signalSummary) unlocked = true;
+        if (step === 3 && signalSummary && priceSummary) unlocked = true;
+        if (step === 4 && selectedConfigs.length > 0) unlocked = true;
+        if (unlocked) { s.classList.remove('disabled'); s.classList.add('completed'); }
+    });
+}
+
+function updateStatusBar() {
+    if (signalSummary) document.getElementById('status-signals').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Signals (' + signalSummary.total_signals + ')';
+    if (priceSummary) document.getElementById('status-prices').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Prices (' + priceSummary.total_rows + ')';
+}
+
+// ======================== STEP 1: SIGNALS ========================
+async function refreshSignalFiles() {
+    const res = await api('/api/files/signals');
+    if (!res.success) return;
+    const container = document.getElementById('signal-file-list');
+    if (res.data.length === 0) { container.innerHTML = '<div class="text-sm text-slate-500">No CSV files found</div>'; return; }
+    const groups = {};
+    res.data.forEach(f => { if (!groups[f.folder]) groups[f.folder] = []; groups[f.folder].push(f); });
+    let html = '';
+    for (const [folder, files] of Object.entries(groups)) {
+        html += `<div class="text-xs text-slate-500 mt-2 mb-1 font-mono">${folder}/</div>`;
+        html += files.map(f => `<div class="file-item ${selectedSignalFile===f.path?'selected':''}" onclick="selectSignalFile('${f.path}',this)">
+            <div class="flex justify-between items-center"><div class="text-sm font-medium">${f.name}</div><span class="text-xs text-slate-500">${f.size}</span></div></div>`).join('');
+    }
+    container.innerHTML = html;
+}
+
+function selectSignalFile(path, el) {
+    selectedSignalFile = path;
+    document.querySelectorAll('#signal-file-list .file-item').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('btn-load-signal').disabled = false;
+    document.getElementById('btn-process-signal').disabled = false;
+}
+
+let lastProcessedPath = null;
+
+async function processSelectedSignal() {
+    if (!selectedSignalFile) return;
+    showLoading('Processing raw signal file...');
+    try {
+        const res = await api('/api/process/signals', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({file_path:selectedSignalFile}) });
+        if (res.success) {
+            const d = res.data;
+            lastProcessedPath = d.saved_paths && d.saved_paths.length > 1 ? d.saved_paths[1] : (d.saved_paths[0] || null);
+            // Render process result
+            const stats = [
+                ['Total Signals', d.total_signals.toLocaleString()],
+                ['Total Weeks', d.total_weeks],
+                ['Weeks Range', d.weeks_range],
+                ['Bullish', `${d.bullish_count} (${d.bullish_pct}%)`],
+                ['Bearish', d.bearish_count],
+                ['Date Range', d.date_range[0].slice(0,10) + ' ~ ' + d.date_range[1].slice(0,10)],
+            ];
+            document.getElementById('process-stats').innerHTML = stats.map(([l,v]) =>
+                `<div class="bg-slate-800/60 rounded-lg p-3"><div class="text-xs text-slate-500">${l}</div><div class="text-sm font-semibold mt-1">${v}</div></div>`
+            ).join('');
+            let detailHtml = '';
+            if (d.added_columns.length > 0) {
+                detailHtml += `<div><span class="text-emerald-400 font-medium">Added columns:</span> ${d.added_columns.join(', ')}</div>`;
+            } else {
+                detailHtml += `<div><span class="text-amber-400 font-medium">All columns already present</span> — file was already processed</div>`;
+            }
+            detailHtml += `<div><span class="text-slate-300">Output file:</span> ${d.output_filename}</div>`;
+            detailHtml += `<div><span class="text-slate-300">Saved to:</span></div>`;
+            d.saved_paths.forEach(p => { detailHtml += `<div class="ml-3 font-mono text-[11px]">${p}</div>`; });
+            document.getElementById('process-details').innerHTML = detailHtml;
+            document.getElementById('process-result').classList.remove('hidden');
+            document.getElementById('process-result').scrollIntoView({behavior:'smooth', block:'center'});
+            // Refresh file list to show new processed file
+            await refreshSignalFiles();
+            showToast('Signal file processed successfully');
+        } else { alert('Processing failed:\n' + (res.error || 'Unknown error')); }
+    } catch(e) { alert('Request failed: ' + e.message); } finally { hideLoading(); }
+}
+
+async function loadProcessedSignal() {
+    if (!lastProcessedPath) return;
+    // Convert absolute path to relative for API
+    selectedSignalFile = lastProcessedPath;
+    showLoading('Loading processed signal file...');
+    try {
+        const res = await api('/api/load/signals', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({file_path:lastProcessedPath}) });
+        if (res.success) {
+            signalSummary = res.data;
+            renderSignalPreview(res.data);
+            document.getElementById('signal-preview').classList.remove('hidden');
+            document.getElementById('signal-validation').classList.add('hidden');
+            updateStatusBar();
+            updateStepperState();
+            document.getElementById('signal-preview').scrollIntoView({behavior:'smooth', block:'center'});
+            showToast('Processed signal loaded into backtester');
+        } else { alert('Failed to load:\n' + (res.error || 'Unknown error')); }
+    } catch(e) { alert('Request failed: ' + e.message); } finally { hideLoading(); }
+}
+
+async function loadSelectedSignal() {
+    if (!selectedSignalFile) return;
+    showLoading('Loading signal file...');
+    try {
+        const res = await api('/api/load/signals', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({file_path:selectedSignalFile}) });
+        if (res.success) {
+            signalSummary = res.data;
+            renderSignalPreview(res.data);
+            document.getElementById('signal-preview').classList.remove('hidden');
+            document.getElementById('signal-validation').classList.add('hidden');
+            updateStatusBar();
+            updateStepperState();
+            document.getElementById('signal-preview').scrollIntoView({behavior:'smooth', block:'center'});
+        } else { alert('Failed to load:\n' + (res.error || 'Unknown error')); }
+    } catch(e) { alert('Request failed: ' + e.message); } finally { hideLoading(); }
+}
+
+function renderSignalPreview(s) {
+    const items = [
+        ['Total Signals', s.total_signals.toLocaleString()], ['Total Weeks', s.total_weeks],
+        ['Date Range', s.date_range[0].slice(0,10) + ' ~ ' + s.date_range[1].slice(0,10)],
+        ['Pred Mean', s.prediction_stats.mean.toFixed(3)], ['Conf Mean', s.confidence_stats.mean.toFixed(3)],
+        ['Bullish %', (s.bullish_pct * 100).toFixed(1) + '%'],
+    ];
+    document.getElementById('signal-stats').innerHTML = items.map(([l,v]) =>
+        `<div class="bg-slate-800/60 rounded-lg p-3"><div class="text-xs text-slate-500">${l}</div><div class="text-sm font-semibold mt-1">${v}</div></div>`
+    ).join('');
+}
+
+async function validateSignals() {
+    showLoading('Verifying signal data...');
+    try {
+        const res = await api('/api/validate/signals');
+        if (!res.success) { alert('Validation failed: ' + res.error); return; }
+        validationReport = res.data;
+        renderValidationReport(res.data);
+        document.getElementById('signal-validation').classList.remove('hidden');
+        document.getElementById('signal-validation').scrollIntoView({behavior:'smooth', block:'start'});
+        loadLlmConfig();
+    } catch(e) { alert('Error: ' + e.message); } finally { hideLoading(); }
+}
+
+function renderValidationReport(r) {
+    // Badge
+    const badge = document.getElementById('validation-badge');
+    if (r.valid && r.warnings.length === 0) badge.innerHTML = '<span class="badge-ok">PASS</span>';
+    else if (r.valid) badge.innerHTML = '<span class="badge-warn">PASS with Warnings</span>';
+    else badge.innerHTML = '<span class="badge-err">FAIL</span>';
+
+    // Messages
+    let msgHtml = '';
+    r.errors.forEach(e => msgHtml += `<div class="flex items-start gap-2 text-xs mb-1"><span class="text-red-400 font-bold mt-px">ERROR</span><span class="text-red-300">${e}</span></div>`);
+    r.warnings.forEach(w => msgHtml += `<div class="flex items-start gap-2 text-xs mb-1"><span class="text-amber-400 font-bold mt-px">WARN</span><span class="text-amber-300">${w}</span></div>`);
+    r.info.forEach(i => msgHtml += `<div class="flex items-start gap-2 text-xs mb-1"><span class="text-slate-500 mt-px">INFO</span><span class="text-slate-400">${i}</span></div>`);
+    document.getElementById('validation-messages').innerHTML = msgHtml;
+
+    // Distribution Charts
+    const d = r.distributions;
+    if (d.prediction_histogram) {
+        Plotly.newPlot('chart-pred-hist', [{x:d.prediction_histogram.bins, y:d.prediction_histogram.counts, type:'bar', marker:{color:'#6366f1',opacity:0.8}}],
+            {...PLOTLY_DARK, title:{text:'Prediction Distribution',font:{size:12,color:'#e2e8f0'}}, xaxis:{...PLOTLY_DARK.xaxis,title:'Prediction'}, yaxis:{...PLOTLY_DARK.yaxis,title:'Count'}, margin:{t:35,b:40,l:50,r:10}, bargap:0.05}, {responsive:true});
+    }
+    if (d.confidence_histogram) {
+        Plotly.newPlot('chart-conf-hist', [{x:d.confidence_histogram.bins, y:d.confidence_histogram.counts, type:'bar', marker:{color:'#8b5cf6',opacity:0.8}}],
+            {...PLOTLY_DARK, title:{text:'Confidence Distribution',font:{size:12,color:'#e2e8f0'}}, xaxis:{...PLOTLY_DARK.xaxis,title:'Confidence'}, yaxis:{...PLOTLY_DARK.yaxis,title:'Count'}, margin:{t:35,b:40,l:50,r:10}, bargap:0.05}, {responsive:true});
+    }
+    if (d.weekly_counts) {
+        Plotly.newPlot('chart-weekly-counts', [{x:d.weekly_counts.weeks, y:d.weekly_counts.counts, type:'bar', marker:{color:'#10b981',opacity:0.7}}],
+            {...PLOTLY_DARK, title:{text:'Signals per Week',font:{size:12,color:'#e2e8f0'}}, xaxis:{...PLOTLY_DARK.xaxis,tickangle:-45,tickfont:{size:8}}, yaxis:{...PLOTLY_DARK.yaxis,title:'Count'}, margin:{t:35,b:60,l:50,r:10}}, {responsive:true});
+    }
+    if (d.weekly_prediction) {
+        const wp = d.weekly_prediction;
+        Plotly.newPlot('chart-weekly-pred', [
+            {x:wp.weeks, y:wp.mean_pred, type:'scatter', mode:'lines+markers', name:'Mean Pred', line:{color:'#6366f1',width:2}, marker:{size:4}},
+            {x:wp.weeks, y:wp.bullish_pct, type:'scatter', mode:'lines+markers', name:'Bullish %', line:{color:'#10b981',width:2,dash:'dot'}, marker:{size:4}, yaxis:'y2'},
+        ], {...PLOTLY_DARK, title:{text:'Weekly Prediction Trend',font:{size:12,color:'#e2e8f0'}},
+            xaxis:{...PLOTLY_DARK.xaxis,tickangle:-45,tickfont:{size:8}},
+            yaxis:{...PLOTLY_DARK.yaxis,title:'Mean Pred',side:'left'},
+            yaxis2:{overlaying:'y',side:'right',title:'Bullish %',tickformat:'.0%',gridcolor:'transparent',tickfont:{color:'#94a3b8'}},
+            margin:{t:35,b:60,l:50,r:50}, legend:{orientation:'h',y:1.15,font:{size:10}}}, {responsive:true});
+    }
+
+    // Market config hint
+    if (r.market_data_config) {
+        const mc = r.market_data_config;
+        document.getElementById('dl-ticker').value = mc.ticker;
+        document.getElementById('dl-start').value = mc.start_date;
+        document.getElementById('dl-end').value = mc.end_date;
+        document.getElementById('dl-weeks-count').textContent = mc.total_weeks + ' weeks (' + mc.weeks[0] + ' ~ ' + mc.weeks[mc.weeks.length-1] + ')';
+
+        const items = [
+            ['Ticker', mc.ticker], ['Pair', mc.pair], ['Date Range', mc.start_date + ' ~ ' + mc.end_date], ['Weeks', mc.total_weeks],
+        ];
+        document.getElementById('market-config-info').innerHTML = items.map(([l,v]) =>
+            `<div class="bg-slate-800/60 rounded-lg p-2"><div class="text-[10px] text-slate-500">${l}</div><div class="text-xs font-semibold mt-0.5 text-indigo-300">${v}</div></div>`
+        ).join('');
+        document.getElementById('market-config-hint').classList.remove('hidden');
+    }
+}
+
+// ======================== LLM ANALYSIS ========================
+let llmAbortController = null;
+
+async function loadLlmConfig() {
+    try {
+        const res = await api('/api/llm/config');
+        if (res.success) {
+            const d = res.data;
+            document.getElementById('llm-base-url').value = d.base_url || '';
+            document.getElementById('llm-model').value = d.model || '';
+            const btn = document.getElementById('btn-ai-analyze');
+            if (d.enabled && d.has_api_key) {
+                btn.disabled = false;
+                document.getElementById('llm-status').textContent = `${d.model} ready`;
+                document.getElementById('llm-status').className = 'text-[10px] text-green-500';
+            } else {
+                btn.disabled = true;
+                document.getElementById('llm-status').textContent = d.has_api_key ? 'Disabled' : 'API key not set';
+                document.getElementById('llm-status').className = 'text-[10px] text-amber-500';
+            }
+        }
+    } catch(e) {}
+}
+
+function toggleLlmSettings() {
+    const el = document.getElementById('llm-settings');
+    el.classList.toggle('hidden');
+}
+
+async function saveLlmSettings() {
+    const payload = {};
+    const baseUrl = document.getElementById('llm-base-url').value.trim();
+    const model = document.getElementById('llm-model').value.trim();
+    const apiKey = document.getElementById('llm-api-key').value.trim();
+    if (baseUrl) payload.base_url = baseUrl;
+    if (model) payload.model = model;
+    if (apiKey) payload.api_key = apiKey;
+    payload.enabled = true;
+    try {
+        const res = await fetch('/api/llm/config', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('llm-settings').classList.add('hidden');
+            document.getElementById('llm-api-key').value = '';
+            await loadLlmConfig();
+        } else {
+            alert('Failed to save: ' + (data.error || 'Unknown error'));
+        }
+    } catch(e) { alert('Error: ' + e.message); }
+}
+
+function simpleMarkdown(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/^### (.+)$/gm, '<div class="text-sm font-bold text-indigo-300 mt-3 mb-1">$1</div>')
+        .replace(/^## (.+)$/gm, '<div class="text-sm font-bold text-indigo-200 mt-4 mb-1">$1</div>')
+        .replace(/^# (.+)$/gm, '<div class="text-base font-bold text-indigo-100 mt-4 mb-2">$1</div>')
+        .replace(/^- (.+)$/gm, '<div class="flex gap-2 ml-2"><span class="text-indigo-400 select-none">&#8226;</span><span>$1</span></div>')
+        .replace(/^(\d+)\. (.+)$/gm, '<div class="flex gap-2 ml-2"><span class="text-indigo-400 font-mono select-none">$1.</span><span>$2</span></div>')
+        .replace(/`([^`]+)`/g, '<code class="bg-slate-800 text-indigo-300 px-1 rounded text-xs">$1</code>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+async function runLlmAnalysis() {
+    const btn = document.getElementById('btn-ai-analyze');
+    const output = document.getElementById('ai-output');
+    const content = document.getElementById('ai-content');
+    const placeholder = document.getElementById('ai-placeholder');
+
+    btn.disabled = true;
+    btn.textContent = 'Analyzing...';
+    placeholder.classList.add('hidden');
+    output.classList.remove('hidden');
+    content.innerHTML = '<span class="ai-cursor"></span>';
+
+    let fullText = '';
+
+    try {
+        llmAbortController = new AbortController();
+        const response = await fetch('/api/llm/analyze', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            signal: llmAbortController.signal,
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const {done, value} = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, {stream: true});
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+                if (!line.startsWith('data:')) continue;
+                const dataStr = line.slice(5).trim();
+                if (dataStr === '[DONE]') continue;
+                try {
+                    const chunk = JSON.parse(dataStr);
+                    if (chunk.content) {
+                        fullText += chunk.content;
+                        content.innerHTML = simpleMarkdown(fullText) + '<span class="ai-cursor"></span>';
+                        content.scrollTop = content.scrollHeight;
+                    }
+                } catch(e) {}
+            }
+        }
+
+        content.innerHTML = simpleMarkdown(fullText);
+
+    } catch(e) {
+        if (e.name === 'AbortError') {
+            content.innerHTML = simpleMarkdown(fullText) + '<br><span class="text-amber-500 text-xs">[Cancelled]</span>';
+        } else {
+            content.innerHTML = `<span class="text-red-400">Error: ${e.message}</span>`;
+        }
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Analyze with AI';
+        llmAbortController = null;
+    }
+}
+
+// ======================== STEP 2: PRICES ========================
+function getDownloadConfig() {
+    return {
+        ticker: document.getElementById('dl-ticker').value,
+        frequency: document.getElementById('dl-freq').value,
+        start_date: document.getElementById('dl-start').value,
+        end_date: document.getElementById('dl-end').value,
+        exit_hour: parseInt(document.getElementById('dl-exit-hour').value) || 2,
+        exit_minute: parseInt(document.getElementById('dl-exit-minute').value) || 0,
+    };
+}
+
+// --- BBG Download ---
+let bbgPollTimer = null;
+let bbgIsConnected = false;
+
+async function checkBBGStatus() {
+    try {
+        const res = await api('/api/bbg/status');
+        if (res.success) {
+            const badge = document.getElementById('bbg-status-badge');
+            const btn = document.getElementById('btn-bbg-download');
+            
+            if (!res.data.has_bbg) {
+                // blpapi not installed
+                badge.textContent = 'BBG Not Installed';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-red-900/30 text-red-400 border border-red-700/30';
+                btn.disabled = true;
+                btn.style.opacity = '0.4';
+                btn.title = 'blpapi module not installed';
+                bbgIsConnected = false;
+            } else if (res.data.bbg_connected) {
+                // Terminal connected
+                badge.textContent = 'BBG Connected';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/30 text-emerald-400 border border-emerald-700/30';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.title = '';
+                bbgIsConnected = true;
+            } else {
+                // blpapi installed but Terminal not running
+                badge.textContent = 'BBG Not Connected';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-900/30 text-amber-400 border border-amber-700/30';
+                btn.disabled = true;
+                btn.style.opacity = '0.4';
+                btn.title = res.data.bbg_message || 'Bloomberg Terminal not running';
+                bbgIsConnected = false;
+            }
+        }
+    } catch(e) {}
+}
+
+async function startBBGDownload() {
+    // 前置检查: Bloomberg是否连接
+    if (!bbgIsConnected) {
+        showBBGError('Bloomberg Terminal未连接。请确认: 1) Bloomberg Terminal已启动 2) 已登录BBG账号 3) API服务正在运行。然后切换回此Tab重试。');
+        return;
+    }
+    
+    const cfg = getDownloadConfig();
+    const forceRefetch = document.getElementById('dl-force-refetch').checked;
+
+    // Reset UI
+    document.getElementById('bbg-download-progress').classList.remove('hidden');
+    document.getElementById('bbg-download-result').classList.add('hidden');
+    document.getElementById('bbg-download-error').classList.add('hidden');
+    document.getElementById('btn-bbg-download').disabled = true;
+    document.getElementById('btn-bbg-download').textContent = 'Downloading...';
+
+    try {
+        const res = await api('/api/bbg/download', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                ticker: cfg.ticker,
+                frequency: cfg.frequency,
+                force_refetch: forceRefetch,
+            }),
+        });
+
+        if (!res.success) {
+            showBBGError(res.error || 'Failed to start download');
+            resetBBGButton();
+            return;
+        }
+
+        // Start polling progress
+        bbgPollTimer = setInterval(pollBBGProgress, 1000);
+    } catch(e) {
+        showBBGError('Request failed: ' + e.message);
+        resetBBGButton();
+    }
+}
+
+async function pollBBGProgress() {
+    try {
+        const res = await api('/api/bbg/download/status');
+        if (!res.success) return;
+
+        const d = res.data;
+        const progressBar = document.getElementById('bbg-progress-bar');
+        const progressLabel = document.getElementById('bbg-progress-label');
+        const progressPct = document.getElementById('bbg-progress-pct');
+        const progressDetail = document.getElementById('bbg-progress-detail');
+
+        if (d.status === 'connecting') {
+            progressLabel.textContent = 'Connecting to Bloomberg...';
+            progressBar.style.width = '5%';
+            progressPct.textContent = '';
+            progressDetail.textContent = '';
+        } else if (d.status === 'downloading') {
+            const pct = d.total > 0 ? Math.round((d.progress / d.total) * 100) : 0;
+            progressLabel.textContent = d.message;
+            progressBar.style.width = pct + '%';
+            progressPct.textContent = d.progress + '/' + d.total;
+            const barsInfo = d.total_bars > 0 ? ` | ${d.total_bars.toLocaleString()} bars so far` : '';
+            progressDetail.textContent = 'Current: ' + d.current_week + barsInfo;
+        } else if (d.status === 'done') {
+            clearInterval(bbgPollTimer);
+            bbgPollTimer = null;
+            progressBar.style.width = '100%';
+
+            // Show success
+            document.getElementById('bbg-download-progress').classList.add('hidden');
+            document.getElementById('bbg-download-result').classList.remove('hidden');
+            const ts = d.timestamp ? ` (${d.timestamp})` : '';
+            const bars = d.total_bars ? ` | ${d.total_bars.toLocaleString()} total bars` : '';
+            document.getElementById('bbg-result-detail').textContent = d.message + ts + bars +
+                (d.output_file ? '\nSaved to: ' + d.output_file : '') +
+                '\n\nRaw intraday data downloaded. Use "Load Intraday Data" tab or "Pre-processed CSV" to load into engine.';
+
+            resetBBGButton();
+            showToast('BBG raw intraday data download complete!');
+        } else if (d.status === 'error') {
+            clearInterval(bbgPollTimer);
+            bbgPollTimer = null;
+            document.getElementById('bbg-download-progress').classList.add('hidden');
+            showBBGError(d.message);
+            resetBBGButton();
+        }
+    } catch(e) {}
+}
+
+function showBBGError(msg) {
+    document.getElementById('bbg-download-error').classList.remove('hidden');
+    document.getElementById('bbg-error-detail').textContent = msg;
+}
+
+function resetBBGButton() {
+    const btn = document.getElementById('btn-bbg-download');
+    btn.disabled = !bbgIsConnected;  // 根据连接状态决定是否启用
+    btn.style.opacity = bbgIsConnected ? '1' : '0.4';
+    btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Download Raw Data from Bloomberg';
+}
+
+// --- Config export helpers ---
+async function copyConfigToClipboard() {
+    const cfg = getDownloadConfig();
+    const text = `BBG Download Config:
+  Ticker: ${cfg.ticker}
+  Frequency: ${cfg.frequency}
+  Start: ${cfg.start_date}
+  End: ${cfg.end_date}
+  Exit Time: Saturday ${String(cfg.exit_hour).padStart(2,'0')}:${String(cfg.exit_minute).padStart(2,'0')} (Beijing)
+  Weeks: ${document.getElementById('dl-weeks-count').textContent}`;
+    try {
+        await navigator.clipboard.writeText(text);
+        showToast('Config copied to clipboard');
+    } catch(e) {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Config copied to clipboard');
+    }
+}
+
+async function exportConfigJSON() {
+    const cfg = getDownloadConfig();
+    try {
+        const res = await fetch('/api/export/config', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cfg) });
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'bbg_download_config.json'; a.click();
+        URL.revokeObjectURL(url);
+        showToast('Config JSON downloaded');
+    } catch(e) { alert('Export failed: ' + e.message); }
+}
+
+async function exportDownloadScript() {
+    const cfg = getDownloadConfig();
+    try {
+        const res = await fetch('/api/export/script', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cfg) });
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'download_bbg_prices.py'; a.click();
+        URL.revokeObjectURL(url);
+        showToast('Python script downloaded');
+    } catch(e) { alert('Export failed: ' + e.message); }
+}
+
+function showToast(msg) {
+    let toast = document.getElementById('toast-msg');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-msg';
+        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#10b981;color:white;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:1000;opacity:0;transition:opacity 0.3s;pointer-events:none;';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+}
+
+function switchPriceSource(mode) {
+    priceSourceMode = mode;
+    ['download','intraday','csv'].forEach(m => {
+        const el = document.getElementById('price-source-' + m);
+        if (el) el.classList.toggle('hidden', m !== mode);
+        const tab = document.getElementById('tab-' + m);
+        if (tab) { tab.classList.toggle('active', m === mode); }
+    });
+    if (mode === 'download') checkBBGStatus();
+    if (mode === 'intraday') refreshIntradayFiles();
+    if (mode === 'csv') refreshPriceFiles();
+    document.getElementById('price-preview').classList.add('hidden');
+}
+
+async function refreshIntradayFiles() {
+    const res = await api('/api/files/intraday');
+    if (!res.success) return;
+    const container = document.getElementById('intraday-file-list');
+    if (res.data.length === 0) { container.innerHTML = '<div class="text-sm text-slate-500">No files found</div>'; return; }
+    const groups = {};
+    res.data.forEach(f => { if (!groups[f.folder]) groups[f.folder] = []; groups[f.folder].push(f); });
+    let html = '';
+    for (const [folder, files] of Object.entries(groups)) {
+        html += `<div class="text-xs text-slate-500 mt-2 mb-1 font-mono">${folder}/</div>`;
+        html += files.map(f => `<div class="file-item ${selectedIntradayFile===f.path?'selected':''}" onclick="selectIntradayFile('${f.path}',this)">
+            <div class="flex justify-between items-center"><div class="text-sm font-medium">${f.name}</div><span class="text-xs text-slate-500">${f.size}</span></div></div>`).join('');
+    }
+    container.innerHTML = html;
+}
+
+function selectIntradayFile(path, el) {
+    selectedIntradayFile = path;
+    document.querySelectorAll('#intraday-file-list .file-item').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('btn-load-intraday').disabled = false;
+}
+
+async function loadSelectedIntraday() {
+    if (!selectedIntradayFile) return;
+    showLoading('Loading intraday data & extracting prices...');
+    try {
+        const params = {
+            file_path: selectedIntradayFile,
+            exit_hour: parseInt(document.getElementById('intra-exit-hour').value) || 2,
+            exit_minute: parseInt(document.getElementById('intra-exit-minute').value) || 0,
+        };
+        const res = await api('/api/load/intraday', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(params) });
+        if (res.success) {
+            priceSummary = res.data;
+            await renderFullPricePreview(res.data);
+            document.getElementById('price-preview').classList.remove('hidden');
+            updateStatusBar(); updateStepperState();
+            document.getElementById('price-preview').scrollIntoView({behavior:'smooth', block:'center'});
+        } else { alert('Failed:\n' + (res.error || 'Unknown error')); }
+    } catch(e) { alert('Error: ' + e.message); } finally { hideLoading(); }
+}
+
+async function refreshPriceFiles() {
+    const res = await api('/api/files/prices');
+    if (!res.success) return;
+    const container = document.getElementById('price-file-list');
+    const groups = {};
+    res.data.forEach(f => { if (!groups[f.folder]) groups[f.folder] = []; groups[f.folder].push(f); });
+    let html = '';
+    for (const [folder, files] of Object.entries(groups)) {
+        html += `<div class="text-xs text-slate-500 mt-2 mb-1 font-mono">${folder}/</div>`;
+        html += files.map(f => `<div class="file-item ${selectedPriceFile===f.path?'selected':''}" onclick="selectPriceFile('${f.path}',this)">
+            <div class="flex justify-between items-center"><div class="text-sm font-medium">${f.name}</div><span class="text-xs text-slate-500">${f.size}</span></div></div>`).join('');
+    }
+    container.innerHTML = html;
+}
+
+function selectPriceFile(path, el) {
+    selectedPriceFile = path;
+    document.querySelectorAll('#price-file-list .file-item').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('btn-load-price').disabled = false;
+}
+
+async function loadSelectedPrice() {
+    if (!selectedPriceFile) return;
+    showLoading('Loading market data...');
+    try {
+        const res = await api('/api/load/prices', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({file_path:selectedPriceFile}) });
+        if (res.success) {
+            priceSummary = res.data;
+            await renderFullPricePreview(res.data);
+            document.getElementById('price-preview').classList.remove('hidden');
+            updateStatusBar(); updateStepperState();
+            document.getElementById('price-preview').scrollIntoView({behavior:'smooth', block:'center'});
+        } else { alert('Failed:\n' + (res.error || 'Unknown error')); }
+    } catch(e) { alert('Error: ' + e.message); } finally { hideLoading(); }
+}
+
+async function renderFullPricePreview(p) {
+    // Stats cards
+    const srcLabel = {csv:'Pre-processed CSV', bbg_ticks:'BBG Tick', intraday:'Intraday OHLCV'};
+    const items = [
+        ['Total Weeks', p.total_rows], ['Matched Weeks', p.valid_weeks],
+        ['Source', srcLabel[p.source] || p.source],
+        ['Date Range', p.weeks.length > 0 ? p.weeks[0] + ' ~ ' + p.weeks[p.weeks.length-1] : '-'],
+    ];
+    if (p.intraday_info) {
+        items.push(['Total Bars', p.intraday_info.total_bars.toLocaleString()]);
+        items.push(['Bar Interval', p.intraday_info.interval_seconds + 's']);
+        items.push(['Price Range', p.intraday_info.price_range[0].toFixed(4) + ' ~ ' + p.intraday_info.price_range[1].toFixed(4)]);
+    }
+    // Add entry/exit price stats from sample_rows
+    if (p.sample_rows && p.sample_rows.length > 0) {
+        const entries = p.sample_rows.filter(r => r.entry_price).map(r => r.entry_price);
+        const exits = p.sample_rows.filter(r => r.exit_price).map(r => r.exit_price);
+        if (entries.length > 0) {
+            const avgEntry = entries.reduce((a,b) => a+b, 0) / entries.length;
+            items.push(['Avg Entry', avgEntry.toFixed(4)]);
+        }
+        if (exits.length > 0) {
+            const avgExit = exits.reduce((a,b) => a+b, 0) / exits.length;
+            items.push(['Avg Exit', avgExit.toFixed(4)]);
+        }
+    }
+    document.getElementById('price-stats').innerHTML = items.map(([l,v]) =>
+        `<div class="bg-slate-800/60 rounded-lg p-3"><div class="text-xs text-slate-500">${l}</div><div class="text-sm font-semibold mt-1">${v}</div></div>`
+    ).join('');
+
+    // Price chart
+    const chartRes = await api('/api/price_chart');
+    if (chartRes.success) {
+        const cd = chartRes.data;
+        const traces = [
+            {x:cd.weeks, y:cd.entry_prices, type:'scatter', mode:'lines+markers', name:'Entry Price', line:{color:'#6366f1',width:2}, marker:{size:5}},
+            {x:cd.weeks, y:cd.exit_prices, type:'scatter', mode:'lines+markers', name:'Exit Price', line:{color:'#f59e0b',width:2,dash:'dot'}, marker:{size:5}},
+        ];
+        // PnL pips as bar on secondary y-axis
+        traces.push({x:cd.weeks, y:cd.pnl_pips, type:'bar', name:'PnL (pips)', yaxis:'y2',
+            marker:{color:cd.pnl_pips.map(v => v >= 0 ? 'rgba(16,185,129,0.6)' : 'rgba(239,68,68,0.6)')}, opacity:0.7});
+
+        Plotly.newPlot('chart-price-entries', traces, {
+            ...PLOTLY_DARK,
+            title:{text:'Entry / Exit Prices & PnL per Week', font:{size:13, color:'#e2e8f0'}},
+            xaxis:{...PLOTLY_DARK.xaxis, tickangle:-45, tickfont:{size:9}},
+            yaxis:{...PLOTLY_DARK.yaxis, title:'Price', side:'left'},
+            yaxis2:{overlaying:'y', side:'right', title:'Pips', gridcolor:'transparent', tickfont:{color:'#94a3b8'}},
+            margin:{t:45,b:60,l:70,r:60}, legend:{orientation:'h', y:1.15, font:{size:10}},
+            barmode:'overlay',
+        }, {responsive:true});
+    }
+
+    // Entry/Exit table — full data with all columns
+    if (chartRes.success) {
+        const cd = chartRes.data;
+        const hasFriday = cd.friday_dates && cd.friday_dates.length > 0;
+        const hasSaturday = cd.saturday_dates && cd.saturday_dates.length > 0;
+        const hasSignal = cd.signal_times && cd.signal_times.length > 0;
+
+        let tbl = `<div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-slate-400">All Weeks (${cd.weeks.length})</span>
+            <span class="text-xs text-slate-500">Entry / Exit / Spread / PnL</span>
+        </div>
+        <table class="data-table"><thead><tr>
+            <th class="text-center">#</th>
+            <th>Week</th>`;
+        if (hasFriday) tbl += `<th>Friday</th>`;
+        if (hasSaturday) tbl += `<th>Saturday</th>`;
+        if (hasSignal) tbl += `<th>Signal Time</th>`;
+        tbl += `<th class="text-right">Entry</th>
+            <th class="text-right">Exit</th>
+            <th class="text-right">Spread</th>
+            <th class="text-right">Pips</th>
+            <th class="text-center">Direction</th>
+        </tr></thead><tbody>`;
+
+        let totalPips = 0, wins = 0, losses = 0;
+        for (let i = 0; i < cd.weeks.length; i++) {
+            const pips = cd.pnl_pips[i];
+            totalPips += pips;
+            if (pips > 0) wins++; else if (pips < 0) losses++;
+            const cls = pips >= 0 ? 'positive' : 'negative';
+            const dir = pips >= 0 ? '↑' : '↓';
+            const dirCls = pips >= 0 ? 'text-emerald-400' : 'text-red-400';
+            const spread = cd.spreads ? cd.spreads[i] : Math.abs(cd.exit_prices[i] - cd.entry_prices[i]);
+
+            tbl += `<tr>
+                <td class="text-center text-slate-500 text-xs">${i + 1}</td>
+                <td class="font-mono">${cd.weeks[i]}</td>`;
+            if (hasFriday) tbl += `<td class="text-xs text-slate-400">${cd.friday_dates[i] || '-'}</td>`;
+            if (hasSaturday) tbl += `<td class="text-xs text-slate-400">${cd.saturday_dates[i] || '-'}</td>`;
+            if (hasSignal) {
+                const st = cd.signal_times[i] || '-';
+                // Show only time part if it contains a space (datetime)
+                const stDisplay = st.includes(' ') ? st.split(' ')[1].substring(0, 5) : st;
+                tbl += `<td class="text-xs text-slate-400 font-mono">${stDisplay}</td>`;
+            }
+            tbl += `<td class="text-right font-mono">${cd.entry_prices[i].toFixed(4)}</td>
+                <td class="text-right font-mono">${cd.exit_prices[i].toFixed(4)}</td>
+                <td class="text-right font-mono text-slate-500">${spread.toFixed(4)}</td>
+                <td class="text-right font-mono ${cls}">${pips > 0 ? '+' : ''}${pips.toFixed(1)}</td>
+                <td class="text-center ${dirCls} font-bold">${dir}</td>
+            </tr>`;
+        }
+
+        // Summary footer
+        const avgPips = cd.weeks.length > 0 ? (totalPips / cd.weeks.length) : 0;
+        const winRate = (wins + losses) > 0 ? (wins / (wins + losses) * 100) : 0;
+        tbl += `</tbody><tfoot><tr class="border-t border-slate-700">
+            <td colspan="${1 + 1 + (hasFriday?1:0) + (hasSaturday?1:0) + (hasSignal?1:0) + 2}" class="text-right text-xs text-slate-400 font-semibold py-2">
+                Total: ${cd.weeks.length} weeks | Win: ${wins} | Loss: ${losses} | Win Rate: ${winRate.toFixed(1)}%
+            </td>
+            <td class="text-right font-mono text-xs text-slate-400">Avg: ${avgPips > 0 ? '+' : ''}${avgPips.toFixed(1)}</td>
+            <td class="text-right font-mono text-sm font-bold ${totalPips >= 0 ? 'positive' : 'negative'}">
+                Σ ${totalPips > 0 ? '+' : ''}${totalPips.toFixed(1)}
+            </td>
+            <td></td>
+        </tr></tfoot></table>`;
+        document.getElementById('price-table-container').innerHTML = tbl;
+    }
+}
+
+// ======================== STEP 3: GRID SEARCH ========================
+// --- Execution Mode ---
+function setExecMode(mode) {
+    executionMode = mode;
+    document.getElementById('exec-mode-single').classList.toggle('active', mode === 'single');
+    document.getElementById('exec-mode-tranche').classList.toggle('active', mode === 'tranche');
+    document.getElementById('tranche-config').classList.toggle('hidden', mode !== 'tranche');
+    if (mode === 'single') {
+        document.getElementById('exec-mode-desc').textContent = 'Single Shot: one entry per week using the last signal in Fri 22:30 ~ Sat 01:30 window. Full notional at once.';
+    } else {
+        document.getElementById('exec-mode-desc').textContent = 'Tranche Execution: split notional across signal time points per week. Configurable per-tranche size. Skip + accumulate when signal is weak.';
+        updateTrancheAutoHint();
+    }
+    updateGridEstimate();
+}
+
+function updateTrancheSizing() {
+    const isFixed = document.querySelector('input[name="tranche-sizing"][value="fixed"]').checked;
+    const wrapper = document.getElementById('tranche-size-input-wrapper');
+    wrapper.style.opacity = isFixed ? '1' : '0.4';
+    wrapper.style.pointerEvents = isFixed ? 'auto' : 'none';
+    updateTrancheAutoHint();
+}
+
+function updateTrancheAutoHint() {
+    const tradeSize = parseInt(document.getElementById('gs-trade-size').value) || 55000000;
+    const autoSize = Math.round(tradeSize / 7);
+    document.getElementById('gs-tranche-size').value = autoSize;
+    document.getElementById('tranche-size-display').textContent = '$' + autoSize.toLocaleString();
+    const isFixed = document.querySelector('input[name="tranche-sizing"][value="fixed"]').checked;
+    if (!isFixed) {
+        document.getElementById('tranche-size-hint').textContent = `Auto mode: $${tradeSize.toLocaleString()} ÷ 7 slots = $${autoSize.toLocaleString()} per tranche (actual N varies per week)`;
+    } else {
+        const fixedSize = parseInt(document.getElementById('gs-tranche-size').value) || autoSize;
+        document.getElementById('tranche-size-hint').textContent = `Fixed mode: $${fixedSize.toLocaleString()} per tranche. Weekly max = N × $${fixedSize.toLocaleString()}`;
+    }
+}
+
+function setTrancheSizePreset(val) {
+    document.querySelector('input[name="tranche-sizing"][value="fixed"]').checked = true;
+    updateTrancheSizing();
+    document.getElementById('gs-tranche-size').value = val;
+    document.getElementById('tranche-size-display').textContent = '$' + val.toLocaleString();
+    updateTrancheAutoHint();
+}
+
+document.getElementById('gs-tranche-size').addEventListener('input', function() {
+    const val = parseInt(this.value) || 0;
+    document.getElementById('tranche-size-display').textContent = '$' + val.toLocaleString();
+    updateTrancheAutoHint();
+});
+
+function getTrancheSize() {
+    if (executionMode !== 'tranche') return null;
+    const isFixed = document.querySelector('input[name="tranche-sizing"][value="fixed"]').checked;
+    if (!isFixed) return null;
+    return parseInt(document.getElementById('gs-tranche-size').value) || null;
+}
+
+function updateStopLossUI() {
+    const enabled = document.getElementById('sl-enabled').checked;
+    const wrapper = document.getElementById('sl-input-wrapper');
+    const presets = document.getElementById('sl-presets');
+    wrapper.style.opacity = enabled ? '1' : '0.4';
+    wrapper.style.pointerEvents = enabled ? 'auto' : 'none';
+    presets.style.opacity = enabled ? '1' : '0.4';
+    presets.style.pointerEvents = enabled ? 'auto' : 'none';
+}
+
+function setStopLossPreset(val) {
+    document.getElementById('sl-enabled').checked = true;
+    updateStopLossUI();
+    document.getElementById('gs-stop-loss-bps').value = val;
+}
+
+function getStopLossBps() {
+    if (executionMode !== 'tranche') return null;
+    const enabled = document.getElementById('sl-enabled').checked;
+    if (!enabled) return null;
+    return parseFloat(document.getElementById('gs-stop-loss-bps').value) || null;
+}
+
+function updateProfitTakingUI() {
+    const enabled = document.getElementById('pt-enabled').checked;
+    const wrapper = document.getElementById('pt-input-wrapper');
+    const presets = document.getElementById('pt-presets');
+    wrapper.style.opacity = enabled ? '1' : '0.4';
+    wrapper.style.pointerEvents = enabled ? 'auto' : 'none';
+    presets.style.opacity = enabled ? '1' : '0.4';
+    presets.style.pointerEvents = enabled ? 'auto' : 'none';
+}
+
+function setProfitTakingPreset(val) {
+    document.getElementById('pt-enabled').checked = true;
+    updateProfitTakingUI();
+    document.getElementById('gs-profit-taking-bps').value = val;
+}
+
+function getProfitTakingBps() {
+    if (executionMode !== 'tranche') return null;
+    const enabled = document.getElementById('pt-enabled').checked;
+    if (!enabled) return null;
+    return parseFloat(document.getElementById('gs-profit-taking-bps').value) || null;
+}
+
+function updateGridEstimate() {
+    const pMin=parseFloat(document.getElementById('gs-pred-min').value)||0.4, pMax=parseFloat(document.getElementById('gs-pred-max').value)||0.85, pStep=parseFloat(document.getElementById('gs-pred-step').value)||0.01;
+    const cMin=parseFloat(document.getElementById('gs-conf-min').value)||0, cMax=parseFloat(document.getElementById('gs-conf-max').value)||1, cStep=parseFloat(document.getElementById('gs-conf-step').value)||0.01;
+    const np=Math.floor((pMax-pMin)/pStep)+1, nc=Math.floor((cMax-cMin)/cStep)+1;
+    let total = np * nc;
+    let extra = executionMode === 'tranche' ? ' (tranche mode: equal weight, all signals)' : '';
+    document.getElementById('gs-estimate').textContent = `Estimated: ${total.toLocaleString()} combinations${extra}`;
+}
+['gs-pred-min','gs-pred-max','gs-pred-step','gs-conf-min','gs-conf-max','gs-conf-step'].forEach(id => { const el=document.getElementById(id); if(el) el.addEventListener('input', updateGridEstimate); });
+
+function formatTradeSize() {
+    const val = parseInt(document.getElementById('gs-trade-size').value) || 0;
+    document.getElementById('trade-size-display').textContent = '$' + val.toLocaleString();
+    if (executionMode === 'tranche') updateTrancheAutoHint();
+}
+document.getElementById('gs-trade-size').addEventListener('input', formatTradeSize);
+
+async function runGridSearch() {
+    showLoading('Running grid search...');
+    try {
+        const tradeSize = parseInt(document.getElementById('gs-trade-size').value) || 55000000;
+        const params = {
+            pred_min: parseFloat(document.getElementById('gs-pred-min').value),
+            pred_max: parseFloat(document.getElementById('gs-pred-max').value),
+            pred_step: parseFloat(document.getElementById('gs-pred-step').value),
+            conf_min: parseFloat(document.getElementById('gs-conf-min').value),
+            conf_max: parseFloat(document.getElementById('gs-conf-max').value),
+            conf_step: parseFloat(document.getElementById('gs-conf-step').value),
+            min_trades: parseInt(document.getElementById('gs-min-trades').value),
+            execution_mode: executionMode,
+            trade_size: tradeSize,
+        };
+        const ts = getTrancheSize();
+        if (ts) params.tranche_size = ts;
+        const slBps = getStopLossBps();
+        if (slBps) params.stop_loss_bps = slBps;
+        const ptBps = getProfitTakingBps();
+        if (ptBps) params.profit_taking_bps = ptBps;
+
+        const res = await api('/api/grid/run', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(params) });
+        if (res.success) {
+            document.getElementById('grid-summary').classList.remove('hidden');
+            document.getElementById('status-grid').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Grid (' + res.data.total_combinations + ')';
+            await Promise.all([loadHeatmap(), loadGridResults()]);
+        } else { alert('Error: ' + res.error); }
+    } finally { hideLoading(); }
+}
+
+async function loadHeatmap() {
+    const res = await api('/api/heatmap?metric=' + document.getElementById('heatmap-metric').value);
+    if (!res.success) return;
+    const data = res.data;
+    const cs = {'total_pnl':'YlGn','sharpe':'Viridis','win_rate':'Blues','max_drawdown':'RdYlGn','num_trades':'Oranges','profit_factor':'Plasma','avg_exec_pct':'Tealgrn'};
+    const titles = {'total_pnl':'Total PnL ($)','sharpe':'Sharpe Ratio','win_rate':'Win Rate','max_drawdown':'Max Drawdown ($)','num_trades':'Num Trades','profit_factor':'Profit Factor','avg_exec_pct':'Avg Execution %'};
+    let x=data.x, y=data.y, z=data.z;
+    const mx=80;
+    if(x.length>mx){const s=Math.ceil(x.length/mx);const idx=Array.from({length:Math.ceil(x.length/s)},(_,i)=>i*s).filter(i=>i<x.length);x=idx.map(i=>data.x[i]);z=data.z.map(r=>idx.map(i=>r[i]));}
+    if(y.length>mx){const s=Math.ceil(y.length/mx);const idx=Array.from({length:Math.ceil(y.length/s)},(_,i)=>i*s).filter(i=>i<y.length);y=idx.map(i=>data.y[i]);z=idx.map(i=>z[i]);}
+
+    const modeLabel = executionMode === 'tranche' ? ' (Tranche)' : '';
+    Plotly.newPlot('chart-heatmap',[{x,y,z,type:'heatmap',colorscale:cs[data.metric]||'Viridis',hovertemplate:'Conf:%{x:.2f}<br>Pred:%{y:.2f}<br>'+(titles[data.metric]||data.metric)+':%{z}<extra></extra>',colorbar:{title:{text:titles[data.metric]||data.metric,side:'right'},tickfont:{color:'#94a3b8'}}}],
+        {title:{text:(titles[data.metric]||data.metric)+modeLabel,font:{size:14,color:'#e2e8f0'}},xaxis:{title:'Confidence Threshold',dtick:0.05,color:'#94a3b8',gridcolor:'#1e293b'},yaxis:{title:'Prediction Threshold',dtick:0.05,color:'#94a3b8',gridcolor:'#1e293b'},paper_bgcolor:'transparent',plot_bgcolor:'transparent',margin:{t:50,b:60,l:70,r:20}},{responsive:true});
+}
+
+async function loadGridResults() {
+    const res = await api(`/api/grid/results?sort_by=${document.getElementById('grid-sort').value}&min_trades=${document.getElementById('gs-min-trades').value}&top_n=50`);
+    if (res.success) renderGridTable(res.data);
+}
+
+function renderGridTable(rows) {
+    const hasExecPct = rows.length > 0 && rows[0].avg_exec_pct !== undefined;
+    const hasStopLoss = rows.length > 0 && rows[0].n_stop_losses !== undefined;
+    const hasProfitTaking = rows.length > 0 && rows[0].n_profit_takings !== undefined;
+
+    let thExtra = '';
+    if (hasExecPct) {
+        thExtra += '<th class="text-right">Avg Exec%</th>';
+    }
+    if (hasStopLoss) {
+        thExtra += '<th class="text-right">SL Count</th>';
+    }
+    if (hasProfitTaking) {
+        thExtra += '<th class="text-right">PT Count</th>';
+    }
+
+    let html = `<table class="data-table"><thead><tr><th></th><th>Pred</th><th>Conf</th><th class="text-right">PnL ($)</th><th class="text-right">Sharpe</th><th class="text-right">Win Rate</th><th class="text-right">Trades</th><th class="text-right">Max DD</th><th class="text-right">PF</th>${thExtra}</tr></thead><tbody>`;
+    rows.forEach(r => {
+        const isSel = selectedConfigs.some(c => Math.abs(c.pred_threshold-r.pred_threshold)<0.001 && Math.abs(c.conf_threshold-r.conf_threshold)<0.001);
+        const pCls = r.total_pnl > 0 ? 'positive' : 'negative';
+
+        let extraCols = '';
+        if (hasExecPct) {
+            extraCols += `<td class="text-right font-mono text-emerald-400">${r.avg_exec_pct.toFixed(1)}%</td>`;
+        }
+        if (hasStopLoss) {
+            extraCols += `<td class="text-right font-mono ${r.n_stop_losses > 0 ? 'text-red-400' : 'text-slate-500'}">${r.n_stop_losses}</td>`;
+        }
+        if (hasProfitTaking) {
+            extraCols += `<td class="text-right font-mono ${r.n_profit_takings > 0 ? 'text-emerald-400' : 'text-slate-500'}">${r.n_profit_takings}</td>`;
+        }
+
+        html += `<tr style="cursor:pointer;${isSel?'background:rgba(99,102,241,0.15)':''}" onclick="toggleGridRow(${r.pred_threshold},${r.conf_threshold},this)">
+            <td class="text-center"><input type="checkbox" ${isSel?'checked':''} class="pointer-events-none" style="accent-color:var(--accent)"></td>
+            <td class="font-mono font-semibold">${r.pred_threshold.toFixed(2)}</td><td class="font-mono font-semibold">${r.conf_threshold.toFixed(2)}</td>
+            <td class="text-right font-mono ${pCls}">$${r.total_pnl.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+            <td class="text-right font-mono">${r.sharpe.toFixed(2)}</td><td class="text-right font-mono">${(r.win_rate*100).toFixed(1)}%</td>
+            <td class="text-right font-mono">${r.num_trades}</td><td class="text-right font-mono negative">$${r.max_drawdown.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+            <td class="text-right font-mono">${r.profit_factor>=9999?'Inf':r.profit_factor.toFixed(2)}</td>${extraCols}</tr>`;
+    });
+    html += '</tbody></table>';
+    document.getElementById('grid-table-container').innerHTML = html;
+}
+
+function toggleGridRow(pred, conf, trEl) {
+    const idx = selectedConfigs.findIndex(c => Math.abs(c.pred_threshold-pred)<0.001 && Math.abs(c.conf_threshold-conf)<0.001);
+
+    if (idx >= 0) {
+        selectedConfigs.splice(idx,1);
+        trEl.style.background='';
+        trEl.querySelector('input[type=checkbox]').checked=false;
+    } else {
+        if(selectedConfigs.length>=8){alert('Max 8');return;}
+        const cfg = {pred_threshold:pred, conf_threshold:conf};
+        if (executionMode === 'tranche') {
+            cfg.execution_mode = 'tranche';
+            const ts = getTrancheSize();
+            if (ts) cfg.tranche_size = ts;
+            const slBps = getStopLossBps();
+            if (slBps) cfg.stop_loss_bps = slBps;
+            const ptBps = getProfitTakingBps();
+            if (ptBps) cfg.profit_taking_bps = ptBps;
+            let riskLabel = '';
+            if (slBps) riskLabel += ` SL:${slBps}bp`;
+            if (ptBps) riskLabel += ` PT:${ptBps}bp`;
+            cfg.label = `P=${pred.toFixed(2)} C=${conf.toFixed(2)} (tranche${riskLabel})`;
+        } else {
+            cfg.label = `P=${pred.toFixed(2)} C=${conf.toFixed(2)}`;
+        }
+        selectedConfigs.push(cfg);
+        trEl.style.background='rgba(99,102,241,0.15)';
+        trEl.querySelector('input[type=checkbox]').checked=true;
+    }
+    updateCompareButton();
+}
+function updateCompareButton() { document.getElementById('compare-count').textContent=selectedConfigs.length; document.getElementById('btn-goto-compare').disabled=selectedConfigs.length===0; }
+
+// ======================== STEP 4: COMPARE ========================
+function renderConfigTags() {
+    document.getElementById('selected-configs-tags').innerHTML = selectedConfigs.map((c,i) =>
+        `<span class="config-tag selected" style="border-color:${COLORS[i%COLORS.length]};color:${COLORS[i%COLORS.length]}">${c.label}<span class="remove" onclick="event.stopPropagation();removeConfig(${i})">x</span></span>`
+    ).join('');
+}
+function removeConfig(idx) { selectedConfigs.splice(idx,1); renderConfigTags(); updateCompareButton(); }
+function addManualConfig() {
+    const pred=prompt('Prediction threshold:','0.50'); if(!pred) return;
+    const conf=prompt('Confidence threshold:','0.00'); if(conf===null) return;
+    const p=parseFloat(pred),c=parseFloat(conf); if(isNaN(p)||isNaN(c)){alert('Invalid');return;}
+    const cfg = {pred_threshold:p, conf_threshold:c, label:`P=${p.toFixed(2)} C=${c.toFixed(2)}`};
+    if (executionMode === 'tranche') {
+        cfg.execution_mode = 'tranche';
+        const ts = getTrancheSize();
+        if (ts) cfg.tranche_size = ts;
+        const slBps = getStopLossBps();
+        if (slBps) cfg.stop_loss_bps = slBps;
+        const ptBps = getProfitTakingBps();
+        if (ptBps) cfg.profit_taking_bps = ptBps;
+        let riskLabel = '';
+        if (slBps) riskLabel += ` SL:${slBps}bp`;
+        if (ptBps) riskLabel += ` PT:${ptBps}bp`;
+        cfg.label = `P=${p.toFixed(2)} C=${c.toFixed(2)} (tranche${riskLabel})`;
+    }
+    selectedConfigs.push(cfg);
+    renderConfigTags(); updateCompareButton();
+}
+
+async function runComparison() {
+    if(!selectedConfigs.length) return; showLoading('Running comparison...');
+    try {
+        const res = await api('/api/compare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({configs:selectedConfigs})});
+        if(res.success){comparisonResults=res.data; oracleData=res.oracle||null; document.getElementById('compare-results').classList.remove('hidden');
+            activeTradeTabIdx = 0;
+            renderCompareKPI(res.data); renderCompareEquity(res.data); renderCompareDrawdown(res.data); renderComparePnlBars(res.data);
+            renderTradeTabBtns(res.data); renderTradeTable(res.data[0].trades,0,res.data[0]); renderCompareScatters(res.data);
+            // Auto-set USDCNH rate from exit price if available
+            if (res.data[0] && res.data[0].trades) {
+                const traded = res.data[0].trades.find(t => t.exit_price);
+                if (traded) document.getElementById('usdcnh-rate').value = traded.exit_price.toFixed(2);
+            }
+        }
+    } finally { hideLoading(); }
+}
+
+function getCurrencySymbol() { return showCNY ? '¥' : '$'; }
+function convertAmount(usd) { return showCNY ? usd * (parseFloat(document.getElementById('usdcnh-rate').value) || 7.25) : usd; }
+function fmtAmt(val) { const v = convertAmount(val); return getCurrencySymbol() + v.toLocaleString(undefined,{maximumFractionDigits:0}); }
+
+function toggleCNY() {
+    showCNY = !showCNY;
+    const btn = document.getElementById('btn-cny-toggle');
+    btn.textContent = showCNY ? 'Show in USD ($)' : 'Show in CNY (¥)';
+    btn.classList.toggle('text-amber-400', !showCNY);
+    btn.classList.toggle('border-amber-500/30', !showCNY);
+    btn.classList.toggle('text-red-400', showCNY);
+    btn.classList.toggle('border-red-500/30', showCNY);
+    // Re-render
+    if (comparisonResults.length > 0) {
+        renderCompareKPI(comparisonResults);
+        renderTradeTable(comparisonResults[activeTradeTabIdx].trades, activeTradeTabIdx, comparisonResults[activeTradeTabIdx]);
+    }
+}
+
+function renderCompareKPI(results) {
+    const sym = getCurrencySymbol();
+    let html = results.map((r,i) => {
+        const m=r.metrics, color=COLORS[i%COLORS.length];
+        let trancheInfo = '';
+        if (m.execution_mode === 'tranche') {
+            let slInfo = '';
+            if (m.n_stop_losses !== undefined && m.n_stop_losses > 0) {
+                slInfo = `<div><div class="text-slate-500">Stop Loss</div><div class="font-mono font-bold text-red-400">${m.n_stop_losses} (${(m.stop_loss_rate*100).toFixed(0)}%)</div></div>`;
+            } else if (m.stop_loss_bps) {
+                slInfo = `<div><div class="text-slate-500">SL Threshold</div><div class="font-mono font-bold text-red-300">${m.stop_loss_bps}bp (0 hit)</div></div>`;
+            }
+            let ptInfo = '';
+            if (m.n_profit_takings !== undefined && m.n_profit_takings > 0) {
+                ptInfo = `<div><div class="text-slate-500">Profit Take</div><div class="font-mono font-bold text-emerald-400">${m.n_profit_takings} (${(m.profit_taking_rate*100).toFixed(0)}%)</div></div>`;
+            } else if (m.profit_taking_bps) {
+                ptInfo = `<div><div class="text-slate-500">PT Threshold</div><div class="font-mono font-bold text-emerald-300">${m.profit_taking_bps}bp (0 hit)</div></div>`;
+            }
+            trancheInfo = `<div class="border-t border-slate-700 mt-2 pt-2 grid grid-cols-3 gap-2 text-xs">
+                <div><div class="text-slate-500">Mode</div><div class="font-mono text-emerald-400">Tranche</div></div>
+                <div><div class="text-slate-500">Avg Exec%</div><div class="font-mono font-bold">${m.avg_executed_pct.toFixed(1)}%</div></div>
+                <div><div class="text-slate-500">Avg Sig/wk</div><div class="font-mono font-bold">${m.avg_signals_executed_per_week.toFixed(1)}</div></div>
+                ${slInfo}${ptInfo}
+            </div>`;
+        }
+        const pnlVal = convertAmount(m.total_pnl);
+        const ddVal = convertAmount(m.max_drawdown);
+        return `<div class="card p-4 metric-card" style="border-top:3px solid ${color}"><div class="text-xs font-semibold mb-2" style="color:${color}">${r.label}</div>
+        <div class="grid grid-cols-3 gap-2 text-xs">
+            <div><div class="text-slate-500">PnL</div><div class="font-mono font-bold ${m.total_pnl>=0?'positive':'negative'}">${sym}${pnlVal.toLocaleString(undefined,{maximumFractionDigits:0})}</div></div>
+            <div><div class="text-slate-500">Sharpe</div><div class="font-mono font-bold">${m.sharpe.toFixed(2)}</div></div>
+            <div><div class="text-slate-500">Win Rate</div><div class="font-mono font-bold">${(m.win_rate*100).toFixed(1)}%</div></div>
+            <div><div class="text-slate-500">Trades</div><div class="font-mono font-bold">${m.num_trades}/${m.num_weeks}</div></div>
+            <div><div class="text-slate-500">Max DD</div><div class="font-mono font-bold negative">${sym}${ddVal.toLocaleString(undefined,{maximumFractionDigits:0})}</div></div>
+            <div><div class="text-slate-500">PF</div><div class="font-mono font-bold">${m.profit_factor>=9999?'Inf':m.profit_factor.toFixed(2)}</div></div>
+        </div>${trancheInfo}</div>`;
+    }).join('');
+
+    // Oracle card (God's eye view ceiling)
+    if (oracleData && oracleData.metrics) {
+        const om = oracleData.metrics;
+        const oPnl = convertAmount(om.total_pnl);
+        const oDD = convertAmount(om.max_drawdown);
+        html += `<div class="card p-4 metric-card" style="border-top:3px solid #fbbf24">
+            <div class="text-xs font-semibold mb-2" style="color:#fbbf24">Oracle (Best Slot per Week)</div>
+            <div class="grid grid-cols-3 gap-2 text-xs">
+                <div><div class="text-slate-500">Ceiling PnL</div><div class="font-mono font-bold text-amber-400">${sym}${oPnl.toLocaleString(undefined,{maximumFractionDigits:0})}</div></div>
+                <div><div class="text-slate-500">Sharpe</div><div class="font-mono font-bold">${om.sharpe.toFixed(2)}</div></div>
+                <div><div class="text-slate-500">Win Rate</div><div class="font-mono font-bold">${(om.win_rate*100).toFixed(1)}%</div></div>
+                <div><div class="text-slate-500">Trades</div><div class="font-mono font-bold">${om.num_trades}</div></div>
+                <div><div class="text-slate-500">Max DD</div><div class="font-mono font-bold negative">${sym}${oDD.toLocaleString(undefined,{maximumFractionDigits:0})}</div></div>
+                <div><div class="text-slate-500">Type</div><div class="font-mono text-amber-300">God View</div></div>
+            </div>
+        </div>`;
+    }
+
+    document.getElementById('compare-kpi-grid').innerHTML = html;
+}
+
+function renderCompareEquity(results) {
+    const traces = results.map((r,i) => ({x:r.trades.map(t=>t.year_week),y:r.trades.map(t=>t.cum_pnl),type:'scatter',mode:'lines+markers',name:r.label,line:{color:COLORS[i%COLORS.length],width:2.5},marker:{size:4},hovertemplate:'%{x}<br>'+r.label+'<br>Cum PnL: $%{y:,.0f}<extra></extra>'}));
+    // Oracle ceiling line (God's eye view)
+    if (oracleData) {
+        traces.push({x:oracleData.weeks, y:oracleData.oracle_cum_pnl, type:'scatter', mode:'lines', name:'Oracle (Best Slot)', line:{color:'#fbbf24',width:2,dash:'dash'}, opacity:0.8, hovertemplate:'%{x}<br>Oracle (Best Slot)<br>Cum PnL: $%{y:,.0f}<extra></extra>'});
+        traces.push({x:oracleData.weeks, y:oracleData.worst_cum_pnl, type:'scatter', mode:'lines', name:'Worst Slot', line:{color:'#ef4444',width:1.5,dash:'dot'}, opacity:0.5, hovertemplate:'%{x}<br>Worst Slot<br>Cum PnL: $%{y:,.0f}<extra></extra>'});
+    }
+    Plotly.newPlot('chart-compare-equity', traces,
+        {...PLOTLY_DARK,title:{text:'Cumulative PnL Comparison',font:{size:14,color:'#e2e8f0'}},xaxis:{...PLOTLY_DARK.xaxis,tickangle:-45,tickfont:{size:9}},yaxis:{...PLOTLY_DARK.yaxis,title:'USD',tickformat:'$,.0f'},margin:{t:45,b:60,l:75,r:20},legend:{orientation:'h',y:1.12,font:{size:11}},hovermode:'x unified'},{responsive:true});
+}
+function renderCompareDrawdown(results) {
+    Plotly.newPlot('chart-compare-drawdown', results.map((r,i) => ({x:r.trades.map(t=>t.year_week),y:r.trades.map(t=>t.drawdown),type:'scatter',mode:'lines',name:r.label,line:{color:COLORS[i%COLORS.length],width:2},fill:i===0?'tozeroy':undefined,fillcolor:i===0?'rgba(239,68,68,0.08)':undefined})),
+        {...PLOTLY_DARK,title:{text:'Drawdown Comparison',font:{size:14,color:'#e2e8f0'}},xaxis:{...PLOTLY_DARK.xaxis,tickangle:-45,tickfont:{size:9}},yaxis:{...PLOTLY_DARK.yaxis,title:'USD',tickformat:'$,.0f'},margin:{t:45,b:60,l:75,r:20},legend:{orientation:'h',y:1.12,font:{size:11}}},{responsive:true});
+}
+function renderComparePnlBars(results) {
+    const weeks=results[0].trades.map(t=>t.year_week);
+    Plotly.newPlot('chart-compare-pnl', results.map((r,i) => ({x:weeks,y:r.trades.map(t=>t.pnl),type:'bar',name:r.label,marker:{color:COLORS[i%COLORS.length],opacity:0.8}})),
+        {...PLOTLY_DARK,barmode:'group',title:{text:'Weekly PnL Comparison',font:{size:14,color:'#e2e8f0'}},xaxis:{...PLOTLY_DARK.xaxis,tickangle:-45,tickfont:{size:9}},yaxis:{...PLOTLY_DARK.yaxis,title:'USD',tickformat:'$,.0f'},margin:{t:45,b:60,l:75,r:20},legend:{orientation:'h',y:1.12,font:{size:11}}},{responsive:true});
+}
+function renderTradeTabBtns(results) {
+    document.getElementById('trade-tab-btns').innerHTML = results.map((r,i) =>
+        `<button onclick="switchTradeTab(${i})" class="trade-tab-btn text-xs px-3 py-1.5 rounded-lg border ${i===activeTradeTabIdx?'font-bold':''}" style="border-color:${COLORS[i%COLORS.length]};color:${COLORS[i%COLORS.length]};${i===activeTradeTabIdx?'background:'+COLORS[i%COLORS.length]+'22':''}">${r.label}</button>`
+    ).join('');
+}
+
+function switchTradeTab(idx) {
+    activeTradeTabIdx = idx;
+    renderTradeTabBtns(comparisonResults);
+    renderTradeTable(comparisonResults[idx].trades, idx, comparisonResults[idx]);
+}
+function renderTradeTable(trades, ci, resultObj) {
+    const isTranche = resultObj && resultObj.tranche_details;
+    const sym = getCurrencySymbol();
+    let extraTh = '';
+    if (isTranche) {
+        extraTh = '<th class="text-right">Exec %</th><th class="text-right">Exec Amt</th><th class="text-right">Sig Exec</th>';
+    }
+
+    let html = `<table class="data-table"><thead><tr><th>Week</th><th>Time</th><th class="text-right">Pred</th><th class="text-right">Conf</th><th>Dir</th><th>Trade</th><th class="text-right">Entry</th><th class="text-right">Exit</th><th class="text-right">Pips</th><th class="text-right">PnL (${sym})</th><th class="text-right">Return%</th><th class="text-right">Cum PnL</th>${extraTh}</tr></thead><tbody>`;
+    for(let idx=0; idx<trades.length; idx++){
+        const t = trades[idx];
+        const bg=t.should_buy?(t.stop_loss_triggered?'rgba(239,68,68,0.12)':(t.profit_taking_triggered?'rgba(16,185,129,0.12)':(t.pnl>=0?'rgba(16,185,129,0.06)':'rgba(239,68,68,0.06)'))):'';
+        const cls=t.pnl>0?'positive':(t.pnl<0?'negative':'');
+        const slBadge = t.stop_loss_triggered ? '<span class="text-[9px] px-1 py-0.5 rounded bg-red-500/20 text-red-400 ml-1">SL</span>' : '';
+        const ptBadge = t.profit_taking_triggered ? '<span class="text-[9px] px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-400 ml-1">PT</span>' : '';
+
+        let extraCols = '';
+        if (isTranche) {
+            const execPct = t.executed_pct !== undefined ? t.executed_pct.toFixed(1) + '%' : '-';
+            const execAmt = t.executed_amount ? sym + (convertAmount(t.executed_amount)/1e6).toFixed(1) + 'M' : '-';
+            const sigExec = t.n_executed !== undefined ? `${t.n_executed}/${t.n_signals}` : '-';
+            extraCols = `<td class="text-right font-mono text-emerald-400">${execPct}</td><td class="text-right font-mono">${execAmt}</td><td class="text-right font-mono">${sigExec}</td>`;
+        }
+
+        const pnlDisplay = t.should_buy ? fmtAmt(t.pnl) : '-';
+        const cumDisplay = fmtAmt(t.cum_pnl);
+        const retPct = t.return_pct !== undefined && t.should_buy ? (t.return_pct > 0 ? '+' : '') + t.return_pct.toFixed(3) + '%' : '-';
+        const retCls = t.return_pct > 0 ? 'positive' : (t.return_pct < 0 ? 'negative' : '');
+
+        html+=`<tr style="background:${bg}${isTranche?';cursor:pointer':''}" ${isTranche?`onclick="showTrancheDetail(${ci},${idx})"`:''}><td class="font-mono">${t.year_week}</td><td>${t.predict_time.slice(0,16)}</td><td class="text-right font-mono">${t.prediction.toFixed(3)}</td><td class="text-right font-mono">${t.confidence.toFixed(3)}</td><td><span class="${t.direction==='BULLISH'?'positive':'negative'}">${t.direction}</span></td><td class="font-semibold">${t.should_buy?'BUY':'-'}${slBadge}${ptBadge}</td><td class="text-right font-mono">${t.entry_price?t.entry_price.toFixed(4):'-'}</td><td class="text-right font-mono">${t.exit_price?t.exit_price.toFixed(4):'-'}</td><td class="text-right font-mono ${cls}">${t.should_buy?(t.pips>0?'+':'')+t.pips.toFixed(1):'-'}</td><td class="text-right font-mono ${cls}">${pnlDisplay}</td><td class="text-right font-mono ${retCls}">${retPct}</td><td class="text-right font-mono font-semibold">${cumDisplay}</td>${extraCols}</tr>`;
+    }
+    html+='</tbody></table>';
+
+    // Add tranche detail panel
+    if (isTranche) {
+        html += `<div id="tranche-detail-panel" class="mt-4 hidden"><div class="bg-slate-800/50 rounded-xl p-4"><h4 class="text-xs font-semibold text-emerald-400 mb-2">Tranche Execution Detail</h4><div id="tranche-detail-content"></div></div></div>`;
+    }
+
+    document.getElementById('trade-table-container').innerHTML=html;
+}
+
+function showTrancheDetail(ci, weekIdx) {
+    const result = comparisonResults[ci];
+    if (!result || !result.tranche_details) return;
+
+    const detail = result.tranche_details[weekIdx];
+    if (!detail) return;
+
+    const panel = document.getElementById('tranche-detail-panel');
+    if (!panel) return;
+    panel.classList.remove('hidden');
+
+    const sym = getCurrencySymbol();
+    let html = `<div class="text-xs text-slate-400 mb-2">Week: <span class="font-mono font-semibold text-white">${detail.year_week}</span> | Executed: ${(detail.total_executed_weight*100).toFixed(1)}% | Unexecuted: ${(detail.unexecuted_weight*100).toFixed(1)}% (${fmtAmt(detail.unexecuted_amount)})</div>`;
+
+    // Show stop loss info if present
+    if (detail.stop_loss && detail.stop_loss.triggered) {
+        const sl = detail.stop_loss;
+        html += `<div class="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-3">
+            <div class="text-xs font-semibold text-red-400 mb-1">STOP LOSS TRIGGERED</div>
+            <div class="grid grid-cols-4 gap-3 text-[10px] text-slate-300">
+                <div><span class="text-slate-500">Unwind Time:</span> <span class="font-mono">${sl.unwind_time.slice(11,19)}</span></div>
+                <div><span class="text-slate-500">Avg Entry (ASK):</span> <span class="font-mono">${sl.avg_entry.toFixed(5)}</span></div>
+                <div><span class="text-slate-500">Unwind (BID):</span> <span class="font-mono text-red-300">${sl.unwind_bid.toFixed(5)}</span></div>
+                <div><span class="text-slate-500">Loss:</span> <span class="font-mono text-red-400">${sl.loss_bps.toFixed(1)} bps</span> (threshold: ${sl.threshold_bps} bps)</div>
+            </div>
+        </div>`;
+    }
+
+    // Show profit taking info if present
+    if (detail.profit_taking && detail.profit_taking.triggered) {
+        const pt = detail.profit_taking;
+        html += `<div class="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-3 mb-3">
+            <div class="text-xs font-semibold text-emerald-400 mb-1">PROFIT TAKING TRIGGERED</div>
+            <div class="grid grid-cols-4 gap-3 text-[10px] text-slate-300">
+                <div><span class="text-slate-500">Unwind Time:</span> <span class="font-mono">${pt.unwind_time.slice(11,19)}</span></div>
+                <div><span class="text-slate-500">Avg Entry (ASK):</span> <span class="font-mono">${pt.avg_entry.toFixed(5)}</span></div>
+                <div><span class="text-slate-500">Unwind (BID):</span> <span class="font-mono text-emerald-300">${pt.unwind_bid.toFixed(5)}</span></div>
+                <div><span class="text-slate-500">Gain:</span> <span class="font-mono text-emerald-400">${pt.gain_bps.toFixed(1)} bps</span> (threshold: ${pt.threshold_bps} bps)</div>
+            </div>
+        </div>`;
+    }
+
+    html += `<table class="data-table"><thead><tr><th>Slot</th><th>Signal Time</th><th class="text-right">Pred</th><th class="text-right">Conf</th><th class="text-right">Base W</th><th class="text-right">Avail W</th><th class="text-right">Exec W</th><th class="text-right">Entry</th><th class="text-right">Amount</th><th class="text-right">PnL</th><th>Action</th></tr></thead><tbody>`;
+
+    for (const t of detail.tranches) {
+        const actionCls = t.action === 'EXECUTE' ? 'text-emerald-400' : (t.action.includes('SL') ? 'text-red-400' : (t.action.includes('PT') ? 'text-emerald-400 font-semibold' : 'text-slate-500'));
+        const amtStr = t.amount_usd > 0 ? sym + (convertAmount(t.amount_usd)/1e6).toFixed(1) + 'M' : '-';
+        const entryStr = t.entry_price ? t.entry_price.toFixed(5) : '-';
+        html += `<tr>
+            <td class="font-mono font-semibold">${t.slot_idx}/${t.slot_total}</td>
+            <td class="text-xs">${t.signal_time ? t.signal_time.slice(11,16) : '-'}</td>
+            <td class="text-right font-mono">${t.prediction !== null ? t.prediction.toFixed(3) : '-'}</td>
+            <td class="text-right font-mono">${t.confidence !== null ? t.confidence.toFixed(3) : '-'}</td>
+            <td class="text-right font-mono">${(t.base_weight*100).toFixed(1)}%</td>
+            <td class="text-right font-mono">${(t.available_weight*100).toFixed(1)}%</td>
+            <td class="text-right font-mono ${t.executed_weight>0?'text-emerald-400':''}">${(t.executed_weight*100).toFixed(1)}%</td>
+            <td class="text-right font-mono">${entryStr}</td>
+            <td class="text-right font-mono">${amtStr}</td>
+            <td class="text-right font-mono ${t.pnl>0?'positive':(t.pnl<0?'negative':'')}">${t.pnl!==0?fmtAmt(t.pnl):'-'}</td>
+            <td class="text-[10px] ${actionCls}">${t.action}</td>
+        </tr>`;
+    }
+    html += '</tbody></table>';
+
+    document.getElementById('tranche-detail-content').innerHTML = html;
+    panel.scrollIntoView({behavior:'smooth', block:'center'});
+}
+function renderCompareScatters(results) {
+    Plotly.newPlot('chart-scatter-pred', results.map((r,i) => {const td=r.trades.filter(t=>t.should_buy); return {x:td.map(t=>t.prediction),y:td.map(t=>t.pnl),mode:'markers',type:'scatter',name:r.label,marker:{color:COLORS[i%COLORS.length],size:9,line:{width:1,color:'rgba(255,255,255,0.3)'}},text:td.map(t=>t.year_week),hovertemplate:'%{text}<br>Pred:%{x:.3f}<br>PnL:$%{y:,.0f}<extra></extra>'};}),
+        {...PLOTLY_DARK,title:{text:'Prediction vs PnL',font:{size:13,color:'#e2e8f0'}},xaxis:{...PLOTLY_DARK.xaxis,title:'Prediction'},yaxis:{...PLOTLY_DARK.yaxis,title:'PnL ($)',tickformat:'$,.0f'},margin:{t:40,b:50,l:70,r:20},legend:{font:{size:10}}},{responsive:true});
+    Plotly.newPlot('chart-scatter-conf', results.map((r,i) => {const td=r.trades.filter(t=>t.should_buy); return {x:td.map(t=>t.confidence),y:td.map(t=>t.pnl),mode:'markers',type:'scatter',name:r.label,marker:{color:COLORS[i%COLORS.length],size:9,line:{width:1,color:'rgba(255,255,255,0.3)'}},text:td.map(t=>t.year_week),hovertemplate:'%{text}<br>Conf:%{x:.3f}<br>PnL:$%{y:,.0f}<extra></extra>'};}),
+        {...PLOTLY_DARK,title:{text:'Confidence vs PnL',font:{size:13,color:'#e2e8f0'}},xaxis:{...PLOTLY_DARK.xaxis,title:'Confidence'},yaxis:{...PLOTLY_DARK.yaxis,title:'PnL ($)',tickformat:'$,.0f'},margin:{t:40,b:50,l:70,r:20},legend:{font:{size:10}}},{responsive:true});
+}
+
+// ======================== BOOT ========================
+window.addEventListener('DOMContentLoaded', async () => {
+    goStep(1); updateGridEstimate();
+    // Load trade size from config
+    try {
+        const cfgRes = await api('/api/config');
+        if (cfgRes.success && cfgRes.data && cfgRes.data.trading) {
+            const ts = cfgRes.data.trading.trade_size_usd;
+            if (ts) {
+                document.getElementById('gs-trade-size').value = ts;
+                formatTradeSize();
+            }
+        }
+    } catch(e) {}
+});
+</script>
+</body>
+</html>

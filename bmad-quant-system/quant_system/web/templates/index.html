@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMAD Quant System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-primary:hover { opacity: 0.9; }
+        .positive { color: #10b981; }
+        .negative { color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">BMAD Quant System</h1>
+                <div class="flex space-x-6">
+                    <button onclick="showTab('strategies')" id="tab-strategies" class="tab-btn tab-active px-4 py-2 font-medium">策略管理</button>
+                    <button onclick="showTab('configs')" id="tab-configs" class="tab-btn px-4 py-2 font-medium text-gray-600">配置管理</button>
+                    <button onclick="showTab('backtest')" id="tab-backtest" class="tab-btn px-4 py-2 font-medium text-gray-600">回测运行</button>
+                    <button onclick="showTab('results')" id="tab-results" class="tab-btn px-4 py-2 font-medium text-gray-600">回测结果</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <!-- 策略管理 -->
+        <div id="panel-strategies" class="panel">
+            <div class="card p-6 mb-6">
+                <h2 class="text-xl font-bold mb-4">可用策略</h2>
+                <div id="strategies-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- 策略卡片将通过JS动态加载 -->
+                </div>
+            </div>
+            
+            <!-- 策略详情 -->
+            <div id="strategy-detail" class="card p-6 hidden">
+                <h2 class="text-xl font-bold mb-4">策略详情</h2>
+                <div id="strategy-detail-content"></div>
+            </div>
+        </div>
+
+        <!-- 配置管理 -->
+        <div id="panel-configs" class="panel hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">配置文件</h2>
+                <button onclick="showConfigEditor()" class="btn-primary text-white px-4 py-2 rounded-lg">
+                    + 新建配置
+                </button>
+            </div>
+            
+            <div id="configs-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 配置列表将通过JS动态加载 -->
+            </div>
+            
+            <!-- 配置编辑器 -->
+            <div id="config-editor" class="card p-6 mt-6 hidden">
+                <h3 class="text-lg font-bold mb-4">配置编辑器</h3>
+                <form id="config-form" class="space-y-6">
+                    <!-- 基本信息 -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">配置名称</label>
+                            <input type="text" id="cfg-name" class="w-full border rounded-lg px-3 py-2" placeholder="My Strategy Config">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">文件名</label>
+                            <input type="text" id="cfg-filename" class="w-full border rounded-lg px-3 py-2" placeholder="my_config.yaml">
+                        </div>
+                    </div>
+                    
+                    <!-- 数据源配置 -->
+                    <div class="border-t pt-4">
+                        <h4 class="font-medium mb-3">数据源配置</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">数据源类型</label>
+                                <select id="cfg-ds-type" class="w-full border rounded-lg px-3 py-2">
+                                    <option value="bloomberg">Bloomberg</option>
+                                    <option value="local_csv">本地CSV</option>
+                                    <option value="local_excel">本地Excel</option>
+                                    <option value="sql">SQL数据库</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">交易品种</label>
+                                <input type="text" id="cfg-symbol" class="w-full border rounded-lg px-3 py-2" value="USDCNH Curncy">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">数据频率</label>
+                                <select id="cfg-frequency" class="w-full border rounded-lg px-3 py-2">
+                                    <option value="1m">1分钟</option>
+                                    <option value="5m">5分钟</option>
+                                    <option value="15m">15分钟</option>
+                                    <option value="1h">1小时</option>
+                                    <option value="1d">日线</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">回溯天数</label>
+                                <input type="number" id="cfg-days-back" class="w-full border rounded-lg px-3 py-2" value="140">
+                            </div>
+                        </div>
+                        
+                        <!-- 本地文件路径 -->
+                        <div id="local-file-config" class="mt-4 hidden">
+                            <label class="block text-sm text-gray-600 mb-1">文件路径</label>
+                            <input type="text" id="cfg-file-path" class="w-full border rounded-lg px-3 py-2" placeholder="./data/usdcnh.csv">
+                        </div>
+                    </div>
+                    
+                    <!-- 策略配置 -->
+                    <div class="border-t pt-4">
+                        <h4 class="font-medium mb-3">策略配置</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">策略类型</label>
+                                <select id="cfg-strategy-type" class="w-full border rounded-lg px-3 py-2" onchange="loadStrategyParams()">
+                                    <!-- 动态加载 -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">策略名称</label>
+                                <input type="text" id="cfg-strategy-name" class="w-full border rounded-lg px-3 py-2" placeholder="My Friday Strategy">
+                            </div>
+                        </div>
+                        <div id="strategy-params" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- 策略参数将动态加载 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 回测配置 -->
+                    <div class="border-t pt-4">
+                        <h4 class="font-medium mb-3">回测配置</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">初始资金</label>
+                                <input type="number" id="cfg-initial-capital" class="w-full border rounded-lg px-3 py-2" value="1000000">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">仓位大小</label>
+                                <input type="number" id="cfg-position-size" class="w-full border rounded-lg px-3 py-2" value="100000">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">手续费率</label>
+                                <input type="number" id="cfg-commission" class="w-full border rounded-lg px-3 py-2" value="0.00005" step="0.00001">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">滑点</label>
+                                <input type="number" id="cfg-slippage" class="w-full border rounded-lg px-3 py-2" value="0.0001" step="0.0001">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 风险配置 -->
+                    <div class="border-t pt-4">
+                        <h4 class="font-medium mb-3">风险管理</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">止损比例</label>
+                                <input type="number" id="cfg-stop-loss" class="w-full border rounded-lg px-3 py-2" value="0.01" step="0.001">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">止盈比例</label>
+                                <input type="number" id="cfg-take-profit" class="w-full border rounded-lg px-3 py-2" value="0.02" step="0.001">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">最大回撤</label>
+                                <input type="number" id="cfg-max-dd" class="w-full border rounded-lg px-3 py-2" value="0.2" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="hideConfigEditor()" class="px-4 py-2 border rounded-lg">取消</button>
+                        <button type="submit" class="btn-primary text-white px-6 py-2 rounded-lg">保存配置</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 回测运行 -->
+        <div id="panel-backtest" class="panel hidden">
+            <div class="card p-6">
+                <h2 class="text-xl font-bold mb-4">运行回测</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">选择配置文件</label>
+                        <select id="backtest-config" class="w-full border rounded-lg px-3 py-2">
+                            <!-- 动态加载 -->
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="runBacktest()" class="btn-primary text-white px-8 py-2 rounded-lg w-full">
+                            🚀 运行回测
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 回测进度 -->
+                <div id="backtest-progress" class="mt-6 hidden">
+                    <div class="flex items-center space-x-3">
+                        <div class="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                        <span>正在运行回测...</span>
+                    </div>
+                </div>
+                
+                <!-- 回测日志 -->
+                <div id="backtest-logs" class="mt-6 hidden">
+                    <h3 class="font-bold mb-3">运行日志</h3>
+                    <div id="backtest-logs-content" class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm max-h-80 overflow-y-auto">
+                        <!-- 日志内容 -->
+                    </div>
+                </div>
+                
+                <!-- 回测结果预览 -->
+                <div id="backtest-preview" class="mt-6 hidden">
+                    <h3 class="font-bold mb-3">回测结果</h3>
+                    <div id="backtest-preview-content" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- 动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 回测结果 -->
+        <div id="panel-results" class="panel hidden">
+            <h2 class="text-xl font-bold mb-4">回测结果历史</h2>
+            
+            <div id="results-list" class="space-y-4">
+                <!-- 动态加载 -->
+            </div>
+            
+            <!-- 结果详情 -->
+            <div id="result-detail" class="card p-6 mt-6 hidden">
+                <div id="result-detail-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局数据
+        let strategies = [];
+        let configs = [];
+        let currentStrategy = null;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStrategies();
+            loadConfigs();
+            loadResults();
+            
+            // 数据源类型切换
+            document.getElementById('cfg-ds-type').addEventListener('change', (e) => {
+                const localConfig = document.getElementById('local-file-config');
+                if (e.target.value === 'local_csv' || e.target.value === 'local_excel') {
+                    localConfig.classList.remove('hidden');
+                } else {
+                    localConfig.classList.add('hidden');
+                }
+            });
+            
+            // 配置表单提交
+            document.getElementById('config-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveConfig();
+            });
+        });
+        
+        // Tab切换
+        function showTab(tab) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(t => {
+                t.classList.remove('tab-active');
+                t.classList.add('text-gray-600');
+            });
+            
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            const tabBtn = document.getElementById(`tab-${tab}`);
+            tabBtn.classList.add('tab-active');
+            tabBtn.classList.remove('text-gray-600');
+            
+            if (tab === 'backtest') {
+                loadBacktestConfigs();
+            }
+        }
+        
+        // 加载策略列表
+        async function loadStrategies() {
+            const res = await fetch('/api/strategies');
+            const data = await res.json();
+            
+            if (data.success) {
+                strategies = data.data;
+                renderStrategies();
+                populateStrategySelect();
+            }
+        }
+        
+        function renderStrategies() {
+            const container = document.getElementById('strategies-list');
+            container.innerHTML = strategies.map(s => `
+                <div class="border rounded-lg p-4 hover:shadow-md cursor-pointer transition" onclick="showStrategyDetail('${s.name}')">
+                    <h3 class="font-bold text-lg">${s.name}</h3>
+                    <p class="text-gray-600 text-sm mt-1">${s.description}</p>
+                    <div class="mt-3 flex items-center text-sm text-gray-500">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">v${s.version}</span>
+                        <span class="ml-2">${s.parameters.length} 个参数</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showStrategyDetail(name) {
+            const strategy = strategies.find(s => s.name === name);
+            if (!strategy) return;
+            
+            currentStrategy = strategy;
+            const container = document.getElementById('strategy-detail-content');
+            
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold text-lg">${strategy.name}</h3>
+                        <p class="text-gray-600 mt-2">${strategy.description}</p>
+                        <p class="text-sm text-gray-500 mt-2">版本: ${strategy.version} | 作者: ${strategy.author}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium mb-2">参数列表</h4>
+                        <div class="space-y-2">
+                            ${strategy.parameters.map(p => `
+                                <div class="flex justify-between items-center bg-gray-50 px-3 py-2 rounded">
+                                    <span class="font-medium">${p.name}</span>
+                                    <span class="text-gray-600">${p.type} (默认: ${p.default})</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('strategy-detail').classList.remove('hidden');
+        }
+        
+        function populateStrategySelect() {
+            const select = document.getElementById('cfg-strategy-type');
+            select.innerHTML = strategies.map(s => 
+                `<option value="${s.name}">${s.name}</option>`
+            ).join('');
+            
+            if (strategies.length > 0) {
+                loadStrategyParams();
+            }
+        }
+        
+        function loadStrategyParams() {
+            const strategyName = document.getElementById('cfg-strategy-type').value;
+            const strategy = strategies.find(s => s.name === strategyName);
+            if (!strategy) return;
+            
+            const container = document.getElementById('strategy-params');
+            container.innerHTML = strategy.parameters.map(p => `
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">${p.name}</label>
+                    ${renderParamInput(p)}
+                </div>
+            `).join('');
+        }
+        
+        function renderParamInput(param) {
+            const id = `param-${param.name}`;
+            
+            if (param.type === 'select') {
+                return `<select id="${id}" class="w-full border rounded-lg px-3 py-2">
+                    ${param.options.map(o => `<option value="${o}" ${o === param.default ? 'selected' : ''}>${o}</option>`).join('')}
+                </select>`;
+            } else if (param.type === 'bool') {
+                return `<input type="checkbox" id="${id}" ${param.default ? 'checked' : ''} class="h-5 w-5">`;
+            } else {
+                return `<input type="${param.type === 'int' ? 'number' : 'text'}" id="${id}" 
+                    value="${param.default}" 
+                    ${param.min !== null ? `min="${param.min}"` : ''} 
+                    ${param.max !== null ? `max="${param.max}"` : ''} 
+                    class="w-full border rounded-lg px-3 py-2">`;
+            }
+        }
+        
+        // 配置管理
+        async function loadConfigs() {
+            const res = await fetch('/api/configs');
+            const data = await res.json();
+            
+            if (data.success) {
+                configs = data.data;
+                renderConfigs();
+            }
+        }
+        
+        function renderConfigs() {
+            const container = document.getElementById('configs-list');
+            container.innerHTML = configs.map(c => `
+                <div class="card p-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold">${c.name}</h3>
+                            <p class="text-sm text-gray-600">${c.filename}</p>
+                            <div class="mt-2 flex space-x-2">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${c.data_source}</span>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">${c.strategy}</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editConfig('${c.filename}')" class="text-blue-600 hover:text-blue-800">编辑</button>
+                            <button onclick="deleteConfig('${c.filename}')" class="text-red-600 hover:text-red-800">删除</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showConfigEditor() {
+            document.getElementById('config-editor').classList.remove('hidden');
+        }
+        
+        function hideConfigEditor() {
+            document.getElementById('config-editor').classList.add('hidden');
+        }
+        
+        async function editConfig(filename) {
+            const res = await fetch(`/api/configs/${filename}`);
+            const data = await res.json();
+            
+            if (data.success) {
+                const cfg = data.data;
+                
+                document.getElementById('cfg-name').value = cfg.name || '';
+                document.getElementById('cfg-filename').value = filename;
+                document.getElementById('cfg-ds-type').value = cfg.data_source?.type || 'bloomberg';
+                document.getElementById('cfg-symbol').value = cfg.data_source?.symbol || '';
+                document.getElementById('cfg-frequency').value = cfg.data_source?.frequency || '1m';
+                document.getElementById('cfg-days-back').value = cfg.data_source?.days_back || 140;
+                document.getElementById('cfg-strategy-type').value = cfg.strategy?.type || '';
+                document.getElementById('cfg-strategy-name').value = cfg.strategy?.name || '';
+                document.getElementById('cfg-initial-capital').value = cfg.backtest?.initial_capital || 1000000;
+                document.getElementById('cfg-position-size').value = cfg.backtest?.position_size || 100000;
+                document.getElementById('cfg-commission').value = cfg.backtest?.commission_rate || 0.00005;
+                document.getElementById('cfg-slippage').value = cfg.backtest?.slippage || 0.0001;
+                
+                loadStrategyParams();
+                
+                // 填充策略参数
+                if (cfg.strategy?.parameters) {
+                    for (const [key, value] of Object.entries(cfg.strategy.parameters)) {
+                        const input = document.getElementById(`param-${key}`);
+                        if (input) input.value = value;
+                    }
+                }
+                
+                showConfigEditor();
+            }
+        }
+        
+        async function saveConfig() {
+            const strategyType = document.getElementById('cfg-strategy-type').value;
+            const strategy = strategies.find(s => s.name === strategyType);
+            
+            // 收集策略参数
+            const params = {};
+            if (strategy) {
+                strategy.parameters.forEach(p => {
+                    const input = document.getElementById(`param-${p.name}`);
+                    if (input) {
+                        params[p.name] = p.type === 'int' ? parseInt(input.value) : 
+                                         p.type === 'float' ? parseFloat(input.value) : input.value;
+                    }
+                });
+            }
+            
+            const config = {
+                name: document.getElementById('cfg-name').value,
+                version: '1.0.0',
+                log_level: 'INFO',
+                data_source: {
+                    type: document.getElementById('cfg-ds-type').value,
+                    symbol: document.getElementById('cfg-symbol').value,
+                    frequency: document.getElementById('cfg-frequency').value,
+                    days_back: parseInt(document.getElementById('cfg-days-back').value),
+                    local_file: {
+                        path: document.getElementById('cfg-file-path')?.value || ''
+                    }
+                },
+                strategy: {
+                    name: document.getElementById('cfg-strategy-name').value,
+                    type: strategyType,
+                    enabled: true,
+                    parameters: params
+                },
+                backtest: {
+                    initial_capital: parseFloat(document.getElementById('cfg-initial-capital').value),
+                    position_size: parseFloat(document.getElementById('cfg-position-size').value),
+                    commission_rate: parseFloat(document.getElementById('cfg-commission').value),
+                    slippage: parseFloat(document.getElementById('cfg-slippage').value)
+                },
+                risk: {
+                    stop_loss_pct: parseFloat(document.getElementById('cfg-stop-loss').value),
+                    take_profit_pct: parseFloat(document.getElementById('cfg-take-profit').value),
+                    max_drawdown_pct: parseFloat(document.getElementById('cfg-max-dd').value)
+                }
+            };
+            
+            const filename = document.getElementById('cfg-filename').value;
+            
+            const res = await fetch('/api/configs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename, config })
+            });
+            
+            const data = await res.json();
+            if (data.success) {
+                alert('配置保存成功！');
+                hideConfigEditor();
+                loadConfigs();
+            } else {
+                alert('保存失败: ' + data.error);
+            }
+        }
+        
+        async function deleteConfig(filename) {
+            if (!confirm(`确定删除配置 ${filename}？`)) return;
+            
+            await fetch(`/api/configs/${filename}`, { method: 'DELETE' });
+            loadConfigs();
+        }
+        
+        // 回测
+        async function loadBacktestConfigs() {
+            const select = document.getElementById('backtest-config');
+            select.innerHTML = configs.map(c => 
+                `<option value="${c.filename}">${c.name} (${c.filename})</option>`
+            ).join('');
+        }
+        
+        async function runBacktest() {
+            const configFile = document.getElementById('backtest-config').value;
+            const logsContainer = document.getElementById('backtest-logs-content');
+            const logsSection = document.getElementById('backtest-logs');
+            
+            // 立即显示日志区域
+            logsSection.classList.remove('hidden');
+            logsContainer.innerHTML = '<div class="text-blue-400">[DEBUG] runBacktest() 被调用</div>';
+            
+            if (!configFile) {
+                logsContainer.innerHTML += '<div class="text-red-400">[ERROR] 未选择配置文件</div>';
+                alert('请选择配置文件');
+                return;
+            }
+            
+            logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] 配置文件: ${configFile}</div>`;
+            
+            // 显示进度
+            document.getElementById('backtest-progress').classList.remove('hidden');
+            document.getElementById('backtest-preview').classList.add('hidden');
+            
+            logsContainer.innerHTML += '<div class="text-gray-400">[DEBUG] 开始发送请求...</div>';
+            
+            try {
+                const requestBody = JSON.stringify({ config: configFile });
+                logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] 请求体: ${requestBody}</div>`;
+                
+                const res = await fetch('/api/backtest/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: requestBody
+                });
+                
+                logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] 响应状态: ${res.status}</div>`;
+                
+                const responseText = await res.text();
+                logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] 响应长度: ${responseText.length} 字符</div>`;
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                    logsContainer.innerHTML += `<div class="text-green-400">[DEBUG] JSON解析成功</div>`;
+                } catch (parseErr) {
+                    logsContainer.innerHTML += `<div class="text-red-400">[ERROR] JSON解析失败: ${parseErr.message}</div>`;
+                    logsContainer.innerHTML += `<div class="text-red-400">[DEBUG] 原始响应: ${responseText.substring(0, 500)}</div>`;
+                    return;
+                }
+                
+                console.log('回测响应:', data);
+                
+                // 显示响应结构
+                logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] data.success = ${data.success}</div>`;
+                logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] data.logs 类型 = ${typeof data.logs}</div>`;
+                logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] data.logs 是数组 = ${Array.isArray(data.logs)}</div>`;
+                logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] data.logs 长度 = ${data.logs ? data.logs.length : 'undefined'}</div>`;
+                
+                // 显示日志
+                if (data.logs && Array.isArray(data.logs) && data.logs.length > 0) {
+                    logsContainer.innerHTML += '<div class="text-green-400 mt-2 border-t border-gray-700 pt-2">=== 服务器日志 ===</div>';
+                    showBacktestLogs(data.logs);
+                } else {
+                    logsContainer.innerHTML += '<div class="text-yellow-400">[WARN] 服务器未返回日志数组</div>';
+                    logsContainer.innerHTML += `<div class="text-gray-400">[DEBUG] 完整响应: ${JSON.stringify(data).substring(0, 1000)}</div>`;
+                }
+                
+                // 显示错误
+                if (data.error) {
+                    logsContainer.innerHTML += `<div class="text-red-500 mt-2">[ERROR] ${data.error}</div>`;
+                    if (data.traceback) {
+                        logsContainer.innerHTML += `<div class="text-red-400 text-xs whitespace-pre-wrap">${data.traceback}</div>`;
+                    }
+                }
+                
+                if (data.success) {
+                    showBacktestResult(data.data, data.logs);
+                    loadResults();
+                }
+            } catch (e) {
+                console.error('回测错误:', e);
+                logsContainer.innerHTML += `<div class="text-red-500">[EXCEPTION] ${e.message}</div>`;
+                logsContainer.innerHTML += `<div class="text-red-400 text-xs">${e.stack}</div>`;
+            } finally {
+                document.getElementById('backtest-progress').classList.add('hidden');
+            }
+        }
+        
+        function showBacktestLogs(logs) {
+            const container = document.getElementById('backtest-logs-content');
+            // 追加日志而不是替换
+            const logsHtml = logs.map(log => {
+                let className = 'py-0.5';
+                if (log.includes('✓')) className += ' text-green-400';
+                else if (log.includes('✗') || log.includes('错误') || log.includes('Error')) className += ' text-red-400';
+                else if (log.includes('⚠')) className += ' text-yellow-400';
+                else if (log.startsWith('[')) className += ' font-bold text-blue-400 mt-2';
+                else if (log.startsWith('  -')) className += ' text-gray-400 pl-4';
+                else className += ' text-gray-200';
+                
+                // 转义HTML
+                const escaped = log.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return `<div class="${className}">${escaped}</div>`;
+            }).join('');
+            
+            container.innerHTML += logsHtml;
+            document.getElementById('backtest-logs').classList.remove('hidden');
+            
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function showBacktestResult(result, logs) {
+            const summary = result.summary || {};
+            const container = document.getElementById('backtest-preview-content');
+            
+            // 安全获取数值
+            const totalReturn = summary.total_return ?? 0;
+            const sharpeRatio = summary.sharpe_ratio ?? 0;
+            const maxDrawdown = summary.max_drawdown ?? 0;
+            const winRate = summary.win_rate ?? 0;
+            const totalTrades = summary.total_trades ?? 0;
+            const totalPnl = summary.total_pnl ?? 0;
+            
+            container.innerHTML = `
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">总收益率</div>
+                    <div class="text-2xl font-bold ${totalReturn >= 0 ? 'positive' : 'negative'}">
+                        ${Number(totalReturn).toFixed(2)}%
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">夏普比率</div>
+                    <div class="text-2xl font-bold">${Number(sharpeRatio).toFixed(2)}</div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">最大回撤</div>
+                    <div class="text-2xl font-bold negative">${Number(maxDrawdown).toFixed(2)}%</div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">胜率</div>
+                    <div class="text-2xl font-bold">${Number(winRate).toFixed(1)}%</div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">总交易</div>
+                    <div class="text-2xl font-bold">${totalTrades}</div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">总盈亏</div>
+                    <div class="text-2xl font-bold ${totalPnl >= 0 ? 'positive' : 'negative'}">
+                        $${Number(totalPnl).toLocaleString()}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('backtest-preview').classList.remove('hidden');
+        }
+        
+        // 结果列表
+        async function loadResults() {
+            const res = await fetch('/api/backtest/results');
+            const data = await res.json();
+            
+            if (data.success) {
+                renderResults(data.data);
+            }
+        }
+        
+        function renderResults(results) {
+            const container = document.getElementById('results-list');
+            
+            if (results.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">暂无回测结果</p>';
+                return;
+            }
+            
+            container.innerHTML = results.map(r => `
+                <div class="card p-4 cursor-pointer hover:shadow-md" onclick="showResultDetail('${r.id}')">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold">${r.strategy}</h3>
+                            <p class="text-sm text-gray-600">${r.symbol} | ${r.created_at}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold ${r.total_return >= 0 ? 'positive' : 'negative'}">
+                                ${r.total_return?.toFixed(2) || 0}%
+                            </div>
+                            <div class="text-sm text-gray-600">Sharpe: ${r.sharpe_ratio?.toFixed(2) || 0}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function showResultDetail(id) {
+            const res = await fetch(`/api/backtest/results/${id}`);
+            const data = await res.json();
+            
+            if (data.success) {
+                const result = data.data;
+                const summary = result.summary || {};
+                const container = document.getElementById('result-detail-content');
+                
+                // 安全获取数值
+                const totalReturn = summary.total_return ?? 0;
+                const sharpeRatio = summary.sharpe_ratio ?? 0;
+                const maxDrawdown = summary.max_drawdown ?? 0;
+                const winRate = summary.win_rate ?? 0;
+                
+                container.innerHTML = `
+                    <h3 class="text-xl font-bold mb-4">${result.strategy_name || '未知策略'}</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-gray-50 p-3 rounded">
+                            <div class="text-sm text-gray-600">总收益率</div>
+                            <div class="text-xl font-bold ${totalReturn >= 0 ? 'positive' : 'negative'}">
+                                ${Number(totalReturn).toFixed(2)}%
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <div class="text-sm text-gray-600">夏普比率</div>
+                            <div class="text-xl font-bold">${Number(sharpeRatio).toFixed(2)}</div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <div class="text-sm text-gray-600">最大回撤</div>
+                            <div class="text-xl font-bold negative">${Number(maxDrawdown).toFixed(2)}%</div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <div class="text-sm text-gray-600">胜率</div>
+                            <div class="text-xl font-bold">${Number(winRate).toFixed(1)}%</div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold mb-2">交易记录 (${result.trades?.length || 0}笔)</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-3 py-2 text-left">入场时间</th>
+                                    <th class="px-3 py-2 text-left">出场时间</th>
+                                    <th class="px-3 py-2 text-right">入场价</th>
+                                    <th class="px-3 py-2 text-right">出场价</th>
+                                    <th class="px-3 py-2 text-right">收益率</th>
+                                    <th class="px-3 py-2 text-right">盈亏</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${(result.trades || []).map(t => `
+                                    <tr class="border-b">
+                                        <td class="px-3 py-2">${t.entry_time || '-'}</td>
+                                        <td class="px-3 py-2">${t.exit_time || '-'}</td>
+                                        <td class="px-3 py-2 text-right">${Number(t.entry_price || 0).toFixed(4)}</td>
+                                        <td class="px-3 py-2 text-right">${Number(t.exit_price || 0).toFixed(4)}</td>
+                                        <td class="px-3 py-2 text-right ${(t.return_pct || 0) >= 0 ? 'positive' : 'negative'}">${Number(t.return_pct || 0).toFixed(4)}%</td>
+                                        <td class="px-3 py-2 text-right ${(t.net_pnl || 0) >= 0 ? 'positive' : 'negative'}">$${Number(t.net_pnl || 0).toLocaleString()}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                document.getElementById('result-detail').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Lab - 策略实验室</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .positive { color: #10b981; }
+        .negative { color: #ef4444; }
+        .tab-active { border-bottom: 3px solid #667eea; color: #667eea; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                    Strategy Lab
+                </h1>
+                <div class="flex space-x-6">
+                    <button onclick="showTab('data')" id="tab-data" class="tab-btn px-4 py-2 text-gray-600">数据管理</button>
+                    <button onclick="showTab('strategy')" id="tab-strategy" class="tab-btn tab-active px-4 py-2">策略分析</button>
+                    <button onclick="showTab('charts')" id="tab-charts" class="tab-btn px-4 py-2 text-gray-600">图表中心</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <!-- 数据管理 -->
+        <div id="panel-data" class="panel hidden">
+            <div class="card p-6 mb-6">
+                <h2 class="text-xl font-bold mb-4">数据文件</h2>
+                
+                <!-- 上传 -->
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 mb-6 text-center">
+                    <input type="file" id="file-upload" accept=".csv" class="hidden" onchange="uploadFile()">
+                    <label for="file-upload" class="cursor-pointer">
+                        <div class="text-gray-500">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <p class="mt-2">点击上传CSV文件</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <!-- 文件列表 -->
+                <div id="data-files" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- 动态加载 -->
+                </div>
+            </div>
+            
+            <!-- 数据预览 -->
+            <div id="data-preview" class="card p-6 hidden">
+                <h3 class="text-lg font-bold mb-4">数据预览</h3>
+                <div id="data-preview-content" class="overflow-x-auto"></div>
+            </div>
+        </div>
+
+        <!-- 策略分析 -->
+        <div id="panel-strategy" class="panel">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 左侧：配置 -->
+                <div class="card p-6">
+                    <h2 class="text-xl font-bold mb-4">策略配置</h2>
+                    
+                    <!-- 数据选择 -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">数据文件</label>
+                        <select id="strategy-data" class="w-full border rounded-lg px-3 py-2">
+                            <option value="">选择数据文件...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 策略选择 -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">策略</label>
+                        <select id="strategy-select" class="w-full border rounded-lg px-3 py-2" onchange="loadStrategyParams()">
+                            <option value="">选择策略...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 策略参数 -->
+                    <div id="strategy-params" class="space-y-3 mb-6">
+                        <!-- 动态加载 -->
+                    </div>
+                    
+                    <button onclick="runAnalysis()" class="btn-primary text-white px-6 py-3 rounded-lg w-full font-medium">
+                        运行分析
+                    </button>
+                </div>
+                
+                <!-- 右侧：结果 -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- 摘要 -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-bold mb-4">分析结果</h3>
+                        <div id="analysis-summary" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                <div class="text-sm text-gray-500">总交易</div>
+                                <div id="stat-trades" class="text-2xl font-bold">-</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                <div class="text-sm text-gray-500">胜率</div>
+                                <div id="stat-winrate" class="text-2xl font-bold">-</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                <div class="text-sm text-gray-500">总收益</div>
+                                <div id="stat-return" class="text-2xl font-bold">-</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                <div class="text-sm text-gray-500">夏普比率</div>
+                                <div id="stat-sharpe" class="text-2xl font-bold">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 权益曲线 -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-bold mb-4">权益曲线</h3>
+                        <div id="equity-chart" style="height: 300px;"></div>
+                    </div>
+                    
+                    <!-- 回撤 -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-bold mb-4">回撤分析</h3>
+                        <div id="drawdown-chart" style="height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 交易记录 -->
+            <div class="card p-6 mt-6">
+                <h3 class="text-lg font-bold mb-4">交易记录</h3>
+                <div id="trades-table" class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 text-left">#</th>
+                                <th class="px-4 py-2 text-left">入场时间</th>
+                                <th class="px-4 py-2 text-left">出场时间</th>
+                                <th class="px-4 py-2 text-right">入场价</th>
+                                <th class="px-4 py-2 text-right">出场价</th>
+                                <th class="px-4 py-2 text-right">收益率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trades-body">
+                            <tr><td colspan="6" class="text-center py-4 text-gray-500">运行分析后显示交易记录</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图表中心 -->
+        <div id="panel-charts" class="panel hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 价格走势 -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-bold mb-4">价格走势</h3>
+                    <div id="price-chart" style="height: 400px;"></div>
+                </div>
+                
+                <!-- 收益分布 -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-bold mb-4">收益分布</h3>
+                    <div id="returns-dist-chart" style="height: 400px;"></div>
+                </div>
+                
+                <!-- 月度收益 -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-bold mb-4">月度收益</h3>
+                    <div id="monthly-chart" style="height: 300px;"></div>
+                </div>
+                
+                <!-- 星期分析 -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-bold mb-4">星期分析</h3>
+                    <div id="weekday-chart" style="height: 300px;"></div>
+                </div>
+                
+                <!-- 小时分析 -->
+                <div class="card p-6 lg:col-span-2">
+                    <h3 class="text-lg font-bold mb-4">小时分析</h3>
+                    <div id="hourly-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局数据
+        let strategies = [];
+        let currentReport = null;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStrategies();
+            loadDataFiles();
+        });
+        
+        // Tab切换
+        function showTab(tab) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(t => {
+                t.classList.remove('tab-active');
+                t.classList.add('text-gray-600');
+            });
+            
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            const tabBtn = document.getElementById(`tab-${tab}`);
+            tabBtn.classList.add('tab-active');
+            tabBtn.classList.remove('text-gray-600');
+            
+            if (tab === 'charts' && currentReport) {
+                renderAllCharts(currentReport);
+            }
+        }
+        
+        // 加载策略列表
+        async function loadStrategies() {
+            const res = await fetch('/api/strategies');
+            const data = await res.json();
+            
+            if (data.success) {
+                strategies = data.data;
+                const select = document.getElementById('strategy-select');
+                select.innerHTML = '<option value="">选择策略...</option>' +
+                    strategies.map(s => `<option value="${s.name}">${s.name} - ${s.description}</option>`).join('');
+            }
+        }
+        
+        // 加载数据文件
+        async function loadDataFiles() {
+            const res = await fetch('/api/data/list');
+            const data = await res.json();
+            
+            if (data.success) {
+                const container = document.getElementById('data-files');
+                const select = document.getElementById('strategy-data');
+                
+                if (data.data.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 col-span-3">暂无数据文件，请上传CSV文件</p>';
+                    select.innerHTML = '<option value="">无可用数据</option>';
+                } else {
+                    container.innerHTML = data.data.map(f => `
+                        <div class="border rounded-lg p-4 hover:shadow-md cursor-pointer" onclick="previewData('${f.name}')">
+                            <div class="font-medium">${f.name}</div>
+                            <div class="text-sm text-gray-500">${(f.size / 1024).toFixed(1)} KB</div>
+                            ${f.columns ? `<div class="text-xs text-gray-400 mt-1">${f.columns.slice(0, 4).join(', ')}...</div>` : ''}
+                        </div>
+                    `).join('');
+                    
+                    select.innerHTML = '<option value="">选择数据文件...</option>' +
+                        data.data.map(f => `<option value="${f.name}">${f.name}</option>`).join('');
+                }
+            }
+        }
+        
+        // 上传文件
+        async function uploadFile() {
+            const input = document.getElementById('file-upload');
+            const file = input.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const res = await fetch('/api/data/upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await res.json();
+            if (data.success) {
+                alert('上传成功！');
+                loadDataFiles();
+            } else {
+                alert('上传失败: ' + data.error);
+            }
+        }
+        
+        // 预览数据
+        async function previewData(filename) {
+            const res = await fetch(`/api/data/${filename}`);
+            const data = await res.json();
+            
+            if (data.success) {
+                const container = document.getElementById('data-preview-content');
+                const preview = data.data;
+                
+                container.innerHTML = `
+                    <div class="mb-4 text-sm text-gray-600">
+                        共 ${preview.rows} 行 | 列: ${preview.columns.join(', ')}
+                    </div>
+                    <table class="w-full text-sm border">
+                        <thead class="bg-gray-100">
+                            <tr>${preview.columns.map(c => `<th class="px-3 py-2 text-left border">${c}</th>`).join('')}</tr>
+                        </thead>
+                        <tbody>
+                            ${preview.preview.map(row => `
+                                <tr>${preview.columns.map(c => `<td class="px-3 py-2 border">${row[c] ?? ''}</td>`).join('')}</tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('data-preview').classList.remove('hidden');
+            }
+        }
+        
+        // 加载策略参数
+        function loadStrategyParams() {
+            const name = document.getElementById('strategy-select').value;
+            const strategy = strategies.find(s => s.name === name);
+            
+            const container = document.getElementById('strategy-params');
+            
+            if (!strategy || !strategy.parameters) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = strategy.parameters.map(p => `
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">${p.description || p.name}</label>
+                    ${renderParamInput(p)}
+                </div>
+            `).join('');
+        }
+        
+        function renderParamInput(param) {
+            const id = `param-${param.name}`;
+            
+            if (param.type === 'select') {
+                return `<select id="${id}" class="w-full border rounded-lg px-3 py-2">
+                    ${param.options.map(o => `<option value="${o}" ${o === param.default ? 'selected' : ''}>${o}</option>`).join('')}
+                </select>`;
+            } else {
+                return `<input type="number" id="${id}" value="${param.default}" 
+                    ${param.min !== undefined ? `min="${param.min}"` : ''} 
+                    ${param.max !== undefined ? `max="${param.max}"` : ''} 
+                    class="w-full border rounded-lg px-3 py-2">`;
+            }
+        }
+        
+        // 运行分析
+        async function runAnalysis() {
+            const strategyName = document.getElementById('strategy-select').value;
+            const dataFile = document.getElementById('strategy-data').value;
+            
+            if (!strategyName || !dataFile) {
+                alert('请选择策略和数据文件');
+                return;
+            }
+            
+            const strategy = strategies.find(s => s.name === strategyName);
+            const params = {};
+            
+            if (strategy && strategy.parameters) {
+                strategy.parameters.forEach(p => {
+                    const input = document.getElementById(`param-${p.name}`);
+                    if (input) {
+                        params[p.name] = p.type === 'int' ? parseInt(input.value) : 
+                                        p.type === 'float' ? parseFloat(input.value) : input.value;
+                    }
+                });
+            }
+            
+            try {
+                const res = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        strategy: strategyName,
+                        data_file: dataFile,
+                        parameters: params
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    currentReport = data.data;
+                    renderAnalysisResult(data.data);
+                } else {
+                    alert('分析失败: ' + data.error);
+                }
+            } catch (e) {
+                alert('请求失败: ' + e.message);
+            }
+        }
+        
+        // 渲染分析结果
+        function renderAnalysisResult(report) {
+            const summary = report.summary;
+            
+            // 更新统计
+            document.getElementById('stat-trades').textContent = summary.total_trades;
+            document.getElementById('stat-winrate').textContent = summary.win_rate + '%';
+            
+            const returnEl = document.getElementById('stat-return');
+            returnEl.textContent = summary.total_return.toFixed(2) + '%';
+            returnEl.className = 'text-2xl font-bold ' + (summary.total_return >= 0 ? 'positive' : 'negative');
+            
+            document.getElementById('stat-sharpe').textContent = summary.sharpe_ratio.toFixed(2);
+            
+            // 权益曲线
+            renderEquityChart(report.charts.equity_curve);
+            
+            // 回撤
+            renderDrawdownChart(report.charts.drawdown);
+            
+            // 交易记录
+            renderTrades(report.trades);
+        }
+        
+        // 权益曲线图
+        function renderEquityChart(equityCurve) {
+            const trace = {
+                y: equityCurve,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tozeroy',
+                line: { color: '#667eea', width: 2 },
+                fillcolor: 'rgba(102, 126, 234, 0.1)'
+            };
+            
+            const layout = {
+                margin: { t: 20, r: 20, b: 40, l: 50 },
+                xaxis: { title: '交易次数' },
+                yaxis: { title: '权益' },
+                showlegend: false
+            };
+            
+            Plotly.newPlot('equity-chart', [trace], layout, { responsive: true });
+        }
+        
+        // 回撤图
+        function renderDrawdownChart(drawdown) {
+            const trace = {
+                y: drawdown.drawdown_curve,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tozeroy',
+                line: { color: '#ef4444', width: 2 },
+                fillcolor: 'rgba(239, 68, 68, 0.2)'
+            };
+            
+            const layout = {
+                margin: { t: 20, r: 20, b: 40, l: 50 },
+                xaxis: { title: '交易次数' },
+                yaxis: { title: '回撤 %', autorange: 'reversed' },
+                showlegend: false,
+                annotations: [{
+                    x: drawdown.max_dd_end_idx,
+                    y: drawdown.max_drawdown,
+                    text: `最大回撤: ${drawdown.max_drawdown.toFixed(2)}%`,
+                    showarrow: true,
+                    arrowhead: 2
+                }]
+            };
+            
+            Plotly.newPlot('drawdown-chart', [trace], layout, { responsive: true });
+        }
+        
+        // 交易记录表格
+        function renderTrades(trades) {
+            const tbody = document.getElementById('trades-body');
+            
+            if (!trades || trades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">无交易记录</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = trades.map((t, i) => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-2">${i + 1}</td>
+                    <td class="px-4 py-2">${t.entry_time}</td>
+                    <td class="px-4 py-2">${t.exit_time}</td>
+                    <td class="px-4 py-2 text-right">${t.entry_price.toFixed(4)}</td>
+                    <td class="px-4 py-2 text-right">${t.exit_price.toFixed(4)}</td>
+                    <td class="px-4 py-2 text-right ${t.return_pct >= 0 ? 'positive' : 'negative'}">
+                        ${t.return_pct >= 0 ? '+' : ''}${t.return_pct.toFixed(4)}%
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 渲染所有图表
+        function renderAllCharts(report) {
+            const charts = report.charts;
+            
+            // 价格图
+            if (charts.price && charts.price.close.length > 0) {
+                const trace = {
+                    x: charts.price.dates,
+                    y: charts.price.close,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#3b82f6', width: 1 }
+                };
+                
+                Plotly.newPlot('price-chart', [trace], {
+                    margin: { t: 20, r: 20, b: 60, l: 50 },
+                    xaxis: { title: '时间' },
+                    yaxis: { title: '价格' }
+                }, { responsive: true });
+            }
+            
+            // 收益分布
+            if (charts.returns_distribution) {
+                const hist = charts.returns_distribution.histogram;
+                const trace = {
+                    x: hist.bins.slice(0, -1),
+                    y: hist.counts,
+                    type: 'bar',
+                    marker: { color: '#667eea' }
+                };
+                
+                Plotly.newPlot('returns-dist-chart', [trace], {
+                    margin: { t: 20, r: 20, b: 60, l: 50 },
+                    xaxis: { title: '收益率 %' },
+                    yaxis: { title: '频次' }
+                }, { responsive: true });
+            }
+            
+            // 月度收益
+            if (charts.monthly_returns && charts.monthly_returns.months.length > 0) {
+                const colors = charts.monthly_returns.returns.map(r => r >= 0 ? '#10b981' : '#ef4444');
+                const trace = {
+                    x: charts.monthly_returns.months,
+                    y: charts.monthly_returns.returns,
+                    type: 'bar',
+                    marker: { color: colors }
+                };
+                
+                Plotly.newPlot('monthly-chart', [trace], {
+                    margin: { t: 20, r: 20, b: 60, l: 50 },
+                    xaxis: { title: '月份' },
+                    yaxis: { title: '收益率 %' }
+                }, { responsive: true });
+            }
+            
+            // 星期分析
+            if (charts.weekday_analysis) {
+                const trace = {
+                    x: charts.weekday_analysis.weekdays,
+                    y: charts.weekday_analysis.avg_returns,
+                    type: 'bar',
+                    marker: { 
+                        color: charts.weekday_analysis.avg_returns.map(r => r >= 0 ? '#10b981' : '#ef4444')
+                    }
+                };
+                
+                Plotly.newPlot('weekday-chart', [trace], {
+                    margin: { t: 20, r: 20, b: 60, l: 50 },
+                    xaxis: { title: '星期' },
+                    yaxis: { title: '平均收益率 %' }
+                }, { responsive: true });
+            }
+            
+            // 小时分析
+            if (charts.hourly_analysis) {
+                const trace = {
+                    x: charts.hourly_analysis.hours,
+                    y: charts.hourly_analysis.avg_returns,
+                    type: 'bar',
+                    marker: { 
+                        color: charts.hourly_analysis.avg_returns.map(r => r >= 0 ? '#10b981' : '#ef4444')
+                    }
+                };
+                
+                Plotly.newPlot('hourly-chart', [trace], {
+                    margin: { t: 20, r: 20, b: 60, l: 50 },
+                    xaxis: { title: '小时', dtick: 1 },
+                    yaxis: { title: '平均收益率 %' }
+                }, { responsive: true });
+            }
+        }
+    </script>
+</body>
+</html>

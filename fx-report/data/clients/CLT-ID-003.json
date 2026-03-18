@@ -1,0 +1,171 @@
+{
+  "client_id": "CLT-ID-003",
+  "name": "OVO Financial Technology",
+  "short_name": "OVO",
+  "legal_entity": "PT Visionet Internasional",
+  "client_type": "Fintech",
+  "tier": "Tier 2",
+  "status": "Active",
+  "onboarding_date": "2025-02-15",
+  "logo_url": "",
+  "kyc_status": "Verified",
+  "kyc_expiry_date": "",
+  "aml_risk_rating": "Low",
+  "pep_status": false,
+  "sanctions_screening": "Clear",
+  "ubo_structure": "",
+  "tax_id": "",
+  "incorporation_country": "",
+  "incorporation_date": "",
+  "compliance_notes": "",
+  "region": "Southeast Asia",
+  "country": "Indonesia",
+  "operating_countries": [
+    "Indonesia"
+  ],
+  "timezone": "Asia/Jakarta",
+  "local_regulator": "Bank Indonesia (BI)",
+  "license_type": "E-money License",
+  "central_bank": "Bank Indonesia (BI)",
+  "fx_purpose_codes": [],
+  "local_tax_requirements": "",
+  "regulatory_notes": "",
+  "industry": "Payment/PSP",
+  "business_model": "Indonesia leading e-wallet and financial services platform — integrated with Grab and Tokopedia",
+  "main_products": [
+    "E-wallet",
+    "Payment gateway",
+    "Lending",
+    "Insurance",
+    "Investment"
+  ],
+  "monthly_volume_usd": 400000000,
+  "volume_tier": "Enterprise",
+  "annual_revenue_usd": 150000000,
+  "employee_count": "700+",
+  "website": "https://www.ovo.id",
+  "base_currency": "IDR",
+  "settlement_currencies": [
+    "USD",
+    "SGD"
+  ],
+  "focus_pairs": [
+    "USDIDR",
+    "SGDIDR"
+  ],
+  "fx_products_used": [
+    "Spot"
+  ],
+  "product_complexity": "Basic",
+  "tenor_preferences": [],
+  "hedging_policy": "No Hedge",
+  "hedging_ratio": "",
+  "hedging_horizon": "",
+  "pricing_model": "Markup",
+  "current_markup_bps": 18,
+  "volume_based_tiering": false,
+  "benchmark_rate_source": "",
+  "preferred_liquidity_providers": [],
+  "preferred_bank_routing": "",
+  "settlement_cycle": "T+1",
+  "preferred_execution_window": "",
+  "corridors": [
+    {
+      "from_currency": "USD",
+      "to_currency": "IDR",
+      "direction": "inbound",
+      "label": "USD→IDR Platform Funding",
+      "avg_ticket_size_usd": 1000000,
+      "monthly_volume_usd": 200000000,
+      "priority": "Primary",
+      "purpose": "Platform capital injection",
+      "purpose_code": "FUND"
+    },
+    {
+      "from_currency": "SGD",
+      "to_currency": "IDR",
+      "direction": "inbound",
+      "label": "SGD→IDR Grab Integration",
+      "avg_ticket_size_usd": 500000,
+      "monthly_volume_usd": 120000000,
+      "priority": "Primary",
+      "purpose": "Grab ecosystem settlement",
+      "purpose_code": "TRAD"
+    },
+    {
+      "from_currency": "IDR",
+      "to_currency": "USD",
+      "direction": "outbound",
+      "label": "IDR→USD Vendor Payments",
+      "avg_ticket_size_usd": 100000,
+      "monthly_volume_usd": 50000000,
+      "priority": "Secondary",
+      "purpose": "International vendor payments",
+      "purpose_code": "SUPP"
+    }
+  ],
+  "credit_line_usd": 15000000,
+  "credit_line_utilized_pct": 0,
+  "credit_line_expiry": "",
+  "net_exposure_limit_usd": 0,
+  "unhedged_exposure_alert_pct": 0,
+  "collateral_type": "",
+  "collateral_amount_usd": 0,
+  "payment_terms": "",
+  "risk_appetite": "Conservative",
+  "max_single_trade_usd": 0,
+  "daily_limit_usd": 0,
+  "stop_loss_threshold": "",
+  "var_limit": "",
+  "key_concerns": [
+    "IDR volatility",
+    "BI monetary tightening",
+    "Indonesia election impact on IDR",
+    "Capital flow regulations"
+  ],
+  "sensitivity_factors": [],
+  "report_frequency": "Bi-weekly",
+  "report_language": "en",
+  "report_format": "HTML",
+  "report_delivery": "Email",
+  "sections_enabled": {
+    "executive_summary": true,
+    "client_corridor": true,
+    "market_overview": true,
+    "volatility_analysis": true,
+    "flow_analysis": true,
+    "macro_outlook": true,
+    "risk_monitor": true
+  },
+  "include_charts": true,
+  "include_corridor_analysis": true,
+  "include_cost_analysis": false,
+  "custom_benchmarks": [],
+  "news_topics": [
+    "Indonesia economy",
+    "IDR outlook",
+    "Digital banking regulation"
+  ],
+  "alert_thresholds": {},
+  "contacts": [
+    {
+      "name": "Jason Thompson",
+      "title": "CFO",
+      "email": "jason.t@ovo.id",
+      "phone": "+62 21 5089 9999",
+      "access_level": "Signer"
+    }
+  ],
+  "tags": [
+    "Tier 2",
+    "E-wallet",
+    "Grab ecosystem"
+  ],
+  "internal_notes": "",
+  "key_events": [],
+  "relationship_manager": "Adi Pratama",
+  "last_review_date": "",
+  "next_review_date": "",
+  "created_at": "2026-03-05T12:18:51.306051",
+  "updated_at": "2026-03-05T12:18:51.306051"
+}

@@ -1,0 +1,93 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+package-lock.json
+
+# Data files (large)
+*.csv
+*.xlsx
+*.xls
+*.db
+*.sqlite
+*.parquet
+
+# Keep specific data files that should be tracked
+!bmad-quant-system/data/raw/*.csv
+
+# Raw data directories (large, not for git)
+ddd/
+wedata_analysis/
+wedata-notebooks/
+backtest_data/
+
+# Upload / output directories
+pnl-analysis/uploads/
+pnl-analysis/output/
+output/
+
+# Images (generated charts)
+*.png
+*.jpg
+
+# Logs
+*.log
+logs/
+*_log.txt
+
+# Temporary / scratch files
+*.tmp
+*.temp
+$null
+15
+
+# CodeBuddy internal
+.codebuddy/
+SKILL/
+*/SKILL/
+
+# FX Report output
+fx-report/output/

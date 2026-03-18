@@ -1,0 +1,6 @@
+{
+  "name": "外汇市场分析",
+  "description": "分析外汇市场的实时数据，包括汇率、波动率、资金流向等",
+  "tools": ["get_spot_rates", "get_vol_data", "get_news", "get_economic_calendar"],
+  "version": "1.0"
+}

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TenPay 智研 · 产品汇报</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: 'Noto Sans SC', 'Inter', -apple-system, sans-serif;
+    background: #F0F2F5; color: #1a1a2e;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Slide 容器 ── */
+.slide {
+    width: 960px; min-height: 540px;
+    margin: 32px auto; padding: 48px 56px;
+    background: #fff; border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    position: relative; overflow: hidden;
+    page-break-after: always;
+}
+
+/* ── 封面 slide ── */
+.slide-cover {
+    display: flex; flex-direction: column;
+    justify-content: center; min-height: 540px;
+}
+.slide-cover .cover-brand {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.15em;
+    color: #0052D9; text-transform: uppercase; margin-bottom: 20px;
+}
+.slide-cover h1 {
+    font-size: 32px; font-weight: 700; color: #0F172A;
+    line-height: 1.3; margin-bottom: 12px;
+}
+.slide-cover h1 span { color: #0052D9; }
+.slide-cover .cover-sub {
+    font-size: 16px; color: #64748B; font-weight: 400;
+    line-height: 1.6; margin-bottom: 32px; max-width: 600px;
+}
+.slide-cover .cover-meta {
+    font-size: 13px; color: #94A3B8;
+}
+
+/* ── Slide 标题 ── */
+.slide-title {
+    font-size: 22px; font-weight: 700; color: #0F172A;
+    margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
+}
+.slide-title .num {
+    font-family: 'Inter', monospace; font-size: 13px; font-weight: 700;
+    color: #fff; background: #0052D9; border-radius: 6px;
+    padding: 3px 10px; letter-spacing: 0.05em;
+}
+.slide-subtitle {
+    font-size: 14px; color: #64748B; margin: -16px 0 24px;
+}
+
+/* ── 通用 ── */
+p { font-size: 14px; color: #334155; line-height: 1.7; margin-bottom: 10px; }
+ul { margin: 6px 0 12px 20px; font-size: 14px; color: #334155; line-height: 1.8; }
+li { margin-bottom: 4px; }
+li strong { color: #0F172A; }
+.text-muted { color: #94A3B8; }
+.text-blue { color: #0052D9; font-weight: 600; }
+
+/* ── 2列/3列/4列 grid ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+.g-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.g-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+
+/* ── 卡片 ── */
+.card {
+    border: 1px solid #E8ECF0; border-radius: 8px;
+    padding: 16px; background: #fff;
+}
+.card-title { font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 6px; }
+.card-desc { font-size: 13px; color: #64748B; line-height: 1.6; }
+.card-tag {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px; margin-bottom: 8px;
+    letter-spacing: 0.05em;
+}
+.tag-done { background: #D1FAE5; color: #065F46; }
+.tag-wip { background: #FEF3C7; color: #92400E; }
+.tag-plan { background: #E0E7FF; color: #3730A3; }
+
+/* ── 数字卡片 ── */
+.num-card {
+    text-align: center; padding: 16px 12px;
+    border: 1px solid #E8ECF0; border-radius: 8px; background: #FAFBFF;
+}
+.num-card .nv {
+    font-family: 'Inter', sans-serif; font-size: 28px;
+    font-weight: 700; color: #0052D9;
+}
+.num-card .nl { font-size: 11px; color: #64748B; margin-top: 2px; letter-spacing: 0.06em; }
+
+/* ── 截图/占位符 ── */
+.screenshot-box {
+    border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden;
+    background: #F8FAFC;
+}
+.screenshot-box img { width: 100%; display: block; }
+.screenshot-box .cap {
+    padding: 8px 12px; font-size: 11px; color: #94A3B8;
+    border-top: 1px solid #E2E8F0;
+}
+.placeholder {
+    border: 2px dashed #CBD5E1; border-radius: 8px;
+    height: 200px; display: flex; align-items: center; justify-content: center;
+    background: #F8FAFC; color: #94A3B8; font-size: 13px;
+}
+.placeholder-lg { height: 300px; }
+
+/* ── 表格 ── */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+    background: #F1F5F9; color: #475569; padding: 8px 12px;
+    text-align: left; font-weight: 600; font-size: 12px;
+    border-bottom: 2px solid #E2E8F0;
+}
+tbody td {
+    padding: 7px 12px; border-bottom: 1px solid #F1F5F9; color: #334155;
+}
+tbody tr:hover td { background: #FAFBFF; }
+
+/* ── 时间线 ── */
+.tl { position: relative; padding-left: 24px; margin: 8px 0; }
+.tl::before {
+    content: ''; position: absolute; left: 6px; top: 4px; bottom: 4px;
+    width: 2px; background: #E2E8F0;
+}
+.tl-item { position: relative; margin-bottom: 16px; }
+.tl-item::before {
+    content: ''; position: absolute; left: -22px; top: 5px;
+    width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff;
+}
+.tl-item.done::before { background: #059669; box-shadow: 0 0 0 2px #059669; }
+.tl-item.now::before { background: #0052D9; box-shadow: 0 0 0 3px rgba(0,82,217,0.25); }
+.tl-item.next::before { background: #CBD5E1; box-shadow: 0 0 0 2px #CBD5E1; }
+.tl-time { font-family: 'Inter', monospace; font-size: 11px; color: #94A3B8; font-weight: 500; }
+.tl-label { font-size: 13px; font-weight: 600; color: #0F172A; }
+.tl-sub { font-size: 12px; color: #64748B; }
+
+/* ── 页码 ── */
+.page-num {
+    position: absolute; bottom: 16px; right: 24px;
+    font-family: 'Inter', monospace; font-size: 11px; color: #CBD5E1;
+}
+
+/* ── 分隔线 ── */
+.sep { border: none; border-top: 1px solid #E8ECF0; margin: 20px 0; }
+
+/* ── Note 框 ── */
+.note {
+    background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px;
+    padding: 10px 14px; font-size: 13px; color: #92400E;
+}
+
+@media print {
+    body { background: #fff; }
+    .slide { box-shadow: none; margin: 0; border-radius: 0; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================== SLIDE 0: 封面 ============================== -->
+<div class="slide slide-cover">
+    <div class="cover-brand">TENPAY GLOBAL &middot; FX TEAM</div>
+    <h1><span>FX 智能研究工具集</span></h1>
+    <p class="cover-sub">
+        围绕跨境支付外汇业务，搭建了一套研究和定价的工具。<br>
+        目前有 4 个模块已开发完成，汇报进展和下一步想法。
+    </p>
+    <p class="cover-meta">
+        Tenpay Global FX 团队 &middot; 2026 年 3 月 &middot; 内部汇报
+    </p>
+    <span class="page-num"></span>
+</div>
+
+<!-- ============================== SLIDE 1: 背景 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">01</span>背景</div>
+    <div class="g2">
+        <div>
+            <p><strong>问题：</strong></p>
+            <ul>
+                <li>客户越来越多地问走廊汇率走势、市场分析，我们没有标准化的东西可以给</li>
+                <li>定价会议上 markup 调整主要靠经验，缺少数据工具辅助</li>
+                <li>团队对外汇市场的研究散落在各处，没有沉淀和复用</li>
+            </ul>
+        </div>
+        <div>
+            <p><strong>做了什么：</strong></p>
+            <ul>
+                <li>利用业余时间搭了一套 FX 研究工具</li>
+                <li>4 个模块，覆盖研报、定价、回测、策略</li>
+                <li>全部代码自建，已经跑通可以用了</li>
+                <li>接下来想看看怎么能实际用起来</li>
+            </ul>
+        </div>
+    </div>
+    <span class="page-num">1</span>
+</div>
+
+<!-- ============================== SLIDE 2: 做了什么（总览） ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">02</span>做了什么 — 4 个模块总览</div>
+    <div class="g4" style="margin-bottom:20px;">
+        <div class="num-card"><div class="nv">4</div><div class="nl">工具模块</div></div>
+        <div class="num-card"><div class="nv">24</div><div class="nl">覆盖币对</div></div>
+        <div class="num-card"><div class="nv">7</div><div class="nl">客户画像</div></div>
+        <div class="num-card"><div class="nv">5</div><div class="nl">数据源</div></div>
+    </div>
+    <div class="g2">
+        <div class="card">
+            <span class="card-tag tag-done">已完成</span>
+            <div class="card-title">1. 外汇研报生成器</div>
+            <div class="card-desc">选客户 &rarr; 系统拉数据 &rarr; AI 搜新闻 &rarr; 自动生成一份针对该客户走廊的研报。支持中英双语，HTML/PDF 输出。</div>
+        </div>
+        <div class="card">
+            <span class="card-tag tag-done">已完成</span>
+            <div class="card-title">2. 走廊加价引擎</div>
+            <div class="card-desc">输入增收目标金额，系统自动反算每个币种应该加多少 BPS。6 种分配策略，支持波动率加权。</div>
+        </div>
+        <div class="card">
+            <span class="card-tag tag-done">已完成</span>
+            <div class="card-title">3. 量化回测系统</div>
+            <div class="card-desc">针对 USDCNH 的交易策略回测框架。网格搜索最优参数，Bloomberg 数据接入，7,900+ 条信号数据。</div>
+        </div>
+        <div class="card">
+            <span class="card-tag tag-done">已完成</span>
+            <div class="card-title">4. 策略实验室</div>
+            <div class="card-desc">轻量级的策略验证工具。选策略、调参数、跑回测、看结果，几秒钟验证一个想法。</div>
+        </div>
+    </div>
+    <span class="page-num">2</span>
+</div>
+
+<!-- ============================== SLIDE 3: 研报生成器详细 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">03</span>研报生成器 — 功能详情</div>
+    <div class="g-2-1">
+        <div>
+            <table>
+                <thead><tr><th>功能</th><th>说明</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>客户画像</strong></td><td>7 个预设（越南/菲律宾/印尼/泰国/马来/巴西/全球），按走廊自动过滤</td></tr>
+                    <tr><td><strong>Client Portal</strong></td><td>客户信息管理，80+ 字段，支持新增/编辑/删除</td></tr>
+                    <tr><td><strong>多源数据</strong></td><td>5 个数据源自动切换，24 币对汇率 + 波动率</td></tr>
+                    <tr><td><strong>AI 新闻</strong></td><td>Perplexity 按走廊搜新闻，返回摘要 + sentiment</td></tr>
+                    <tr><td><strong>AI 摘要</strong></td><td>Claude 根据数据 + 新闻生成执行摘要</td></tr>
+                    <tr><td><strong>报告引擎</strong></td><td>7 个章节可选，自动图表，HTML/PDF 输出</td></tr>
+                    <tr><td><strong>双语</strong></td><td>中英文切换，报告内容也支持双语</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <p style="font-size:12px;color:#94A3B8;margin-bottom:6px;">已产出 15+ 份报告</p>
+            <div class="screenshot-box">
+                <img src="/static/images/step1_select_client.png" alt="客户选择界面"/>
+                <div class="cap">研报平台 — 客户选择界面</div>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">3</span>
+</div>
+
+<!-- ============================== SLIDE 4: 研报示例 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">04</span>研报生成器 — 生成效果</div>
+    <p>选一个客户（如 Vietnam PSP），3 分钟左右自动输出一份研报：</p>
+    <div class="g2" style="margin-top:12px;">
+        <div>
+            <div class="placeholder placeholder-lg">[截图] 生成后的研报 — 执行摘要部分<br><span style="font-size:11px;">汇报时现场截图补充</span></div>
+        </div>
+        <div>
+            <div class="placeholder placeholder-lg">[截图] 生成后的研报 — 汇率表格 + 图表<br><span style="font-size:11px;">汇报时现场截图补充</span></div>
+        </div>
+    </div>
+    <div class="note" style="margin-top:16px;">
+        可以现场 demo：打开 localhost:8890，选客户，点生成，看效果。
+    </div>
+    <span class="page-num">4</span>
+</div>
+
+<!-- ============================== SLIDE 5: 加价引擎 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">05</span>走廊加价引擎</div>
+    <div class="g-2-1">
+        <div>
+            <p><strong>解决什么问题：</strong>定价会议上调 markup 时，目前主要靠经验判断。这个工具可以：</p>
+            <ul>
+                <li>输入一个增收目标（比如多赚 $50K/月），系统自动算出每个币种该加多少 BPS</li>
+                <li>6 种分配策略可选：
+                    <ul style="margin:4px 0 4px 16px;">
+                        <li><strong>统一加价</strong> — 所有币种加一样的</li>
+                        <li><strong>波动率加权</strong> — 波动大的多加，客户不敏感</li>
+                        <li><strong>大币种集中</strong> — 只动 USD/HKD/EUR</li>
+                        <li><strong>小币种分摊</strong> — 避开大币种，分散到小币种</li>
+                        <li><strong>阶梯式</strong> — 按波动率分三档</li>
+                        <li><strong>隐蔽优化</strong> — 算法优化，大币种尽量少动</li>
+                    </ul>
+                </li>
+                <li>支持 MSO / SVF / Summary 三个实体独立看</li>
+            </ul>
+        </div>
+        <div>
+            <div class="placeholder placeholder-lg">[截图] 加价引擎界面<br><span style="font-size:11px;">markup 矩阵 + 策略选择</span></div>
+        </div>
+    </div>
+    <span class="page-num">5</span>
+</div>
+
+<!-- ============================== SLIDE 6: 量化 + 策略 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">06</span>量化回测 + 策略实验室</div>
+    <div class="g2">
+        <div>
+            <div class="card" style="margin-bottom:12px;">
+                <div class="card-title">量化回测系统</div>
+                <div class="card-desc">
+                    <ul style="margin:4px 0 0 16px; font-size:13px;">
+                        <li>针对 USDCNH 的交易策略回测</li>
+                        <li>内置策略：均线交叉、动量、RSI、布林带、周五夜盘策略（4 个迭代版本）</li>
+                        <li>网格搜索：自动扫描参数空间，找最优组合</li>
+                        <li>Bloomberg 实盘数据接入</li>
+                        <li>7,900+ 条已处理信号数据</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">策略实验室</div>
+                <div class="card-desc">
+                    <ul style="margin:4px 0 0 16px; font-size:13px;">
+                        <li>Web 界面，选策略 &rarr; 调参 &rarr; 一键回测</li>
+                        <li>看胜率、夏普、回撤、月度收益分布</li>
+                        <li>几秒钟验证一个策略想法</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="placeholder" style="margin-bottom:12px;">[截图] 回测结果 — PnL 曲线 / 热力图<br><span style="font-size:11px;">汇报时补充</span></div>
+            <div class="placeholder">[截图] 策略实验室界面<br><span style="font-size:11px;">汇报时补充</span></div>
+        </div>
+    </div>
+    <span class="page-num">6</span>
+</div>
+
+<!-- ============================== SLIDE 7: 当前进展 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">07</span>当前进展</div>
+    <table>
+        <thead><tr><th>模块</th><th>已完成的功能</th><th>状态</th></tr></thead>
+        <tbody>
+            <tr>
+                <td rowspan="4" style="vertical-align:top;font-weight:700;">研报生成器</td>
+                <td>客户画像 + Client Portal（7 预设 + 自定义，80+ 字段 CRUD）</td>
+                <td style="color:#059669;font-weight:600;">Done</td>
+            </tr>
+            <tr><td>多源数据聚合（5 源，24 币对，自动优先级切换）</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr><td>AI 新闻搜索 + 执行摘要自动生成（Perplexity + Claude）</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr><td>报告引擎（7 章节可选，10 类图表，HTML/PDF，中英双语）</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr>
+                <td rowspan="2" style="vertical-align:top;font-weight:700;">加价引擎</td>
+                <td>目标反算（6 种策略），波动率加权</td>
+                <td style="color:#059669;font-weight:600;">Done</td>
+            </tr>
+            <tr><td>多实体支持（MSO/SVF/Summary），在线 + 离线双模式</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr>
+                <td rowspan="2" style="vertical-align:top;font-weight:700;">量化回测</td>
+                <td>回测框架 + 5 种内置策略 + Friday Night 策略（4 版）</td>
+                <td style="color:#059669;font-weight:600;">Done</td>
+            </tr>
+            <tr><td>网格搜索优化 + Bloomberg 数据接入</td><td style="color:#059669;font-weight:600;">Done</td></tr>
+            <tr>
+                <td style="font-weight:700;">策略实验室</td>
+                <td>Web UI 回测 + 多维分析（胜率/夏普/回撤/月度分布）</td>
+                <td style="color:#059669;font-weight:600;">Done</td>
+            </tr>
+        </tbody>
+    </table>
+    <p style="margin-top:12px; font-size:13px; color:#64748B;">全部自建代码，已实际跑通。研报已产出 15+ 份（Global、Vietnam、Philippines、Malaysia 等）。</p>
+    <span class="page-num">7</span>
+</div>
+
+<!-- ============================== SLIDE 8: 商业价值 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">08</span>商业价值 — 待讨论</div>
+    <p style="margin-bottom:16px;">以下是初步想法，具体怎么用、值不值得投入，想听听意见：</p>
+    <div class="g2">
+        <div class="card" style="border-style:dashed;">
+            <div class="card-title">给客户发研报</div>
+            <div class="card-desc">
+                针对不同客户走廊定制化研报，作为跨境支付的增值服务。<br>
+                客户看到的不只是换汇管道，而是有专业分析能力的合作方。<br>
+                <strong>需要 BD 确认：哪些客户适合先试？什么形式发？</strong>
+            </div>
+        </div>
+        <div class="card" style="border-style:dashed;">
+            <div class="card-title">定价会议辅助</div>
+            <div class="card-desc">
+                加价引擎可以在定价会议上用。输入目标，看不同策略下各币种的 BPS 方案。<br>
+                比纯经验判断多一个数据参考。<br>
+                <strong>可以先在下次会议上试用一次。</strong>
+            </div>
+        </div>
+        <div class="card" style="border-style:dashed;">
+            <div class="card-title">团队研究沉淀</div>
+            <div class="card-desc">
+                市场分析、走廊数据、策略回测结果不再散落在各处。<br>
+                新人入职能快速了解各市场情况。<br>
+                <strong>先内部用起来再看外部价值。</strong>
+            </div>
+        </div>
+        <div class="card" style="border-style:dashed;">
+            <div class="card-title">未来可能的变现</div>
+            <div class="card-desc">
+                如果客户反馈好，研报可以做分级（基础版免费 / 高级版收费）。<br>
+                但这个比较远，先把工具用起来再说。<br>
+                <strong>不急，看实际反馈再决定。</strong>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">8</span>
+</div>
+
+<!-- ============================== SLIDE 9: 下一步 ============================== -->
+<div class="slide">
+    <div class="slide-title"><span class="num">09</span>下一步</div>
+    <div class="g-2-1">
+        <div class="tl">
+            <div class="tl-item done">
+                <div class="tl-time">2026.01 - 02 &middot; 已完成</div>
+                <div class="tl-label">工具搭建 + 跑通</div>
+                <div class="tl-sub">4 个模块开发完成，端到端可用</div>
+            </div>
+            <div class="tl-item done">
+                <div class="tl-time">2026.03 W1 &middot; 已完成</div>
+                <div class="tl-label">AI 接入 + 客户门户</div>
+                <div class="tl-sub">Perplexity 新闻 + Claude 摘要，Client Portal 上线</div>
+            </div>
+            <div class="tl-item now">
+                <div class="tl-time">近期</div>
+                <div class="tl-label">内部先用起来</div>
+                <div class="tl-sub">
+                    &bull; 定价会议试用加价引擎<br>
+                    &bull; 选 2-3 个客户试发研报<br>
+                    <span class="text-blue">&bull; 需要 BD involve — 确认客户名单</span>
+                </div>
+            </div>
+            <div class="tl-item next">
+                <div class="tl-time">Q2</div>
+                <div class="tl-label">自动化 + 常规化</div>
+                <div class="tl-sub">
+                    &bull; 定时自动生成 + 邮件分发<br>
+                    &bull; 根据反馈迭代<br>
+                    <span class="text-blue">&bull; 需要开发资源 — 邮件、调度、前端</span>
+                </div>
+            </div>
+            <div class="tl-item next">
+                <div class="tl-time">Q3+</div>
+                <div class="tl-label">看情况扩展</div>
+                <div class="tl-sub">
+                    &bull; 如果客户反馈好，考虑正式产品化<br>
+                    <span class="text-blue">&bull; 需要开发 + BD 持续参与</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="card" style="background:#F8FAFC; margin-bottom:12px;">
+                <div class="card-title">近期需要的支持</div>
+                <div class="card-desc">
+                    <strong>1. BD 团队 involve</strong><br>
+                    确认哪几个客户适合先试发研报，对接方式怎么定<br><br>
+                    <strong>2. 开发资源（Q2）</strong><br>
+                    自动化分发需要邮件系统 + 定时调度 + 前端打磨，一个人做比较慢
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">9</span>
+</div>
+
+<!-- ============================== SLIDE 10: 尾页 ============================== -->
+<div class="slide slide-cover" style="min-height:400px;">
+    <h1 style="font-size:26px;"><span>Demo Time</span></h1>
+    <p class="cover-sub" style="font-size:15px;">
+        可以现场演示研报生成和加价引擎。
+    </p>
+    <p class="cover-meta">
+        Tenpay Global FX 团队 &middot; 2026.03 &middot; Confidential
+    </p>
+    <span class="page-num">10</span>
+</div>
+
+<script>
+console.log('TenPay FX Tools · Briefing v3 (PPT style) · 2026-03-06');
+</script>
+</body>
+</html>

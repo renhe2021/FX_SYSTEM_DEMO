@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="{{ data.lang|default('en') }}">
+<head>
+<meta charset="UTF-8">
+<title>{{ data.config.get('title_' + data.lang, data.config.get('title', 'FX Research Report')) }}</title>
+<style>
+  /* ════════════════════════════════════════════════════════════
+     TENPAY GLOBAL — FX Research Report
+     Brand: Tencent Blue Palette + Fintech Clean Design
+     Inspired by Goldman Sachs / JP Morgan / Barclays styling
+     Color System: Tencent Blue (#0052D9 / #3458B0)
+     ════════════════════════════════════════════════════════════ */
+
+  @page {
+    size: A4;
+    margin: 0;
+    @bottom-center {
+      content: counter(page);
+      font-family: 'Georgia', serif;
+      font-size: 8pt;
+      color: #94a3b8;
+    }
+  }
+
+  :root {
+    /* ── Tenpay Global Brand Colors ── */
+    --brand-dark:    #0F172A;   /* Slate 900 */
+    --brand-primary: #0052D9;   /* Tenpay Primary Blue */
+    --brand-accent:  #2563EB;   /* Blue 600 */
+    --brand-light:   #EFF6FF;   /* Blue 50 */
+    --brand-gold:    #B8860B;   /* Dark Goldenrod */
+    --brand-hover:   #1D4ED8;   /* Blue 700 */
+
+    /* ── Semantic Colors ── */
+    --text-primary:  #0F172A;
+    --text-secondary:#475569;
+    --text-light:    #94A3B8;
+    --border:        #E2E8F0;
+    --bg-subtle:     #F8FAFC;
+    --positive:      #059669;
+    --negative:      #DC2626;
+    --warning:       #D97706;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'TencentSans', 'Noto Sans SC', 'PingFang SC', 'Helvetica Neue', 'Arial', sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.55;
+    color: var(--text-primary);
+    background: white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── SVG Logo ────────────────────────────────── */
+  .tpg-logo-mark { fill: currentColor; }
+  .tpg-logo-text { fill: currentColor; font-family: 'TencentSans', 'PingFang SC', 'Helvetica Neue', sans-serif; }
+  .cover-logo-wrap {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8mm;
+  }
+  .cover-logo-wrap svg { flex-shrink: 0; }
+  .cover-logo-brand {
+    font-family: 'TencentSans', 'PingFang SC', 'Helvetica Neue', sans-serif;
+    font-size: 14pt; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    opacity: 0.95; line-height: 1.2;
+  }
+  .cover-logo-brand .brand-sub {
+    display: block; font-size: 7.5pt; font-weight: 300;
+    letter-spacing: 5px; opacity: 0.6; margin-top: 2px;
+  }
+  .page-header-logo {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .page-header-logo svg { vertical-align: middle; }
+
+  /* ── Cover Page ─────────────────────────────── */
+  .cover-page {
+    width: 210mm; height: 297mm;
+    background: linear-gradient(155deg, #0F172A 0%, #1E293B 35%, #0052D9 75%, #2563EB 100%);
+    color: white;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 0;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover-page::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 55%; height: 100%;
+    background: linear-gradient(180deg, rgba(37,99,235,0.08) 0%, rgba(0,82,217,0.03) 100%);
+    clip-path: polygon(35% 0, 100% 0, 100% 100%, 5% 100%);
+  }
+  /* Decorative circuit/network pattern overlay */
+  .cover-page::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, #0052D9, #2563EB, #7C3AED, rgba(124,58,237,0.3));
+  }
+  .cover-top {
+    padding: 50mm 40mm 0 40mm;
+    position: relative; z-index: 1;
+  }
+  .cover-logo {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8mm;
+  }
+  .cover-gold-line {
+    width: 50mm; height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.15));
+    margin-bottom: 10mm;
+  }
+  .cover-title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 32pt; font-weight: 400;
+    line-height: 1.2; margin-bottom: 6mm;
+    letter-spacing: -0.5px;
+  }
+  .cover-subtitle {
+    font-size: 13pt; font-weight: 300;
+    opacity: 0.85; line-height: 1.5;
+    max-width: 120mm;
+  }
+  .cover-client-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    padding: 8px 20px;
+    margin-top: 10mm;
+    font-size: 10pt;
+    letter-spacing: 1px;
+    backdrop-filter: blur(4px);
+  }
+  .cover-client-badge .badge-label {
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    opacity: 0.6;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .cover-bottom {
+    padding: 0 40mm 35mm 40mm;
+    position: relative; z-index: 1;
+  }
+  .cover-meta {
+    display: flex; gap: 20mm;
+    font-size: 9pt; opacity: 0.7;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 6mm;
+    flex-wrap: wrap;
+  }
+  .cover-meta-item label {
+    display: block; font-size: 7pt;
+    text-transform: uppercase; letter-spacing: 2px;
+    opacity: 0.5; margin-bottom: 2mm;
+  }
+  .cover-confidential {
+    position: absolute; bottom: 12mm; right: 40mm;
+    font-size: 7pt; letter-spacing: 3px;
+    text-transform: uppercase; opacity: 0.35;
+  }
+
+  /* ── Page Container ─────────────────────────── */
+  .report-page {
+    width: 210mm;
+    min-height: 280mm;
+    padding: 18mm 22mm 25mm 22mm;
+    page-break-after: always;
+    position: relative;
+  }
+  .report-page::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, #0F172A 0%, #0052D9 40%, #2563EB 70%, #7C3AED 100%);
+  }
+
+  /* ── Page Header ────────────────────────────── */
+  .page-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 4mm; margin-bottom: 6mm;
+    border-bottom: 0.5pt solid var(--border);
+  }
+  .page-header-left {
+    font-size: 7.5pt; color: var(--text-light);
+    letter-spacing: 3px; text-transform: uppercase;
+  }
+  .page-header-right {
+    font-size: 7.5pt; color: var(--text-light);
+  }
+
+  /* ── Section Titles ─────────────────────────── */
+  .section-number {
+    display: inline-block;
+    background: var(--brand-dark);
+    color: white; font-family: 'Georgia', serif;
+    font-size: 11pt; font-weight: 700;
+    width: 28px; height: 28px;
+    line-height: 28px; text-align: center;
+    border-radius: 6px; margin-right: 10px;
+    vertical-align: middle;
+  }
+  h2.section-title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 18pt; font-weight: 400;
+    color: var(--brand-dark);
+    margin: 0 0 5mm 0;
+    padding-bottom: 3mm;
+    border-bottom: 2px solid var(--brand-dark);
+    letter-spacing: -0.3px;
+  }
+  h3 {
+    font-size: 11pt; font-weight: 700;
+    color: var(--brand-dark);
+    margin: 5mm 0 3mm 0;
+    padding-left: 8px;
+    border-left: 3px solid var(--brand-primary);
+  }
+  h4 {
+    font-size: 9.5pt; font-weight: 600;
+    color: var(--text-primary);
+    margin: 4mm 0 2mm 0;
+  }
+
+  /* ── Key Insight Box (Goldman style) ────────── */
+  .insight-box {
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+    border-left: 4px solid var(--brand-primary);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 4mm 0 5mm 0;
+    font-size: 9.5pt;
+    line-height: 1.6;
+  }
+  .insight-box .insight-label {
+    font-size: 7pt; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--brand-primary);
+    margin-bottom: 4px;
+  }
+
+  /* ── Client Focus Box ──────────────────────── */
+  .client-focus-box {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    border-left: 4px solid var(--brand-dark);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 4mm 0 5mm 0;
+    font-size: 9.5pt;
+    line-height: 1.6;
+  }
+  .client-focus-box .focus-label {
+    font-size: 7pt; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--brand-dark);
+    margin-bottom: 4px;
+  }
+
+  /* ── Callout Box (Risk warning style) ───────── */
+  .callout-risk {
+    background: #FEF0EF;
+    border: 1px solid #FECACA;
+    border-left: 4px solid var(--negative);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    margin: 4mm 0;
+  }
+  .callout-risk .callout-label {
+    font-size: 7pt; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--negative); margin-bottom: 3px;
+  }
+
+  /* ── Bloomberg Data Badge ──────────────────── */
+  .data-source-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 7pt;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .badge-bloomberg { background: #FFF0C7; color: #92400e; }
+  .badge-live { background: #D1FAE5; color: #065F46; }
+  .badge-sample { background: #E8F0FE; color: #0052D9; }
+
+  /* ── Tables (JP Morgan style) ───────────────── */
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 3mm 0 4mm 0; font-size: 8.5pt;
+  }
+  thead th {
+    background: var(--brand-dark); color: white;
+    padding: 8px 10px; text-align: left;
+    font-weight: 600; font-size: 7.5pt;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border: none;
+  }
+  thead th:first-child { border-radius: 6px 0 0 0; }
+  thead th:last-child { border-radius: 0 6px 0 0; }
+  tbody td {
+    padding: 5px 10px;
+    border-bottom: 0.5px solid var(--border);
+    vertical-align: middle;
+  }
+  tbody tr:nth-child(even) { background: var(--bg-subtle); }
+  tbody tr:hover { background: var(--brand-light); }
+  .td-pair { font-weight: 700; color: var(--brand-dark); white-space: nowrap; }
+  .td-rate { font-family: 'Consolas', 'Menlo', monospace; font-weight: 600; }
+  .td-positive { color: var(--positive); font-weight: 600; }
+  .td-negative { color: var(--negative); font-weight: 600; }
+  .td-neutral  { color: var(--text-secondary); }
+
+  /* ── Direction badges ──────────────────────── */
+  .badge-inbound {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 7pt; font-weight: 700; letter-spacing: 0.5px;
+    background: #D1FAE5; color: #065F46;
+  }
+  .badge-outbound {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 7pt; font-weight: 700; letter-spacing: 0.5px;
+    background: #FEF0EF; color: #991B1B;
+  }
+  .badge-tightening {
+    display: inline-block; padding: 1px 6px; border-radius: 8px;
+    font-size: 7pt; font-weight: 600;
+    background: #D1FAE5; color: #065F46;
+  }
+  .badge-widening {
+    display: inline-block; padding: 1px 6px; border-radius: 8px;
+    font-size: 7pt; font-weight: 600;
+    background: #FEF0EF; color: #991B1B;
+  }
+  .badge-stable {
+    display: inline-block; padding: 1px 6px; border-radius: 8px;
+    font-size: 7pt; font-weight: 600;
+    background: #E8F0FE; color: #0052D9;
+  }
+
+  /* ── Two-column layout ──────────────────────── */
+  .two-col { display: flex; gap: 5mm; }
+  .two-col > * { flex: 1; }
+
+  /* ── Three-column layout ─────────────────────── */
+  .three-col { display: flex; gap: 4mm; }
+  .three-col > * { flex: 1; }
+
+  /* ── Chart containers ───────────────────────── */
+  .chart-frame {
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 3mm 0;
+    background: white;
+  }
+  .chart-frame img {
+    width: 100%; height: auto; display: block;
+  }
+  .chart-caption {
+    font-size: 7pt; color: var(--text-light);
+    text-align: center; padding: 4px 0 6px;
+    font-style: italic;
+  }
+
+  /* ── KPI Cards ──────────────────────────────── */
+  .kpi-row {
+    display: flex; gap: 3mm; margin: 4mm 0;
+  }
+  .kpi-card {
+    flex: 1;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .kpi-card .kpi-label {
+    font-size: 7pt; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-light);
+    margin-bottom: 3px;
+  }
+  .kpi-card .kpi-value {
+    font-size: 16pt; font-weight: 700;
+    font-family: 'Georgia', serif;
+    color: var(--brand-dark);
+  }
+  .kpi-card .kpi-change {
+    font-size: 8pt; margin-top: 2px;
+  }
+
+  /* ── Concern List ──────────────────────────── */
+  .concern-list {
+    margin: 3mm 0; padding-left: 0;
+    list-style: none;
+  }
+  .concern-list li {
+    position: relative;
+    padding: 4px 0 4px 18px;
+    font-size: 9pt;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .concern-list li::before {
+    content: '▸';
+    position: absolute; left: 0;
+    color: var(--brand-primary);
+    font-weight: 700;
+  }
+
+  /* ── Event badges ───────────────────────────── */
+  .event-badge {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 7pt; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge-high   { background: #FEE2E2; color: #991B1B; }
+  .badge-medium { background: #FFF0C7; color: #92400E; }
+  .badge-low    { background: #D1FAE5; color: #166534; }
+
+  /* ── Paragraphs ─────────────────────────────── */
+  p { margin-bottom: 3mm; text-align: justify; hyphens: auto; }
+
+  /* ── Footer / Disclaimer ────────────────────── */
+  .page-footer {
+    position: absolute; bottom: 12mm; left: 22mm; right: 22mm;
+    border-top: 0.5pt solid var(--border);
+    padding-top: 3mm;
+    font-size: 6.5pt; color: var(--text-light);
+    line-height: 1.4;
+  }
+  .disclaimer-section {
+    margin-top: 8mm; padding: 12px 16px;
+    background: var(--bg-subtle);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 7pt; color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ── Print specifics ────────────────────────── */
+  @media print {
+    .cover-page { height: 297mm; }
+    .no-print { display: none; }
+    body { -webkit-print-color-adjust: exact; }
+  }
+
+  /* ════════════════════════════════════════════
+     NEW ENHANCED STYLES — v2.0
+     ════════════════════════════════════════════ */
+
+  /* ── Cover Sparkline KPI Strip ──────────────── */
+  .cover-kpi-strip {
+    display: flex; gap: 3mm; margin-top: 12mm;
+    padding: 10px 0;
+  }
+  .cover-kpi-item {
+    flex: 1;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 8px 12px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .cover-kpi-item .kpi-pair {
+    font-size: 7pt; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    opacity: 0.6; margin-bottom: 2px;
+  }
+  .cover-kpi-item .kpi-rate {
+    font-family: 'Consolas', 'Menlo', monospace;
+    font-size: 13pt; font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .cover-kpi-item .kpi-spark {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 3px;
+  }
+  .cover-kpi-item .kpi-chg {
+    font-size: 8pt; font-weight: 600;
+  }
+  .cover-kpi-item .kpi-chg.positive { color: #4ADE80; }
+  .cover-kpi-item .kpi-chg.negative { color: #FB7185; }
+
+  /* ── Cover Market Gauge ─────────────────────── */
+  .cover-gauge-wrap {
+    position: absolute; bottom: 55mm; right: 40mm;
+    text-align: center; z-index: 1;
+  }
+  .cover-gauge-label {
+    font-size: 7pt; text-transform: uppercase;
+    letter-spacing: 2px; opacity: 0.5; margin-top: -8px;
+  }
+
+  /* ── Gradient Section Divider ──────────────── */
+  .section-divider {
+    height: 2px; margin: 5mm 0;
+    background: linear-gradient(90deg,
+      var(--brand-primary) 0%,
+      var(--brand-accent) 40%,
+      rgba(124,58,237,0.4) 70%,
+      rgba(124,58,237,0.05) 100%
+    );
+    border: none;
+  }
+
+  /* ── Traffic Light Panel ───────────────────── */
+  .traffic-light-row {
+    display: flex; gap: 3mm; margin: 4mm 0;
+  }
+  .tl-card {
+    flex: 1;
+    text-align: center;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 8px 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tl-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 3px;
+  }
+  .tl-card.signal-green::before { background: var(--positive); }
+  .tl-card.signal-yellow::before { background: var(--warning); }
+  .tl-card.signal-red::before { background: var(--negative); }
+  .tl-dot {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    margin-bottom: 3px;
+  }
+  .tl-dot.green { background: var(--positive); box-shadow: 0 0 8px rgba(5,150,105,0.4); }
+  .tl-dot.yellow { background: var(--warning); box-shadow: 0 0 8px rgba(217,119,6,0.4); }
+  .tl-dot.red { background: var(--negative); box-shadow: 0 0 8px rgba(220,38,38,0.4); }
+  .tl-pair {
+    font-size: 8pt; font-weight: 700;
+    color: var(--brand-dark);
+    margin: 2px 0;
+  }
+  .tl-rationale {
+    font-size: 7pt; color: var(--text-secondary);
+    line-height: 1.3;
+  }
+
+  /* ── Pull Quote (for key insights) ──────────── */
+  .pull-quote {
+    position: relative;
+    padding: 14px 20px 14px 28px;
+    margin: 5mm 8mm;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 11pt;
+    font-style: italic;
+    color: var(--brand-dark);
+    line-height: 1.6;
+    border-left: none;
+  }
+  .pull-quote::before {
+    content: '\201C';
+    position: absolute;
+    left: 0; top: -4px;
+    font-size: 42pt;
+    color: var(--brand-primary);
+    opacity: 0.25;
+    font-family: 'Georgia', serif;
+    line-height: 1;
+  }
+  .pull-quote .pq-source {
+    display: block;
+    font-style: normal;
+    font-size: 7.5pt;
+    color: var(--text-light);
+    margin-top: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'TencentSans', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  }
+
+  /* ── What Changed Badge ─────────────────────── */
+  .wc-item {
+    display: flex; align-items: center;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--border);
+    gap: 10px;
+  }
+  .wc-item:last-child { border-bottom: none; }
+  .wc-pair {
+    font-weight: 700; font-size: 9pt;
+    color: var(--brand-dark);
+    min-width: 70px;
+  }
+  .wc-bar-wrap {
+    flex: 1; height: 18px;
+    background: var(--bg-subtle);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .wc-bar {
+    height: 100%;
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    min-width: 2px;
+  }
+  .wc-bar.positive {
+    left: 50%;
+    background: linear-gradient(90deg, rgba(5,150,105,0.15), var(--positive));
+  }
+  .wc-bar.negative {
+    right: 50%;
+    background: linear-gradient(270deg, rgba(220,38,38,0.15), var(--negative));
+  }
+  .wc-val {
+    font-family: 'Consolas', 'Menlo', monospace;
+    font-size: 8.5pt; font-weight: 600;
+    min-width: 55px; text-align: right;
+  }
+  .wc-val.positive { color: var(--positive); }
+  .wc-val.negative { color: var(--negative); }
+
+  /* ── Sparkline in Table ──────────────────────── */
+  .td-sparkline {
+    padding: 3px 6px;
+    vertical-align: middle;
+  }
+  .td-sparkline svg {
+    display: block;
+  }
+
+  /* ── Frosted Info Card (new insight style) ──── */
+  .frost-card {
+    background: linear-gradient(135deg, rgba(239,246,255,0.9) 0%, rgba(219,234,254,0.6) 100%);
+    border: 1px solid rgba(0,82,217,0.12);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 4mm 0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .frost-card .frost-label {
+    font-size: 7pt; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--brand-primary);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .frost-card .frost-label .frost-icon {
+    display: inline-block;
+    width: 16px; height: 16px;
+    background: var(--brand-primary);
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 16px;
+    font-size: 9pt;
+  }
+</style>
+</head>
+<body>
+
+{# ── Reusable i18n-aware header/footer snippets ── #}
+{% if logo_b64 %}
+{% set mini_logo_svg = '<img src="data:image/png;base64,' + logo_b64 + '" style="height:14px;width:auto;vertical-align:middle;">' %}
+{% else %}
+{% set mini_logo_svg = '' %}
+{% endif %}
+{% set hdr_text = data.t.get('page_header', 'Tenpay Global · FX Research') %}
+{% set ftr_text = data.t.get('page_footer', 'Tenpay Global · FX Research Report') %}
+{% set ftr_cls = data.t.get('classification_value', 'Confidential') %}
+
+<!-- ═══════════════════ COVER PAGE ═══════════════════ -->
+<div class="cover-page">
+  <div class="cover-top">
+    <div class="cover-logo">
+      {% if logo_b64 %}
+      <img src="data:image/png;base64,{{ logo_b64 }}" style="height:48px;width:auto;" alt="TenPay Global">
+      {% endif %}
+      <div class="cover-logo-brand">
+        TenPay Global
+        {% if data.lang == 'zh' %}<span class="brand-sub">腾讯跨境支付</span>{% else %}<span class="brand-sub">Cross-Border Payments</span>{% endif %}
+      </div>
+    </div>
+    <div class="cover-gold-line"></div>
+    <div class="cover-title">{{ data.t.get('report_title', 'FX Research Report') }}</div>
+    {% if data.client_profile %}
+    <div class="cover-subtitle">
+      {{ data.client_profile.get('region', '') }} {{ data.t.get('subtitle_corridor', 'Market Focus — Foreign Exchange & Corridor Analysis') }}
+    </div>
+    <div class="cover-client-badge">
+      <span class="badge-label">{{ data.t.get('prepared_for', 'Prepared For') }}</span>
+      {{ data.client_profile.get('name', '') }}
+    </div>
+    {% else %}
+    <div class="cover-subtitle">{{ data.t.get('subtitle_market', 'Foreign Exchange Market Analysis & Business Intelligence Review') }}</div>
+    {% endif %}
+
+    <!-- ── NEW: Cover KPI Strip with Sparklines ── -->
+    {% if data.get('spot_rates') and not data.spot_rates.get('_error') %}
+    {% if data.client_profile %}
+    {% set cover_pairs = data.client_profile.get('focus_pairs', ['USDCNH', 'EURUSD', 'USDJPY'])[:4] %}
+    {% else %}
+    {% set cover_pairs = ['USDCNH', 'EURUSD', 'USDJPY', 'GBPUSD'] %}
+    {% endif %}
+    <div class="cover-kpi-strip">
+      {% for ccy in cover_pairs %}
+      {% if ccy in data.spot_rates and data.spot_rates[ccy] is mapping %}
+      {% set sr = data.spot_rates[ccy] %}
+      <div class="cover-kpi-item">
+        <div class="kpi-pair">{{ ccy }}</div>
+        <div class="kpi-rate">{{ sr.rate }}</div>
+        <div class="kpi-spark">
+          {% if data.get('sparklines', {}).get(ccy) %}{{ data.sparklines[ccy] }}{% endif %}
+          <span class="kpi-chg {{ 'positive' if sr.chg_1w is not none and sr.chg_1w >= 0 else 'negative' if sr.chg_1w is not none else '' }}">
+            {{ sr.chg_1w|format_pct }}
+          </span>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ── NEW: Cover Market Gauge ── -->
+  {% if charts.get('market_gauge') %}
+  <div class="cover-gauge-wrap">
+    <img src="data:image/png;base64,{{ charts.market_gauge }}" alt="Market Temperature" style="width:140px;height:auto;opacity:0.8;">
+  </div>
+  {% endif %}
+
+  <div class="cover-bottom">
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <label>{{ data.t.get('report_date', 'Report Date') }}</label>
+        <div>{{ data.report_date }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <label>{{ data.t.get('prepared_by', 'Prepared By') }}</label>
+        <div>{{ data.config.get('author_' + data.lang, data.config.get('author', 'FX Research Team')) }}</div>
+      </div>
+      {% if data.client_profile %}
+      <div class="cover-meta-item">
+        <label>{{ data.t.get('base_currency', 'Base Currency') }}</label>
+        <div>{{ data.client_profile.get('base_currency', 'USD') }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <label>{{ data.t.get('region_focus', 'Region Focus') }}</label>
+        <div>{{ data.client_profile.get('region', 'Global') }}</div>
+      </div>
+      {% endif %}
+      <div class="cover-meta-item">
+        <label>{{ data.t.get('classification', 'Classification') }}</label>
+        <div>{{ data.t.get('classification_value', 'Internal — Confidential') }}</div>
+      </div>
+      {% if data.get('data_sources') %}
+      <div class="cover-meta-item">
+        <label>{{ data.t.get('data_sources', 'Data Sources') }}</label>
+        <div>{{ data.data_sources|join(', ') }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% if data.config.get('confidential') %}
+  <div class="cover-confidential">{{ data.t.get('confidential', 'Confidential · For Internal Use Only') }}</div>
+  {% endif %}
+</div>
+
+<!-- ═══════════════════ TABLE OF CONTENTS ═══════════════════ -->
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ data.t.get('page_header', 'Tenpay Global · FX Research') }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h2 class="section-title" style="border-bottom-color: var(--brand-gold);">{{ data.t.get('contents', 'Contents') }}</h2>
+
+  {% if data.client_profile %}
+  <div class="client-focus-box" style="margin-top:5mm;">
+    <div class="focus-label">{{ data.t.get('ui_client_profile', 'Client Profile') }}</div>
+    <strong>{{ data.client_profile.get('name', '') }}</strong> · {{ data.t.get('base_currency', 'Base Currency') }}: {{ data.client_profile.get('base_currency', 'USD') }} · {{ data.client_profile.get('corridors', [])|length }} {% if data.lang == 'zh' %}条活跃通道{% else %}active corridors{% endif %}
+  </div>
+  {% endif %}
+
+  <table style="margin-top:6mm; border:none;">
+    <tbody>
+    {% set ns = namespace(n=0) %}
+    {% if sections.get('executive_summary') %}{% set ns.n = ns.n + 1 %}
+      <tr style="background:transparent;"><td style="border:none;padding:8px 0;font-size:11pt;"><span style="color:var(--brand-primary);font-weight:700;margin-right:8px;">{{ ns.n }}.</span> {{ data.t.get('sec_executive_summary', 'Executive Summary') }}</td></tr>
+    {% endif %}
+    {% if sections.get('client_corridor') and data.client_profile %}{% set ns.n = ns.n + 1 %}
+      <tr style="background:transparent;"><td style="border:none;padding:8px 0;font-size:11pt;"><span style="color:var(--brand-gold);font-weight:700;margin-right:8px;">{{ ns.n }}.</span> {{ data.client_profile.get('region', '') }} {{ data.t.get('sec_client_corridor', 'Corridor Analysis') }}</td></tr>
+    {% endif %}
+    {% if sections.get('market_overview') %}{% set ns.n = ns.n + 1 %}
+      <tr style="background:transparent;"><td style="border:none;padding:8px 0;font-size:11pt;"><span style="color:var(--brand-primary);font-weight:700;margin-right:8px;">{{ ns.n }}.</span> {{ data.t.get('sec_market_overview', 'Market Overview') }}</td></tr>
+    {% endif %}
+    {% if sections.get('volatility_analysis') %}{% set ns.n = ns.n + 1 %}
+      <tr style="background:transparent;"><td style="border:none;padding:8px 0;font-size:11pt;"><span style="color:var(--brand-primary);font-weight:700;margin-right:8px;">{{ ns.n }}.</span> {{ data.t.get('sec_volatility', 'Volatility Analysis') }}</td></tr>
+    {% endif %}
+    {% if sections.get('flow_analysis') %}{% set ns.n = ns.n + 1 %}
+      <tr style="background:transparent;"><td style="border:none;padding:8px 0;font-size:11pt;"><span style="color:var(--brand-primary);font-weight:700;margin-right:8px;">{{ ns.n }}.</span> {{ data.t.get('sec_flow', 'Flow Analysis') }}</td></tr>
+    {% endif %}
+    {% if sections.get('macro_outlook') %}{% set ns.n = ns.n + 1 %}
+      <tr style="background:transparent;"><td style="border:none;padding:8px 0;font-size:11pt;"><span style="color:var(--brand-primary);font-weight:700;margin-right:8px;">{{ ns.n }}.</span> {{ data.t.get('sec_macro', 'Macro Outlook & Commentary') }}</td></tr>
+    {% endif %}
+    {% if sections.get('risk_monitor') %}{% set ns.n = ns.n + 1 %}
+      <tr style="background:transparent;"><td style="border:none;padding:8px 0;font-size:11pt;"><span style="color:var(--brand-primary);font-weight:700;margin-right:8px;">{{ ns.n }}.</span> {{ data.t.get('sec_risk', 'Risk Event Monitor') }}</td></tr>
+    {% endif %}
+    </tbody>
+  </table>
+
+  <div class="page-footer">{{ data.t.get('page_footer', 'Tenpay Global · FX Research Report') }} · {{ data.report_date }} · {{ data.t.get('classification_value', 'Confidential') }}</div>
+</div>
+
+<!-- ═══════════════════ 1. EXECUTIVE SUMMARY ═══════════════════ -->
+{% if sections.get('executive_summary') and data.get('commentary') %}
+{% set ns = namespace(sec_num=1) %}
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }}{% if data.client_profile %} · {{ data.client_profile.get('short_name', '') }}{% endif %}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h2 class="section-title"><span class="section-number">{{ ns.sec_num }}</span> Executive Summary</h2>
+
+  <div class="insight-box">
+    <div class="insight-label">Key Takeaway</div>
+    {{ data.commentary.get('executive_summary', '') }}
+  </div>
+
+  <!-- ── NEW: Traffic Light Signal Panel ── -->
+  {% if data.get('traffic_light_signals') and data.traffic_light_signals|length > 0 %}
+  <h3>Currency Signal Dashboard</h3>
+  <div class="traffic-light-row">
+    {% for sig in data.traffic_light_signals[:6] %}
+    <div class="tl-card signal-{{ sig.signal }}">
+      <div class="tl-dot {{ sig.signal }}"></div>
+      <div class="tl-pair">{{ sig.pair }}</div>
+      <div class="tl-rationale">{{ sig.rationale }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="section-divider"></div>
+
+  {% if data.get('spot_rates') and not data.spot_rates.get('_error') %}
+  {% if data.client_profile %}
+  {% set kpi_pairs = data.client_profile.get('focus_pairs', ['USDCNH', 'EURUSD', 'USDJPY'])[:4] %}
+  {% else %}
+  {% set kpi_pairs = ['USDCNH', 'EURUSD', 'USDJPY', 'GBPUSD'] %}
+  {% endif %}
+  <div class="kpi-row">
+    {% for ccy in kpi_pairs %}
+    {% if ccy in data.spot_rates and data.spot_rates[ccy] is mapping %}
+    <div class="kpi-card">
+      <div class="kpi-label">{{ ccy }}</div>
+      <div class="kpi-value" style="font-size:14pt;">{{ data.spot_rates[ccy].rate }}</div>
+      <div class="kpi-change {{ 'td-positive' if data.spot_rates[ccy].chg_1w is not none and data.spot_rates[ccy].chg_1w >= 0 else 'td-negative' if data.spot_rates[ccy].chg_1w is not none else '' }}">
+        {{ data.spot_rates[ccy].chg_1w|format_pct }} (1W)
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if data.client_profile %}
+  <h3>Focus Pairs at a Glance</h3>
+  <table>
+    <thead>
+      <tr><th>Pair</th><th style="text-align:center;width:90px;">Trend</th><th style="text-align:right">Spot</th><th style="text-align:right">1D</th><th style="text-align:right">1W</th><th style="text-align:right">1M</th><th style="text-align:right">YTD</th></tr>
+    </thead>
+    <tbody>
+    {% for ccy in data.client_profile.get('focus_pairs', []) %}
+    {% if ccy in data.spot_rates and data.spot_rates[ccy] is mapping %}
+    {% set v = data.spot_rates[ccy] %}
+    <tr>
+      <td class="td-pair">{{ ccy }}</td>
+      <td class="td-sparkline" style="text-align:center;">{% if data.get('sparklines', {}).get(ccy) %}{{ data.sparklines[ccy] }}{% endif %}</td>
+      <td class="td-rate" style="text-align:right">{{ v.rate }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1d is not none and v.chg_1d >= 0 else 'td-negative' if v.chg_1d is not none else '' }}">{{ v.chg_1d|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1w is not none and v.chg_1w >= 0 else 'td-negative' if v.chg_1w is not none else '' }}">{{ v.chg_1w|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1m is not none and v.chg_1m >= 0 else 'td-negative' if v.chg_1m is not none else '' }}">{{ v.chg_1m|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_ytd is not none and v.chg_ytd >= 0 else 'td-negative' if v.chg_ytd is not none else '' }}">{{ v.chg_ytd|format_pct }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <h3>Key Rates at a Glance</h3>
+  <table>
+    <thead>
+      <tr><th>Pair</th><th style="text-align:center;width:90px;">Trend</th><th style="text-align:right">Spot</th><th style="text-align:right">1D</th><th style="text-align:right">1W</th><th style="text-align:right">1M</th><th style="text-align:right">YTD</th></tr>
+    </thead>
+    <tbody>
+    {% for ccy in ['USDCNH', 'EURUSD', 'GBPUSD', 'USDJPY', 'AUDUSD'] %}
+    {% if ccy in data.spot_rates and data.spot_rates[ccy] is mapping %}
+    {% set v = data.spot_rates[ccy] %}
+    <tr>
+      <td class="td-pair">{{ ccy }}</td>
+      <td class="td-sparkline" style="text-align:center;">{% if data.get('sparklines', {}).get(ccy) %}{{ data.sparklines[ccy] }}{% endif %}</td>
+      <td class="td-rate" style="text-align:right">{{ v.rate }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1d is not none and v.chg_1d >= 0 else 'td-negative' if v.chg_1d is not none else '' }}">{{ v.chg_1d|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1w is not none and v.chg_1w >= 0 else 'td-negative' if v.chg_1w is not none else '' }}">{{ v.chg_1w|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1m is not none and v.chg_1m >= 0 else 'td-negative' if v.chg_1m is not none else '' }}">{{ v.chg_1m|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_ytd is not none and v.chg_ytd >= 0 else 'td-negative' if v.chg_ytd is not none else '' }}">{{ v.chg_ytd|format_pct }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% endif %}
+
+  {% if charts.get('focus_heatmap') %}
+  <h3>Focus Pairs Performance</h3>
+  <div class="chart-frame">
+    <img src="data:image/png;base64,{{ charts.focus_heatmap }}" alt="Focus Pairs Heatmap">
+    <div class="chart-caption">Performance heatmap for client-specific focus currency pairs.</div>
+  </div>
+  {% endif %}
+
+  <div class="page-footer">{{ ftr_text }} · {{ data.report_date }} · {{ ftr_cls }}</div>
+</div>
+{% set ns.sec_num = ns.sec_num + 1 %}
+{% endif %}
+
+<!-- ═══════════════════ CLIENT CORRIDOR ANALYSIS ═══════════════════ -->
+{% if sections.get('client_corridor') and data.client_profile and data.get('corridor_data') and not data.corridor_data.get('_error') %}
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }} · {{ data.client_profile.get('short_name', '') }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h2 class="section-title" style="border-bottom-color: var(--brand-gold);">
+    <span class="section-number" style="background: var(--brand-gold);">C</span>
+    {{ data.client_profile.get('region', '') }} Corridor Analysis
+  </h2>
+
+  <div class="client-focus-box">
+    <div class="focus-label">{{ data.client_profile.get('base_currency', '') }}-Denominated Corridors</div>
+    {% if data.get('client_commentary', {}).get('corridor_analysis') %}
+    {{ data.client_commentary.corridor_analysis }}
+    {% endif %}
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Base Currency</div>
+      <div class="kpi-value" style="font-size:18pt;">{{ data.client_profile.get('base_currency', 'USD') }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Corridors</div>
+      <div class="kpi-value" style="font-size:18pt;">{{ data.corridor_data.get('corridor_count', 0) }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Volume</div>
+      <div class="kpi-value" style="font-size:14pt;">{{ data.corridor_data.get('total_volume_usd', 0)|usd_millions }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Central Bank</div>
+      <div class="kpi-value" style="font-size:9pt;line-height:1.3;padding-top:3px;">{{ data.client_profile.get('central_bank', '') }}</div>
+    </div>
+  </div>
+
+  <h3>Corridor Rate Monitor</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Corridor</th>
+        <th style="text-align:center">Direction</th>
+        <th style="text-align:right">Rate</th>
+        <th style="text-align:right">1D %</th>
+        <th style="text-align:right">1W %</th>
+        <th style="text-align:right">Spread (bps)</th>
+        <th style="text-align:center">Trend</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for c in data.corridor_data.get('corridors', []) %}
+    {% if not c.get('_error') %}
+    <tr>
+      <td class="td-pair">{{ c.pair }}<br><span style="font-weight:normal;font-size:7pt;color:var(--text-secondary);">{{ c.label }}</span></td>
+      <td style="text-align:center">
+        <span class="badge-{{ c.direction }}">{{ c.direction|upper }}</span>
+      </td>
+      <td class="td-rate" style="text-align:right">{{ c.rate if c.rate is not none else 'N/A' }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if c.chg_1d is not none and c.chg_1d >= 0 else 'td-negative' if c.chg_1d is not none else '' }}">{{ c.chg_1d|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if c.chg_1w is not none and c.chg_1w >= 0 else 'td-negative' if c.chg_1w is not none else '' }}">{{ c.chg_1w|format_pct }}</td>
+      <td class="td-rate" style="text-align:right">{{ c.avg_spread_bps if c.avg_spread_bps is not none else 'N/A' }}</td>
+      <td style="text-align:center">
+        {% if c.spread_trend %}
+        <span class="badge-{{ c.spread_trend }}">{{ c.spread_trend|title }}</span>
+        {% else %}
+        <span style="color:var(--text-secondary);">N/A</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% if charts.get('corridor_volume') %}
+  <h3>Volume by Corridor</h3>
+  <div class="chart-frame">
+    <img src="data:image/png;base64,{{ charts.corridor_volume }}" alt="Corridor Volume">
+    <div class="chart-caption">Corridor volume breakdown. Blue = Inbound, Red = Outbound.</div>
+  </div>
+  {% endif %}
+
+  <div class="page-footer">{{ ftr_text }} · {{ data.report_date }} · {{ ftr_cls }}</div>
+</div>
+
+<!-- Corridor Analysis Page 2 -->
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }} · {{ data.client_profile.get('short_name', '') }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h3 style="margin-top:2mm;">Corridor Transaction Profile</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Corridor</th>
+        <th style="text-align:right">Volume (USD)</th>
+        <th style="text-align:right">Txn Count</th>
+        <th style="text-align:right">Avg Ticket (USD)</th>
+        <th style="text-align:right">Avg Spread (bps)</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for c in data.corridor_data.get('corridors', []) %}
+    {% if not c.get('_error') %}
+    <tr>
+      <td class="td-pair">{{ c.pair }}</td>
+      <td style="text-align:right">{{ c.volume_usd|usd_millions if c.volume_usd else 'N/A' }}</td>
+      <td style="text-align:right">{{ "{:,}".format(c.txn_count) if c.txn_count else 'N/A' }}</td>
+      <td class="td-rate" style="text-align:right">{{ "${:,.0f}".format(c.avg_ticket_usd) if c.avg_ticket_usd else 'N/A' }}</td>
+      <td class="td-rate" style="text-align:right">{{ c.avg_spread_bps if c.avg_spread_bps is not none else 'N/A' }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="two-col">
+    {% if charts.get('corridor_spread') %}
+    <div>
+      <h4>Spread Analysis</h4>
+      <div class="chart-frame">
+        <img src="data:image/png;base64,{{ charts.corridor_spread }}" alt="Corridor Spread">
+      </div>
+    </div>
+    {% endif %}
+    {% if charts.get('corridor_seasonality') %}
+    <div>
+      <h4>Volume Seasonality</h4>
+      <div class="chart-frame">
+        <img src="data:image/png;base64,{{ charts.corridor_seasonality }}" alt="Seasonality">
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <h3>Key Concerns &amp; Watch Items</h3>
+  <ul class="concern-list">
+  {% for concern in data.client_profile.get('key_concerns', []) %}
+    <li>{{ concern }}</li>
+  {% endfor %}
+  </ul>
+
+  {% if data.get('client_commentary', {}).get('local_market') %}
+  <h3>Local Market Commentary</h3>
+  <p>{{ data.client_commentary.local_market }}</p>
+  {% endif %}
+
+  {% if data.get('client_commentary', {}).get('recommendation') %}
+  <div class="insight-box">
+    <div class="insight-label">Recommendation</div>
+    {{ data.client_commentary.recommendation }}
+  </div>
+  {% endif %}
+
+  <div class="page-footer">{{ ftr_text }} · {{ data.report_date }} · {{ ftr_cls }}</div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════ MARKET OVERVIEW ═══════════════════ -->
+{% if sections.get('market_overview') and data.get('spot_rates') and not data.spot_rates.get('_error') %}
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h2 class="section-title"><span class="section-number">M</span> Market Overview</h2>
+
+  <!-- ── NEW: What Changed Section ── -->
+  {% if data.get('what_changed') and data.what_changed|length > 0 %}
+  <div class="frost-card">
+    <div class="frost-label"><span class="frost-icon">Δ</span> What Changed This Week</div>
+    {% for wc in data.what_changed[:6] %}
+    <div class="wc-item">
+      <span class="wc-pair">{{ wc.pair }}</span>
+      <div class="wc-bar-wrap">
+        {% set bar_width = [wc.change_pct|abs * 15, 50]|min %}
+        {% if wc.change_pct >= 0 %}
+        <div class="wc-bar positive" style="width:{{ bar_width }}%;"></div>
+        {% else %}
+        <div class="wc-bar negative" style="width:{{ bar_width }}%;"></div>
+        {% endif %}
+      </div>
+      <span class="wc-val {{ 'positive' if wc.change_pct >= 0 else 'negative' }}">{{ wc.change_pct|format_pct }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="section-divider"></div>
+
+  <h3>Complete FX Rate Monitor</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Currency Pair</th>
+        <th style="text-align:center;width:90px;">Trend</th>
+        <th style="text-align:right">Spot Rate</th>
+        <th style="text-align:right">1D Chg %</th>
+        <th style="text-align:right">1W Chg %</th>
+        <th style="text-align:right">1M Chg %</th>
+        <th style="text-align:right">YTD %</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for ccy, v in data.spot_rates.items() %}
+    {% if not ccy.startswith('_') and v is mapping %}
+    <tr>
+      <td class="td-pair">{{ ccy }}</td>
+      <td class="td-sparkline" style="text-align:center;">
+        {% if data.get('sparklines', {}).get(ccy) %}{{ data.sparklines[ccy] }}{% endif %}
+      </td>
+      <td class="td-rate" style="text-align:right">{{ v.rate }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1d is not none and v.chg_1d >= 0 else 'td-negative' if v.chg_1d is not none else '' }}">{{ v.chg_1d|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1w is not none and v.chg_1w >= 0 else 'td-negative' if v.chg_1w is not none else '' }}">{{ v.chg_1w|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_1m is not none and v.chg_1m >= 0 else 'td-negative' if v.chg_1m is not none else '' }}">{{ v.chg_1m|format_pct }}</td>
+      <td style="text-align:right" class="{{ 'td-positive' if v.chg_ytd is not none and v.chg_ytd >= 0 else 'td-negative' if v.chg_ytd is not none else '' }}">{{ v.chg_ytd|format_pct }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% if charts.get('spot_heatmap') %}
+  <h3>Performance Heatmap</h3>
+  <div class="chart-frame">
+    <img src="data:image/png;base64,{{ charts.spot_heatmap }}" alt="Spot Rate Heatmap">
+    <div class="chart-caption">FX spot rate changes across multiple time horizons. Source: Market Data.</div>
+  </div>
+  {% endif %}
+
+  <div class="page-footer">{{ ftr_text }} · {{ data.report_date }} · {{ ftr_cls }}</div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════ VOLATILITY ANALYSIS ═══════════════════ -->
+{% if sections.get('volatility_analysis') and data.get('vol_data') and not data.vol_data.get('_error') %}
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h2 class="section-title"><span class="section-number">V</span> Volatility Analysis</h2>
+
+  <h3>Implied Volatility Monitor</h3>
+  <table>
+    <thead>
+      <tr><th>Pair</th><th style="text-align:right">1W</th><th style="text-align:right">1M</th><th style="text-align:right">3M</th><th style="text-align:right">6M</th><th style="text-align:right">1Y</th></tr>
+    </thead>
+    <tbody>
+    {% for ccy, v in data.vol_data.items() %}
+    <tr>
+      <td class="td-pair">{{ ccy }}</td>
+      <td class="td-rate" style="text-align:right">{{ v.vol_1w|format_vol }}</td>
+      <td class="td-rate" style="text-align:right">{{ v.vol_1m|format_vol }}</td>
+      <td class="td-rate" style="text-align:right">{{ v.vol_3m|format_vol }}</td>
+      <td class="td-rate" style="text-align:right">{{ v.vol_6m|format_vol }}</td>
+      <td class="td-rate" style="text-align:right">{{ v.vol_1y|format_vol }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% if charts.get('vol_term_structure') %}
+  <h3>Term Structure — {% if data.client_profile %}Focus Pairs{% else %}Major Pairs{% endif %}</h3>
+  <div class="chart-frame">
+    <img src="data:image/png;base64,{{ charts.vol_term_structure }}" alt="Vol Term Structure">
+    <div class="chart-caption">Implied volatility term structure for {% if data.client_profile %}{{ data.client_profile.get('region', '') }} focus{% else %}G10{% endif %} currency pairs.</div>
+  </div>
+  {% endif %}
+
+  {% if charts.get('vol_comparison') %}
+  <h3>Short-term vs Mid-term Volatility</h3>
+  <div class="chart-frame">
+    <img src="data:image/png;base64,{{ charts.vol_comparison }}" alt="Vol Comparison">
+    <div class="chart-caption">1-month vs 3-month implied volatility comparison across all monitored pairs.</div>
+  </div>
+  {% endif %}
+
+  <div class="page-footer">{{ ftr_text }} · {{ data.report_date }} · {{ ftr_cls }}</div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════ FLOW ANALYSIS ═══════════════════ -->
+{% if sections.get('flow_analysis') and data.get('flow_data') and not data.flow_data.get('_error') %}
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h2 class="section-title"><span class="section-number">F</span> Flow &amp; Volume Analysis</h2>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Period</div>
+      <div class="kpi-value" style="font-size:14pt;">{{ data.flow_data.get('period', 'N/A') }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Volume</div>
+      <div class="kpi-value" style="font-size:14pt;">{{ data.flow_data.get('total_volume_usd', 0)|usd_millions }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Pairs</div>
+      <div class="kpi-value" style="font-size:14pt;">{{ data.flow_data.get('by_currency', {})|length }}</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    {% if charts.get('flow_pie') %}
+    <div>
+      <h4>Volume by Currency</h4>
+      <div class="chart-frame">
+        <img src="data:image/png;base64,{{ charts.flow_pie }}" alt="Flow by Currency">
+      </div>
+    </div>
+    {% endif %}
+    {% if charts.get('flow_bar') %}
+    <div>
+      <h4>Volume by Business Line</h4>
+      <div class="chart-frame">
+        <img src="data:image/png;base64,{{ charts.flow_bar }}" alt="Flow by Business">
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="page-footer">{{ ftr_text }} · {{ data.report_date }} · {{ ftr_cls }}</div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════ MACRO OUTLOOK ═══════════════════ -->
+{% if sections.get('macro_outlook') and data.get('commentary') %}
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h2 class="section-title"><span class="section-number">O</span> Macro Outlook &amp; Commentary</h2>
+
+  <h3>Market View</h3>
+  <p>{{ data.commentary.get('market_view', '') }}</p>
+
+  <div class="section-divider"></div>
+
+  <h3>Risk Assessment</h3>
+  <div class="callout-risk">
+    <div class="callout-label">Key Risks</div>
+    {{ data.commentary.get('risk_assessment', '') }}
+  </div>
+
+  {% if data.get('news') and data.news|length > 0 and not data.news[0].get('_error', '') %}
+  <h3>Market News &amp; Sentiment</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Headline</th><th style="text-align:center">Sentiment</th><th>Source</th></tr></thead>
+    <tbody>
+    {% for item in data.news[:10] %}
+    <tr>
+      <td style="white-space:nowrap">{{ item.date }}</td>
+      <td>{{ item.title }}</td>
+      <td style="text-align:center">
+        {% if item.sentiment == 'Bullish' %}<span class="td-positive">{{ item.sentiment }}</span>
+        {% elif item.sentiment == 'Bearish' %}<span class="td-negative">{{ item.sentiment }}</span>
+        {% else %}<span class="td-neutral">{{ item.sentiment }}</span>{% endif %}
+      </td>
+      <td style="font-size:7.5pt;color:var(--text-secondary);">{{ item.source }}{% if item.get('bbg') %} <span class="data-source-badge badge-bloomberg">BBG</span>{% endif %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  <h3>Outlook</h3>
+  <div class="pull-quote">
+    {{ data.commentary.get('outlook', '') }}
+    <span class="pq-source">— Tenpay Global FX Research</span>
+  </div>
+
+  <div class="page-footer">{{ ftr_text }} · {{ data.report_date }} · {{ ftr_cls }}</div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════ RISK MONITOR ═══════════════════ -->
+{% if sections.get('risk_monitor') and data.get('macro_events') and (data.macro_events is sequence and data.macro_events|length > 0 and not data.macro_events[0].get('_error', '')) %}
+<div class="report-page">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <h2 class="section-title"><span class="section-number">R</span> Risk Monitor — Event Calendar</h2>
+
+  {% if charts.get('event_timeline') %}
+  <div class="chart-frame">
+    <img src="data:image/png;base64,{{ charts.event_timeline }}" alt="Event Timeline">
+    <div class="chart-caption">Upcoming macro risk events by impact level.{% if data.client_profile %} Includes {{ data.client_profile.get('region', '') }}-specific events.{% endif %}</div>
+  </div>
+  {% endif %}
+
+  <h3>Upcoming Events Detail</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Event</th><th style="text-align:center">Impact</th><th>Currency</th></tr></thead>
+    <tbody>
+    {% for evt in data.macro_events %}
+    <tr>
+      <td style="white-space:nowrap">{{ evt.date }}</td>
+      <td>{{ evt.event }}</td>
+      <td style="text-align:center">
+        <span class="event-badge badge-{{ evt.impact|lower }}">{{ evt.impact }}</span>
+      </td>
+      <td>{{ evt.get('currency', '') }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="page-footer">{{ ftr_text }} · {{ data.report_date }} · {{ ftr_cls }}</div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════ DISCLAIMER ═══════════════════ -->
+<div class="report-page" style="min-height:auto;">
+  <div class="page-header">
+    <div class="page-header-left"><span class="page-header-logo">{{ mini_logo_svg }}</span> {{ hdr_text }}</div>
+    <div class="page-header-right">{{ data.report_date }}</div>
+  </div>
+
+  <div class="disclaimer-section">
+    <h4 style="margin-bottom:4mm;color:var(--text-secondary);">{{ data.t.get('disclaimer_title', 'Important Disclosures & Disclaimer') }}</h4>
+    <p style="font-size:7pt;color:var(--text-secondary);margin-bottom:2mm;">
+      {{ data.t.get('disclaimer_1', '') }}
+    </p>
+    <p style="font-size:7pt;color:var(--text-secondary);margin-bottom:2mm;">
+      {{ data.t.get('disclaimer_2', '') }}
+    </p>
+    <p style="font-size:7pt;color:var(--text-secondary);margin-bottom:0;">
+      &copy; {{ data.report_date[:4] }} {{ data.t.get('disclaimer_3_prefix', 'Tenpay Global. All rights reserved.') }}
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

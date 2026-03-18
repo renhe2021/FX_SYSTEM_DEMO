@@ -1,0 +1,23 @@
+/* pages/index/index.wxss */
+
+.header-stats {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  margin: -20rpx -20rpx 30rpx -20rpx;
+  padding: 60rpx 40rpx;
+  color: #fff;
+}
+
+.stats-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+
+.stats-subtitle {
+  font-size: 28rpx;
+  opacity: 0.8;
+}
+
+.quick-actions {
+  margin-top: 30rpx;
+}

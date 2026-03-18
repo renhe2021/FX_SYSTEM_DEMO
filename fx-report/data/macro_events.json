@@ -1,0 +1,182 @@
+[
+  {
+    "date": "2026-03-04",
+    "event": "China Caixin Services PMI (Feb)",
+    "impact": "Medium",
+    "currency": "CNH"
+  },
+  {
+    "date": "2026-03-05",
+    "event": "China National People's Congress (NPC) Opening — 2026 GDP Target & Fiscal Policy",
+    "impact": "High",
+    "currency": "CNH"
+  },
+  {
+    "date": "2026-03-05",
+    "event": "US ADP Nonfarm Employment Change (Feb)",
+    "impact": "Medium",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-05",
+    "event": "US ISM Services PMI (Feb)",
+    "impact": "High",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-06",
+    "event": "ECB Interest Rate Decision",
+    "impact": "High",
+    "currency": "EUR"
+  },
+  {
+    "date": "2026-03-06",
+    "event": "US Initial Jobless Claims (Weekly)",
+    "impact": "Low",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-06",
+    "event": "Eurozone GDP (Q4 2025, Final)",
+    "impact": "Medium",
+    "currency": "EUR"
+  },
+  {
+    "date": "2026-03-07",
+    "event": "US Nonfarm Payrolls (Feb)",
+    "impact": "High",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-07",
+    "event": "US Unemployment Rate (Feb)",
+    "impact": "High",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-07",
+    "event": "Canada Employment Change (Feb)",
+    "impact": "Medium",
+    "currency": "CAD"
+  },
+  {
+    "date": "2026-03-10",
+    "event": "Japan GDP (Q4 2025, Revised)",
+    "impact": "Medium",
+    "currency": "JPY"
+  },
+  {
+    "date": "2026-03-10",
+    "event": "China CPI & PPI (Feb)",
+    "impact": "High",
+    "currency": "CNH"
+  },
+  {
+    "date": "2026-03-11",
+    "event": "UK Employment & Wages Data (Jan)",
+    "impact": "Medium",
+    "currency": "GBP"
+  },
+  {
+    "date": "2026-03-11",
+    "event": "US JOLTS Job Openings (Jan)",
+    "impact": "Medium",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-12",
+    "event": "US CPI (Feb)",
+    "impact": "High",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-13",
+    "event": "US PPI (Feb)",
+    "impact": "Medium",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-13",
+    "event": "Bank Indonesia Interest Rate Decision",
+    "impact": "High",
+    "currency": "IDR"
+  },
+  {
+    "date": "2026-03-14",
+    "event": "China NPC Closing — Policy Wrap-up",
+    "impact": "Medium",
+    "currency": "CNH"
+  },
+  {
+    "date": "2026-03-16",
+    "event": "China Fixed Asset Investment & Retail Sales (Jan-Feb)",
+    "impact": "High",
+    "currency": "CNH"
+  },
+  {
+    "date": "2026-03-18",
+    "event": "RBA Interest Rate Decision",
+    "impact": "High",
+    "currency": "AUD"
+  },
+  {
+    "date": "2026-03-18",
+    "event": "US Retail Sales (Feb)",
+    "impact": "High",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-19",
+    "event": "FOMC Interest Rate Decision & Dot Plot",
+    "impact": "High",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-19",
+    "event": "BOJ Interest Rate Decision",
+    "impact": "High",
+    "currency": "JPY"
+  },
+  {
+    "date": "2026-03-20",
+    "event": "BOE Interest Rate Decision",
+    "impact": "High",
+    "currency": "GBP"
+  },
+  {
+    "date": "2026-03-20",
+    "event": "BSP (Philippines) Interest Rate Decision",
+    "impact": "High",
+    "currency": "PHP"
+  },
+  {
+    "date": "2026-03-20",
+    "event": "SNB Interest Rate Decision",
+    "impact": "Medium",
+    "currency": "CHF"
+  },
+  {
+    "date": "2026-03-25",
+    "event": "Thailand Trade Balance (Feb)",
+    "impact": "Medium",
+    "currency": "THB"
+  },
+  {
+    "date": "2026-03-26",
+    "event": "Malaysia CPI (Feb)",
+    "impact": "Medium",
+    "currency": "MYR"
+  },
+  {
+    "date": "2026-03-27",
+    "event": "US GDP (Q4 2025, Final)",
+    "impact": "Medium",
+    "currency": "USD"
+  },
+  {
+    "date": "2026-03-28",
+    "event": "US PCE Price Index (Feb) — Fed's Preferred Inflation Gauge",
+    "impact": "High",
+    "currency": "USD"
+  }
+]

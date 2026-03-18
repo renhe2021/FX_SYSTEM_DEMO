@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FX Markup Pricing — 加价分析工具 V4 (Offline)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+body{background:#0f172a;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;margin:0}
+.card{background:#1e293b;border-radius:10px;border:1px solid #334155}
+.metric-card{transition:transform .15s;cursor:default}.metric-card:hover{transform:translateY(-2px)}
+.btn{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;border:none}
+.btn-primary{background:#3b82f6;color:#fff}.btn-primary:hover{background:#2563eb}
+.btn-secondary{background:#475569;color:#e2e8f0}.btn-secondary:hover{background:#64748b}
+.btn-success{background:#10b981;color:#fff}.btn-success:hover{background:#059669}
+.btn-warning{background:#f59e0b;color:#1e293b}.btn-warning:hover{background:#d97706}
+.btn-sm{padding:4px 10px;font-size:11px}
+input[type=number],input[type=text]{background:#0f172a;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:5px 8px;font-size:12px}
+input[type=range]{cursor:pointer}
+input:focus{outline:none;border-color:#3b82f6}
+select{background:#0f172a;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:5px 8px;font-size:12px}
+.tab-btn{padding:8px 20px;border-radius:8px 8px 0 0;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #334155;border-bottom:none;background:#1e293b;color:#94a3b8;transition:all .15s}
+.tab-btn.active{background:#334155;color:#f1f5f9;border-color:#475569}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#334155;padding:6px 10px;text-align:right;font-weight:600;color:#94a3b8;border-bottom:2px solid #475569;white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:5px 10px;border-bottom:1px solid #1e293b;text-align:right;font-family:'Consolas','Courier New',monospace;white-space:nowrap}
+td:first-child{text-align:left;font-family:'Segoe UI',system-ui,sans-serif}
+tr:hover td{background:#1e293b80}
+.glow-blue{box-shadow:0 0 20px rgba(59,130,246,0.15)}.glow-green{box-shadow:0 0 20px rgba(16,185,129,0.15)}.glow-amber{box-shadow:0 0 20px rgba(245,158,11,0.15)}
+.markup-input{width:60px;text-align:center;padding:3px 4px;font-size:11px}
+.entity-btn{padding:6px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid #475569;background:#1e293b;color:#94a3b8;transition:all .2s}
+.entity-btn.active{border-color:#3b82f6;color:#3b82f6;background:#1e293b}
+.entity-btn:hover{border-color:#3b82f6;color:#e2e8f0}
+.ccy-markup-row{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:#0f172a;margin-bottom:4px}
+.ccy-markup-row:hover{background:#1e293b}
+.vol-bar{height:20px;border-radius:3px;background:linear-gradient(90deg,#1e40af,#3b82f6);min-width:2px}
+.offline-badge{background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="px-6 py-3 border-b border-slate-700" style="background:linear-gradient(135deg,#1e293b,#0f172a)">
+  <div class="flex items-center justify-between mx-auto" style="max-width:1600px">
+    <div>
+      <h1 class="text-lg font-bold text-white">FX Markup Pricing 加价分析工具 <span class="offline-badge">OFFLINE</span></h1>
+      <p class="text-xs text-slate-400 mt-0.5">Revenue = 交易量 × Markup(BPS) × 1e-4 | 离线版 — 数据已内嵌</p>
+    </div>
+    <div class="flex gap-3 items-center">
+      <div class="flex gap-1" id="entity-switcher">
+        <div class="entity-btn active" data-entity="summary" onclick="switchEntity('summary',this)">全量</div>
+        <div class="entity-btn" data-entity="mso" onclick="switchEntity('mso',this)">MSO</div>
+        <div class="entity-btn" data-entity="svf" onclick="switchEntity('svf',this)">SVF</div>
+      </div>
+      <span class="text-xs text-slate-500" id="month-label">—</span>
+      <span class="text-xs text-slate-600" id="status-text">Ready</span>
+      <button class="btn btn-secondary btn-sm" onclick="resetAll()">Reset (清零)</button>
+    </div>
+  </div>
+</div>
+<div class="px-6 py-4 mx-auto" style="max-width:1600px">
+<div class="grid grid-cols-4 gap-3 mb-4">
+  <div class="card p-3 metric-card glow-blue"><div class="text-xs text-slate-500">月交易量 (CNY)</div><div class="text-lg font-bold text-blue-400" id="kpi-volume">—</div></div>
+  <div class="card p-3 metric-card"><div class="text-xs text-slate-500">加权平均 Markup</div><div class="text-lg font-bold text-slate-300" id="kpi-avg-markup">—</div></div>
+  <div class="card p-3 metric-card glow-green"><div class="text-xs text-slate-500">月度加价收入 (CNY)</div><div class="text-xl font-bold text-emerald-400" id="kpi-revenue">—</div></div>
+  <div class="card p-3 metric-card glow-amber"><div class="text-xs text-slate-500">年化加价收入 (CNY)</div><div class="text-xl font-bold text-amber-400" id="kpi-annual">—</div></div>
+</div>
+<div class="flex gap-1 mb-0">
+  <div class="tab-btn active" onclick="switchTab('ccy-markup',this)">按币种加价 ⭐</div>
+  <div class="tab-btn" onclick="switchTab('reverse-calc',this)">目标反算 🎯</div>
+  <div class="tab-btn" onclick="switchTab('vol-weight',this)">波动率加权</div>
+  <div class="tab-btn" onclick="switchTab('overview',this)">Overview</div>
+  <div class="tab-btn" onclick="switchTab('markup-matrix',this)">完整矩阵</div>
+  <div class="tab-btn" onclick="switchTab('biz-detail',this)">业务线明细</div>
+  <div class="tab-btn" onclick="switchTab('ccy-detail',this)">币种明细</div>
+  <div class="tab-btn" onclick="switchTab('scenario',this)">场景计算</div>
+</div>
+<div id="tab-ccy-markup" class="card p-4" style="border-radius:0 10px 10px 10px"><div class="flex justify-between items-center mb-3"><div><h3 class="text-sm font-bold text-slate-300">按币种对设置 Markup (BPS)</h3><p class="text-xs text-slate-500 mt-1">在右侧输入框设置每个币种的加价(BPS)</p></div><div class="flex gap-2 items-center"><span class="text-xs text-slate-500">快捷统一设置:</span><input type="number" id="quick-uniform-bps" value="5" step="0.5" min="0" style="width:70px"><span class="text-xs text-slate-500">BPS</span><button class="btn btn-warning btn-sm" onclick="quickFillAll()">统一填入</button><button class="btn btn-success btn-sm" onclick="applyCcyMarkups()">计算 Revenue</button></div></div><div id="ccy-markup-list"></div><div class="mt-3 grid grid-cols-2 gap-4"><div class="card p-3"><div id="chart-ccy-markup-rev" style="height:350px"></div></div><div class="card p-3"><div id="chart-ccy-markup-vol" style="height:350px"></div></div></div></div>
+<div id="tab-reverse-calc" class="card p-4 hidden" style="border-radius:0 10px 10px 10px"><div class="flex justify-between items-center mb-4"><div><h3 class="text-sm font-bold text-slate-300">目标收入反算 — 倒推加价方案</h3><p class="text-xs text-slate-500 mt-1">输入目标月增收金额，勾选方案，点击反算</p></div><div class="flex gap-2 items-center"><span class="text-xs text-slate-400">目标月增收:</span><span class="text-sm text-slate-500">¥</span><input type="text" id="rev-target-input" value="3,000,000" style="width:130px" oninput="fmtAccounting(this)" onfocus="fmtAccounting(this)"><span class="text-xs text-slate-500">元</span><button class="btn btn-primary" onclick="runReverseCalc()" style="padding:8px 24px">反算方案</button></div></div>
+<div class="mb-4" style="border:1px solid #334155;border-radius:10px;padding:14px;background:#0f172a"><div class="text-xs font-bold text-slate-400 mb-3">选择方案</div><div class="flex gap-4 flex-wrap">
+<label class="flex items-center gap-2 cursor-pointer" style="min-width:170px"><input type="checkbox" value="uniform" checked class="plan-checkbox" style="accent-color:#3b82f6;width:16px;height:16px"><span style="font-size:16px">📊</span><div><div class="text-xs font-bold text-blue-400">统一加价</div></div></label>
+<label class="flex items-center gap-2 cursor-pointer" style="min-width:170px"><input type="checkbox" value="vol_weight" class="plan-checkbox" style="accent-color:#10b981;width:16px;height:16px"><span style="font-size:16px">📈</span><div><div class="text-xs font-bold text-emerald-400">波动率加权</div></div></label>
+<label class="flex items-center gap-2 cursor-pointer" style="min-width:170px"><input type="checkbox" value="big_only" checked class="plan-checkbox" style="accent-color:#f59e0b;width:16px;height:16px"><span style="font-size:16px">🏦</span><div><div class="text-xs font-bold text-amber-400">只加大币种</div></div></label>
+<label class="flex items-center gap-2 cursor-pointer" style="min-width:170px"><input type="checkbox" value="small_only" checked class="plan-checkbox" style="accent-color:#8b5cf6;width:16px;height:16px"><span style="font-size:16px">💱</span><div><div class="text-xs font-bold text-purple-400">只加小币种</div></div></label>
+<label class="flex items-center gap-2 cursor-pointer" style="min-width:170px"><input type="checkbox" value="tiered" checked class="plan-checkbox" style="accent-color:#ec4899;width:16px;height:16px"><span style="font-size:16px">📶</span><div><div class="text-xs font-bold text-pink-400">阶梯式加价</div></div></label>
+<label class="flex items-center gap-2 cursor-pointer" style="min-width:170px"><input type="checkbox" value="stealth" checked class="plan-checkbox" style="accent-color:#06b6d4;width:16px;height:16px" onchange="toggleStealthOpts()"><span style="font-size:16px">🥷</span><div><div class="text-xs font-bold text-cyan-400">隐蔽式加价</div></div></label>
+</div>
+<div id="stealth-options" class="mt-3" style="background:#06b6d415;border:1px solid #06b6d444;border-radius:8px;padding:14px">
+<div class="flex items-center gap-2 mb-3"><span style="font-size:14px">🥷</span><span class="text-xs font-bold text-cyan-400">隐蔽式参数</span></div>
+<div class="flex items-center gap-4 mb-3 flex-wrap"><div class="flex items-center gap-2"><span class="text-xs text-slate-400">上限</span><input type="number" id="stealth-max-bps" value="20" step="1" min="1" max="100" style="width:70px;text-align:center"><span class="text-xs text-slate-500">BPS</span></div><div style="width:1px;height:20px;background:#334155"></div><div class="flex items-center gap-2"><span class="text-xs text-slate-400">随机</span><input type="range" id="stealth-randomness" min="0" max="1" step="0.1" value="0" style="width:120px;accent-color:#06b6d4" oninput="document.getElementById('stealth-rand-label').textContent=Math.round(this.value*100)+'%'"><span class="text-xs text-cyan-400 font-bold" id="stealth-rand-label" style="min-width:32px">0%</span></div></div>
+<div class="mb-2"><div class="flex items-center gap-2 mb-2"><span class="text-xs text-slate-400">🔒 锁定币种</span><button class="btn btn-sm" style="background:#06b6d422;color:#06b6d4;border:1px solid #06b6d444;font-size:10px;padding:2px 8px" onclick="addStealthPin()">+ 添加</button></div><div id="stealth-pinned-list" class="flex gap-2 flex-wrap"></div></div>
+</div></div>
+<div class="grid grid-cols-3 gap-3 mb-4"><div class="card p-3 metric-card glow-blue"><div class="text-xs text-slate-500">目标月增收</div><div class="text-xl font-bold text-blue-400" id="rev-kpi-target">¥300.00万</div></div><div class="card p-3 metric-card glow-amber"><div class="text-xs text-slate-500">目标年增收</div><div class="text-xl font-bold text-amber-400" id="rev-kpi-annual">¥3,600.00万</div></div><div class="card p-3 metric-card"><div class="text-xs text-slate-500">月总交易量</div><div class="text-lg font-bold text-slate-300" id="rev-kpi-volume">—</div></div></div>
+<div id="rev-plans-container" class="mb-4"></div><div id="rev-plan-detail" class="mb-4"></div>
+<div class="grid grid-cols-2 gap-4"><div class="card p-3"><div id="chart-rev-compare" style="height:400px"></div></div><div class="card p-3"><div id="chart-rev-ccy-compare" style="height:400px"></div></div></div></div>
+<div id="tab-vol-weight" class="card p-4 hidden" style="border-radius:0 10px 10px 10px">
+<div class="mb-4" style="border:1px solid #334155;border-radius:10px;padding:16px;background:#0f172a"><div class="flex justify-between items-center mb-3"><div class="flex items-center gap-3"><span style="background:#10b981;color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px">离线数据</span><div><h3 class="text-sm font-bold text-slate-300">波动率数据 (已内嵌)</h3></div></div><span class="text-xs text-emerald-400">✓ 已加载</span></div><div id="vol-raw-data-table"></div></div>
+<div class="mb-4" style="border:1px solid #334155;border-radius:10px;padding:16px;background:#0f172a"><div class="flex justify-between items-center mb-3"><div class="flex items-center gap-3"><span style="background:#10b981;color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px">计算</span><div><h3 class="text-sm font-bold text-slate-300">计算加价建议</h3></div></div><div class="flex gap-2 items-center"><span class="text-xs text-slate-400">目标:</span><input type="number" id="vol-target-bps" value="0.5" step="0.1" min="0.1" max="20" style="width:70px"><span class="text-xs text-slate-500">BPS</span><button class="btn btn-primary btn-sm" onclick="loadVolSuggestion()">计算</button><button class="btn btn-success btn-sm" onclick="applyVolSuggestion()">应用到加价</button></div></div>
+<div class="grid grid-cols-4 gap-3 mb-4"><div class="card p-3 glow-blue" style="background:#1e293b"><div class="text-xs text-slate-500">目标</div><div class="text-lg font-bold text-blue-400" id="vol-kpi-target">0.50 BPS</div></div><div class="card p-3" style="background:#1e293b"><div class="text-xs text-slate-500">实际</div><div class="text-lg font-bold text-slate-300" id="vol-kpi-actual">—</div></div><div class="card p-3 glow-green" style="background:#1e293b"><div class="text-xs text-slate-500">月度收入</div><div class="text-xl font-bold text-emerald-400" id="vol-kpi-monthly">—</div></div><div class="card p-3 glow-amber" style="background:#1e293b"><div class="text-xs text-slate-500">年化收入</div><div class="text-xl font-bold text-amber-400" id="vol-kpi-annual2">—</div></div></div>
+<div id="vol-suggest-table"></div></div>
+<div class="grid grid-cols-2 gap-4"><div class="card p-3"><div id="chart-vol-scatter" style="height:380px"></div></div><div class="card p-3"><div id="chart-vol-markup-bar" style="height:380px"></div></div></div></div>
+<div id="tab-overview" class="card p-4 hidden" style="border-radius:0 10px 10px 10px"><div class="grid grid-cols-2 gap-4 mb-4"><div class="card p-3"><div id="chart-biz-volume" style="height:360px"></div></div><div class="card p-3"><div id="chart-ccy-volume" style="height:360px"></div></div></div><div class="grid grid-cols-2 gap-4"><div class="card p-3"><div id="chart-biz-rev" style="height:320px"></div></div><div class="card p-3"><div id="chart-ccy-rev" style="height:320px"></div></div></div><div class="mt-4"><div class="card p-3"><div id="chart-rev-heatmap" style="height:350px"></div></div></div></div>
+<div id="tab-markup-matrix" class="card p-4 hidden" style="border-radius:0 10px 10px 10px"><div class="flex justify-between items-center mb-3"><h3 class="text-sm font-bold text-slate-300">Markup 矩阵 (BPS)</h3><button class="btn btn-success btn-sm" onclick="applyMatrixMarkups()">Apply & Calculate</button></div><div class="overflow-x-auto" id="markup-matrix-container"></div></div>
+<div id="tab-biz-detail" class="card p-4 hidden" style="border-radius:0 10px 10px 10px"><h3 class="text-sm font-bold text-slate-300 mb-3">业务线明细</h3><div id="biz-detail-table"></div></div>
+<div id="tab-ccy-detail" class="card p-4 hidden" style="border-radius:0 10px 10px 10px"><h3 class="text-sm font-bold text-slate-300 mb-3">币种明细</h3><div id="ccy-detail-table"></div></div>
+<div id="tab-scenario" class="card p-4 hidden" style="border-radius:0 10px 10px 10px"><h3 class="text-sm font-bold text-slate-300 mb-3">场景计算器</h3><div class="grid grid-cols-3 gap-4 mb-4"><div class="card p-3"><h4 class="text-xs font-bold text-slate-400 mb-2">统一加价</h4><div class="flex gap-2 items-center"><input type="number" id="uniform-bps" value="5" step="0.5" min="0" style="width:80px"><span class="text-xs text-slate-500">BPS</span><button class="btn btn-primary btn-sm" onclick="applyUniform()">Apply</button></div></div><div class="card p-3"><h4 class="text-xs font-bold text-slate-400 mb-2">按业务线</h4><div class="flex gap-2 items-center"><select id="biz-select" style="width:120px"></select><input type="number" id="biz-bps" value="5" step="0.5" min="0" style="width:60px"><button class="btn btn-primary btn-sm" onclick="applyBiz()">Apply</button></div></div><div class="card p-3"><h4 class="text-xs font-bold text-slate-400 mb-2">按币种</h4><div class="flex gap-2 items-center"><select id="ccy-select" style="width:80px"></select><input type="number" id="ccy-bps" value="5" step="0.5" min="0" style="width:60px"><button class="btn btn-primary btn-sm" onclick="applyCcy()">Apply</button></div></div></div><div class="flex items-center gap-4 mb-3"><h4 class="text-xs font-bold text-slate-400">统一加价扫描</h4><input type="number" id="scan-min" value="0" step="0.5" style="width:60px"><span class="text-xs text-slate-500">~</span><input type="number" id="scan-max" value="20" step="1" style="width:60px"><button class="btn btn-primary btn-sm" onclick="runScan()">Scan</button></div><div class="card p-3"><div id="chart-scan" style="height:380px"></div></div></div>
+</div>
+<script src="FX_Markup_Offline_Engine.js"></script>
+</body>
+</html>

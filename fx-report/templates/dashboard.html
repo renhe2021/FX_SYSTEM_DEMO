@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX System — 工具看板</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Noto Sans SC', 'Inter', -apple-system, sans-serif;
+    background: #0F172A; color: #E2E8F0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+.header {
+    padding: 40px 0 20px;
+    text-align: center;
+}
+.header h1 {
+    font-size: 28px; font-weight: 700; color: #F8FAFC;
+    letter-spacing: -0.5px;
+}
+.header h1 span { color: #3B82F6; }
+.header p { color: #94A3B8; font-size: 14px; margin-top: 6px; }
+
+.grid {
+    max-width: 1100px; margin: 24px auto; padding: 0 24px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #1E293B; border-radius: 12px;
+    border: 1px solid #334155; padding: 24px;
+    transition: all 0.2s ease;
+    position: relative; overflow: hidden;
+}
+.card:hover { border-color: #3B82F6; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.15); }
+.card.git-sync { border-color: #7C3AED30; }
+.card.git-sync:hover { border-color: #7C3AED; box-shadow: 0 8px 24px rgba(124,58,237,0.15); }
+
+.card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.card-icon { font-size: 28px; width: 48px; height: 48px; background: #0F172A; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.card-title { font-size: 16px; font-weight: 600; color: #F1F5F9; }
+.card-port { font-size: 12px; color: #64748B; font-family: 'Inter', monospace; }
+.card-badge { font-size: 10px; color: #A78BFA; background: rgba(124,58,237,0.15); padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+
+.card-desc { font-size: 13px; color: #94A3B8; line-height: 1.6; margin-bottom: 12px; min-height: 36px; }
+
+.card-meta { font-size: 11px; color: #64748B; margin-bottom: 14px; font-family: 'Inter', monospace; }
+.card-meta .changed { color: #FBBF24; }
+
+.card-footer { display: flex; align-items: center; gap: 10px; }
+
+.status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500; padding: 4px 10px;
+    border-radius: 20px;
+}
+.status.online { background: rgba(34,197,94,0.15); color: #4ADE80; }
+.status.online::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #22C55E; animation: pulse 2s infinite; }
+.status.offline { background: rgba(100,116,139,0.2); color: #64748B; }
+.status.offline::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #475569; }
+.status.starting { background: rgba(251,191,36,0.15); color: #FBBF24; }
+.status.starting::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #FBBF24; animation: pulse 0.6s infinite; }
+.status.synced { background: rgba(124,58,237,0.15); color: #A78BFA; }
+.status.synced::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #7C3AED; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.btn {
+    padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    border: none; cursor: pointer; transition: all 0.15s;
+    font-family: inherit;
+}
+.btn-start { background: #3B82F6; color: #fff; }
+.btn-start:hover { background: #2563EB; }
+.btn-start:disabled { background: #334155; color: #64748B; cursor: not-allowed; }
+.btn-sync { background: #7C3AED; color: #fff; }
+.btn-sync:hover { background: #6D28D9; }
+.btn-sync:disabled { background: #334155; color: #64748B; cursor: not-allowed; }
+.btn-open { background: transparent; color: #3B82F6; border: 1px solid #3B82F6; }
+.btn-open:hover { background: rgba(59,130,246,0.1); }
+.btn-open:disabled { border-color: #334155; color: #475569; cursor: not-allowed; }
+.btn-repo { background: transparent; color: #A78BFA; border: 1px solid #7C3AED; }
+.btn-repo:hover { background: rgba(124,58,237,0.1); }
+
+.spacer { flex: 1; }
+
+.refresh-bar {
+    text-align: center; padding: 16px; color: #475569; font-size: 12px;
+}
+.refresh-bar a { color: #3B82F6; cursor: pointer; text-decoration: none; }
+.refresh-bar a:hover { text-decoration: underline; }
+
+.toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #1E293B; border: 1px solid #334155; color: #F1F5F9;
+    padding: 10px 20px; border-radius: 8px; font-size: 13px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100;
+    max-width: 500px; white-space: pre-wrap;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1><span>FX System</span> 工具看板</h1>
+    <p>一键启动和管理所有 FX 工具</p>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="refresh-bar">
+    每 5 秒自动刷新状态 · <a onclick="fetchStatus()">手动刷新</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const grid = document.getElementById('grid');
+const toast = document.getElementById('toast');
+let tools = [];
+
+function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function renderCard(t) {
+    const isGit = t.type === 'git-sync';
+
+    if (isGit) {
+        return `
+        <div class="card git-sync" id="card-${t.id}">
+            <div class="card-head">
+                <div class="card-icon">${t.icon}</div>
+                <div>
+                    <div class="card-title">${t.name} <span class="card-badge">Git Sync</span></div>
+                    <div class="card-port">工蜂 → WeData</div>
+                </div>
+            </div>
+            <div class="card-desc">${t.desc}</div>
+            <div class="card-meta">
+                ${t.last_commit ? `最近提交: ${t.last_commit}` : ''}
+                ${t.has_changes ? '<br><span class="changed">⚠ 有未提交的修改</span>' : ''}
+            </div>
+            <div class="card-footer">
+                <span class="status synced" id="status-${t.id}">
+                    ${t.has_changes ? '有改动' : '已同步'}
+                </span>
+                <span class="spacer"></span>
+                <button class="btn btn-sync" id="sync-${t.id}" onclick="syncTool('${t.id}')">
+                    同步到工蜂
+                </button>
+                <button class="btn btn-repo" onclick="window.open('${t.url}','_blank')">
+                    查看仓库
+                </button>
+            </div>
+        </div>`;
+    }
+
+    return `
+    <div class="card" id="card-${t.id}">
+        <div class="card-head">
+            <div class="card-icon">${t.icon}</div>
+            <div>
+                <div class="card-title">${t.name}</div>
+                <div class="card-port">:${t.port}</div>
+            </div>
+        </div>
+        <div class="card-desc">${t.desc}</div>
+        <div class="card-footer">
+            <span class="status ${t.alive ? 'online' : 'offline'}" id="status-${t.id}">
+                ${t.alive ? '运行中' : '未启动'}
+            </span>
+            <span class="spacer"></span>
+            ${t.self ? '' : `<button class="btn btn-start" id="start-${t.id}" onclick="startTool('${t.id}')" ${t.alive ? 'disabled' : ''}>
+                ${t.alive ? '已启动' : '启动'}
+            </button>`}
+            <button class="btn btn-open" onclick="window.open('${t.url}','_blank')" ${!t.alive ? 'disabled' : ''}>
+                打开
+            </button>
+        </div>
+    </div>`;
+}
+
+function renderCards() {
+    grid.innerHTML = tools.map(renderCard).join('');
+}
+
+async function fetchStatus() {
+    try {
+        const res = await fetch('/api/tools/status');
+        tools = await res.json();
+        renderCards();
+    } catch (e) {
+        console.error('fetch status failed', e);
+    }
+}
+
+async function startTool(id) {
+    const btn = document.getElementById(`start-${id}`);
+    const st = document.getElementById(`status-${id}`);
+    if (btn) { btn.disabled = true; btn.textContent = '启动中…'; }
+    if (st) { st.className = 'status starting'; st.innerHTML = '启动中…'; }
+
+    try {
+        const res = await fetch(`/api/tools/start/${id}`, { method: 'POST' });
+        const data = await res.json();
+        showToast(data.msg);
+
+        let tries = 0;
+        const poll = setInterval(async () => {
+            tries++;
+            if (tries > 30) { clearInterval(poll); fetchStatus(); return; }
+            try {
+                const r = await fetch('/api/tools/status');
+                const list = await r.json();
+                const t = list.find(x => x.id === id);
+                if (t && t.alive) {
+                    clearInterval(poll);
+                    tools = list;
+                    renderCards();
+                    showToast(`${t.name} 已就绪`);
+                }
+            } catch {}
+        }, 500);
+    } catch (e) {
+        showToast('启动失败: ' + e.message);
+        fetchStatus();
+    }
+}
+
+async function syncTool(id) {
+    const btn = document.getElementById(`sync-${id}`);
+    if (btn) { btn.disabled = true; btn.textContent = '同步中…'; }
+
+    try {
+        const res = await fetch(`/api/tools/sync/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+        const data = await res.json();
+        showToast(data.ok ? '同步成功!' : '同步结果: ' + data.msg);
+        fetchStatus();
+    } catch (e) {
+        showToast('同步失败: ' + e.message);
+        fetchStatus();
+    }
+}
+
+fetchStatus();
+setInterval(fetchStatus, 5000);
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+Bloomberg 数据工具箱 - 安装说明
+================================
+
+【前提条件】
+1. 电脑上已安装 Bloomberg Terminal
+2. 已安装 Python 3.8+
+
+【安装步骤】
+
+1. 解压文件到任意目录
+
+2. 打开命令行，进入解压目录，安装依赖：
+   pip install -r requirements.txt
+
+3. 运行工具：
+   python start_bbg_web.py
+
+4. 浏览器访问：
+   http://127.0.0.1:5001
+
+【功能说明】
+- K线数据：下载历史K线
+- Tick数据：下载逐笔成交
+- Bid/Ask数据：下载买卖报价（支持秒级）
+- 参考数据：下载静态字段
+
+【注意事项】
+- 必须先打开 Bloomberg Terminal 并登录
+- 数据下载受 Bloomberg 权限限制

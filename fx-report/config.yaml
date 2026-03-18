@@ -1,0 +1,373 @@
+# FX Research Report Generator - Configuration
+# Tenpay Global FX Team
+
+report:
+  title: "Tenpay Global FX Research Report"
+  title_zh: "Tenpay Global 外汇研究报告"
+  author: "Tenpay Global FX Team"
+  author_zh: "Tenpay Global 外汇研究团队"
+  logo_text: "TENPAY GLOBAL"
+  confidential: true
+  language: "en"  # en / zh
+
+# ──────────────────────────────────────────────
+# i18n — bilingual labels for report & UI
+# ──────────────────────────────────────────────
+i18n:
+  en:
+    report_title: "FX Research Report"
+    subtitle_market: "Foreign Exchange Market Analysis & Business Intelligence Review"
+    subtitle_corridor: "Market Focus — Foreign Exchange & Corridor Analysis"
+    prepared_for: "Prepared For"
+    report_date: "Report Date"
+    prepared_by: "Prepared By"
+    base_currency: "Base Currency"
+    region_focus: "Region Focus"
+    classification: "Classification"
+    classification_value: "Internal — Confidential"
+    data_sources: "Data Sources"
+    confidential: "Confidential · For Internal Use Only"
+    contents: "Contents"
+    page_header: "Tenpay Global · FX Research"
+    page_footer: "Tenpay Global · FX Research Report"
+    disclaimer_title: "Important Disclosures & Disclaimer"
+    disclaimer_1: "This document has been prepared by the Tenpay Global FX Research Team for internal use only and is strictly confidential. The information, opinions, and analyses contained herein are based on sources believed to be reliable, but no representation or warranty, express or implied, is made as to their accuracy, completeness, or correctness."
+    disclaimer_2: "This report does not constitute investment advice, a recommendation, or an offer to buy or sell any financial instruments. The views expressed may change without notice. Past performance is not indicative of future results. Recipients should seek independent professional advice before making any investment decisions."
+    disclaimer_3_prefix: "Tenpay Global. All rights reserved. No part of this material may be reproduced, distributed, or transmitted without prior written permission."
+    # Section titles
+    sec_executive_summary: "Executive Summary"
+    sec_client_corridor: "Client Corridor Analysis"
+    sec_market_overview: "Market Overview"
+    sec_volatility: "Volatility Analysis"
+    sec_flow: "Flow Analysis"
+    sec_macro: "Macro Outlook & Commentary"
+    sec_risk: "Risk Event Monitor"
+    # Web UI
+    ui_title: "FX Research Report Generator"
+    ui_subtitle: "Client-specific FX research reports with corridor analysis"
+    ui_client_profile: "Client Profile"
+    ui_report_settings: "Report Settings"
+    ui_generate: "Generate Report"
+  zh:
+    report_title: "外汇研究报告"
+    subtitle_market: "外汇市场分析与商业情报综述"
+    subtitle_corridor: "市场聚焦 — 外汇及通道分析"
+    prepared_for: "呈报对象"
+    report_date: "报告日期"
+    prepared_by: "编制部门"
+    base_currency: "基础货币"
+    region_focus: "重点区域"
+    classification: "密级"
+    classification_value: "内部 — 保密"
+    data_sources: "数据来源"
+    confidential: "保密 · 仅供内部使用"
+    contents: "目录"
+    page_header: "Tenpay Global · 外汇研究"
+    page_footer: "Tenpay Global · 外汇研究报告"
+    disclaimer_title: "重要披露与免责声明"
+    disclaimer_1: "本文件由 Tenpay Global 外汇研究团队编制，仅供内部使用，属于严格保密文件。本报告所载信息、意见和分析基于被认为可靠的来源，但对其准确性、完整性或正确性不作任何明示或暗示的陈述或保证。"
+    disclaimer_2: "本报告不构成投资建议、推荐或买卖任何金融工具的要约。所表达的观点可能在不通知的情况下变更。过往表现不代表未来结果。接收者在作出任何投资决策之前应寻求独立的专业意见。"
+    disclaimer_3_prefix: "Tenpay Global 版权所有。未经事先书面许可，不得复制、分发或传播本材料的任何部分。"
+    # Section titles
+    sec_executive_summary: "执行摘要"
+    sec_client_corridor: "客户通道分析"
+    sec_market_overview: "市场概览"
+    sec_volatility: "波动率分析"
+    sec_flow: "资金流分析"
+    sec_macro: "宏观展望与评论"
+    sec_risk: "风险事件监控"
+    # Web UI
+    ui_title: "外汇研究报告生成器"
+    ui_subtitle: "基于客户定制的外汇研究报告，含通道分析"
+    ui_client_profile: "客户档案"
+    ui_report_settings: "报告设置"
+    ui_generate: "生成报告"
+
+# ──────────────────────────────────────────────
+# Client Profiles
+# Each client type has a base_currency, key corridors, and focus areas.
+# When generating a report, select a client profile to customize content.
+# ──────────────────────────────────────────────
+client_profiles:
+  # Vietnam PSP (e.g., MoMo, ZaloPay, VNPay)
+  vietnam_psp:
+    name: "Vietnam Payment Service Provider"
+    short_name: "Vietnam PSP"
+    region: "Vietnam"
+    base_currency: "VND"
+    corridors:
+      - { from: "USD", to: "VND", direction: "inbound", label: "USD→VND Inbound Remittance" }
+      - { from: "CNY", to: "VND", direction: "inbound", label: "CNY→VND Cross-border Trade" }
+      - { from: "VND", to: "USD", direction: "outbound", label: "VND→USD Outbound Payment" }
+      - { from: "JPY", to: "VND", direction: "inbound", label: "JPY→VND Inbound" }
+      - { from: "KRW", to: "VND", direction: "inbound", label: "KRW→VND Inbound" }
+    focus_pairs: ["USDVND", "CNHVND", "JPYVND", "KRWVND"]
+    key_concerns:
+      - "SBV (State Bank of Vietnam) FX policy & managed float regime"
+      - "VND depreciation pressure vs USD"
+      - "Remittance inflow seasonality (Tet holidays)"
+      - "Trade balance impact (electronics exports)"
+      - "Capital control restrictions on VND"
+    central_bank: "State Bank of Vietnam (SBV)"
+    key_events:
+      - "SBV reference rate adjustment"
+      - "Vietnam GDP release"
+      - "Vietnam CPI / Trade Balance"
+      - "Fed rate decision (USD impact)"
+
+  # Philippines PSP (e.g., GCash, Maya/PayMaya)
+  philippines_psp:
+    name: "Philippines Payment Service Provider"
+    short_name: "Philippines PSP"
+    region: "Philippines"
+    base_currency: "PHP"
+    corridors:
+      - { from: "USD", to: "PHP", direction: "inbound", label: "USD→PHP OFW Remittance" }
+      - { from: "PHP", to: "USD", direction: "outbound", label: "PHP→USD Outbound" }
+      - { from: "SGD", to: "PHP", direction: "inbound", label: "SGD→PHP Remittance" }
+      - { from: "AED", to: "PHP", direction: "inbound", label: "AED→PHP Gulf Remittance" }
+      - { from: "CNY", to: "PHP", direction: "inbound", label: "CNY→PHP Trade" }
+    focus_pairs: ["USDPHP", "SGDPHP", "CNHPHP", "EURPHP"]
+    key_concerns:
+      - "BSP (Bangko Sentral ng Pilipinas) monetary policy"
+      - "OFW remittance flows (10%+ of GDP)"
+      - "PHP volatility vs USD"
+      - "BPO industry FX demand"
+      - "Current account deficit impact"
+    central_bank: "Bangko Sentral ng Pilipinas (BSP)"
+    key_events:
+      - "BSP rate decision"
+      - "Philippines CPI release"
+      - "OFW remittance data"
+      - "Philippines GDP release"
+
+  # Indonesia PSP (e.g., DANA, OVO, GoPay)
+  indonesia_psp:
+    name: "Indonesia Payment Service Provider"
+    short_name: "Indonesia PSP"
+    region: "Indonesia"
+    base_currency: "IDR"
+    corridors:
+      - { from: "USD", to: "IDR", direction: "inbound", label: "USD→IDR Inbound" }
+      - { from: "IDR", to: "USD", direction: "outbound", label: "IDR→USD Outbound" }
+      - { from: "SGD", to: "IDR", direction: "inbound", label: "SGD→IDR Inbound" }
+      - { from: "CNY", to: "IDR", direction: "inbound", label: "CNY→IDR Trade" }
+      - { from: "MYR", to: "IDR", direction: "inbound", label: "MYR→IDR Cross-border" }
+    focus_pairs: ["USDIDR", "SGDIDR", "CNHIDR", "MYRIDR"]
+    key_concerns:
+      - "Bank Indonesia (BI) rate policy & FX intervention"
+      - "IDR stability vs USD (BI's comfort zone)"
+      - "Commodity export revenue (palm oil, coal, nickel)"
+      - "Foreign bond holdings & capital flows"
+      - "Current account dynamics"
+    central_bank: "Bank Indonesia (BI)"
+    key_events:
+      - "BI rate decision"
+      - "Indonesia CPI release"
+      - "Indonesia trade balance"
+      - "Indonesia GDP release"
+
+  # Thailand PSP
+  thailand_psp:
+    name: "Thailand Payment Service Provider"
+    short_name: "Thailand PSP"
+    region: "Thailand"
+    base_currency: "THB"
+    corridors:
+      - { from: "USD", to: "THB", direction: "inbound", label: "USD→THB Inbound" }
+      - { from: "CNY", to: "THB", direction: "inbound", label: "CNY→THB Tourism/Trade" }
+      - { from: "THB", to: "USD", direction: "outbound", label: "THB→USD Outbound" }
+      - { from: "JPY", to: "THB", direction: "inbound", label: "JPY→THB Inbound" }
+    focus_pairs: ["USDTHB", "CNHTHB", "JPYTHB", "EURTHB"]
+    key_concerns:
+      - "BOT (Bank of Thailand) monetary policy"
+      - "Tourism revenue impact on THB"
+      - "Chinese tourist flow recovery"
+      - "Thai export competitiveness"
+      - "Political stability & fiscal policy"
+    central_bank: "Bank of Thailand (BOT)"
+    key_events:
+      - "BOT rate decision"
+      - "Thailand CPI release"
+      - "Thailand trade balance"
+      - "Tourism arrival data"
+
+  # Malaysia PSP
+  malaysia_psp:
+    name: "Malaysia Payment Service Provider"
+    short_name: "Malaysia PSP"
+    region: "Malaysia"
+    base_currency: "MYR"
+    corridors:
+      - { from: "USD", to: "MYR", direction: "inbound", label: "USD→MYR Inbound" }
+      - { from: "SGD", to: "MYR", direction: "inbound", label: "SGD→MYR Cross-border" }
+      - { from: "CNY", to: "MYR", direction: "inbound", label: "CNY→MYR Trade" }
+      - { from: "MYR", to: "USD", direction: "outbound", label: "MYR→USD Outbound" }
+    focus_pairs: ["USDMYR", "SGDMYR", "CNHMYR", "EURMYR"]
+    key_concerns:
+      - "BNM (Bank Negara Malaysia) policy direction"
+      - "MYR correlation with oil prices"
+      - "Electronics sector export demand"
+      - "Ringgit repatriation measures"
+      - "Cross-border e-commerce growth"
+    central_bank: "Bank Negara Malaysia (BNM)"
+    key_events:
+      - "BNM rate decision"
+      - "Malaysia CPI release"
+      - "Malaysia trade balance"
+      - "Palm oil price movements"
+
+  # Brazil PSP
+  brazil_psp:
+    name: "Brazil Payment Service Provider"
+    short_name: "Brazil PSP"
+    region: "Brazil"
+    base_currency: "BRL"
+    corridors:
+      - { from: "USD", to: "BRL", direction: "inbound", label: "USD→BRL Inbound" }
+      - { from: "BRL", to: "USD", direction: "outbound", label: "BRL→USD Outbound" }
+      - { from: "CNY", to: "BRL", direction: "inbound", label: "CNY→BRL Trade" }
+      - { from: "EUR", to: "BRL", direction: "inbound", label: "EUR→BRL Inbound" }
+    focus_pairs: ["USDBRL", "CNHBRL", "EURBRL"]
+    key_concerns:
+      - "BCB (Banco Central do Brasil) Selic rate path"
+      - "BRL carry trade attractiveness"
+      - "Commodity prices (soybeans, iron ore)"
+      - "Fiscal policy & debt concerns"
+      - "PIX instant payment system growth"
+    central_bank: "Banco Central do Brasil (BCB)"
+    key_events:
+      - "BCB Selic rate decision"
+      - "Brazil IPCA inflation"
+      - "Brazil trade balance"
+      - "Brazil GDP release"
+
+  # Generic / Global overview (no specific client)
+  global_overview:
+    name: "Global Overview"
+    short_name: "Global"
+    region: "Global"
+    base_currency: "USD"
+    corridors: []
+    focus_pairs: ["USDCNH", "EURUSD", "GBPUSD", "USDJPY", "AUDUSD"]
+    key_concerns:
+      - "Fed monetary policy direction"
+      - "US-China trade relations"
+      - "Global risk sentiment"
+      - "DXY trend"
+    central_bank: "Federal Reserve"
+    key_events: []
+
+# Currency pairs to track (global set, client profiles override focus)
+currencies:
+  major:
+    - USDCNH
+    - EURUSD
+    - GBPUSD
+    - USDJPY
+    - AUDUSD
+  em_asia:
+    - USDVND
+    - USDPHP
+    - USDIDR
+    - USDTHB
+    - USDMYR
+    - USDSGD
+    - USDHKD
+    - USDKRW
+    - USDTWD
+    - USDINR
+  em_latam:
+    - USDMXN
+    - USDBRL
+  # Cross rates commonly needed by SEA PSPs
+  cross_rates:
+    - CNHVND
+    - CNHPHP
+    - CNHIDR
+    - CNHTHB
+    - SGDPHP
+    - SGDIDR
+    - SGDMYR
+
+# ──────────────────────────────────────────────
+# AI Integration — Perplexity (news) + Claude (summary generation)
+# ──────────────────────────────────────────────
+ai:
+  perplexity:
+    api_key: ""       # Perplexity API key — enables real-time news search via sonar model
+    model: "sonar"    # sonar / sonar-pro / sonar-reasoning
+  claude:
+    api_key: ""       # Anthropic Claude API key (direct) — fallback if llm proxy unavailable
+    model: "claude-sonnet-4-20250514"  # claude-sonnet-4-20250514 / claude-opus-4-20250514
+
+# ──────────────────────────────────────────────
+# LLM Proxy — Internal OpenAI-compatible API (fit-ai)
+# Priority: llm proxy → claude direct API
+# ──────────────────────────────────────────────
+llm:
+  enabled: true
+  api_key: "ftp-fArt6LXSkYQvGGwGmn94FtC7"
+  # Environment URLs:
+  #   Dev:  http://dev.fit-ai.woa.com/api/llmproxy
+  #   Test: http://devidc.fit-ai.woa.com/api/llmproxy
+  #   IDC:  http://idc.fit-ai.woa.com/api/llmproxy
+  base_url: "http://dev.fit-ai.woa.com/api/llmproxy"   # Current: Dev environment
+  model: "claude-sonnet-4-20250514"
+  temperature: 0.1
+  max_tokens: 4096
+  timeout: 120
+
+# Data sources
+data:
+  # Alpha Vantage API (free key: https://www.alphavantage.co/support/#api-key)
+  alpha_vantage:
+    api_key: ""  # Set your API key here to enable live data
+  # Bloomberg Terminal API (requires blpapi + Bloomberg Terminal running)
+  bbg:
+    enabled: false    # Set to true if Bloomberg Terminal is available
+    host: "localhost"
+    port: 8194
+    fields:
+      - PX_LAST
+      - PX_HIGH
+      - PX_LOW
+      - CHG_PCT_1D
+      - CHG_PCT_5D
+      - CHG_PCT_1M
+      - CHG_PCT_YTD
+    vol_fields:
+      - VOLATILITY_30D
+      - VOLATILITY_90D
+    news:
+      enabled: true          # Fetch FX news headlines from Bloomberg
+      max_items: 15
+    eco_calendar:
+      enabled: true          # Fetch economic calendar events
+      days_ahead: 14
+  # Fallback: manual input or CSV
+  manual:
+    enabled: true
+    data_dir: "data"
+
+# Report sections toggle
+sections:
+  executive_summary: true
+  client_corridor: true         # NEW: Client-specific corridor analysis
+  market_overview: true         # FX spot rates, weekly/monthly changes
+  volatility_analysis: true     # Vol surface, term structure
+  flow_analysis: true           # Business volume & markup data
+  macro_outlook: true           # Manual commentary
+  risk_monitor: true            # Key risk events calendar
+  appendix: true
+
+# PDF settings
+pdf:
+  page_size: "A4"
+  margin: "1.5cm"
+  output_dir: "output"
+
+server:
+  host: "0.0.0.0"
+  port: 8890
+  debug: true

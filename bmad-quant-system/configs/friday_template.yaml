@@ -1,0 +1,55 @@
+# ============================================
+# 周五夜盘策略配置模板
+# ============================================
+# 策略逻辑：周五22:30起每半小时判断一次至01:30，周六02:00出场
+# 交易时段：Fri 22:30, 23:00, 23:30, 00:00, 00:30, 01:00, 01:30
+# Reference/Exit: Sat 02:00
+# 利用外汇市场的周末效应获利
+# ============================================
+
+name: 周五夜盘策略
+version: 1.0.0
+log_level: INFO
+
+# ---------- 数据源配置 ----------
+data_source:
+  type: local_csv              # 数据源类型: local_csv / bloomberg / sql
+  symbol: USDCNH               # 交易品种
+  frequency: 15m               # 数据频率: 1m / 5m / 15m / 1h / 1d
+  days_back: 730               # 回测天数
+  start_date: "2025-06-01"     # 起始日期
+  end_date: "2026-01-01"       # 结束日期
+  local_file:
+    path: './usdcnh_intraday.csv'   # 数据文件路径
+    date_column: timestamp          # 时间列名
+
+# ---------- 策略配置 ----------
+strategy:
+  name: 周五夜盘策略
+  type: FridayNightStrategy    # 策略类型（不要修改）
+  enabled: true
+  parameters:
+    # === 入场设置 ===
+    entry_day: 4               # 入场日期: 0=周一, 1=周二, 2=周三, 3=周四, 4=周五
+    entry_hour: 22             # 入场时间（小时）: 22:30 首次判断
+    entry_minute: 30           # 入场时间（分钟）: 半点
+    
+    # === 出场设置 ===
+    hold_hours: 3.5            # 持仓时长（小时）: 22:30 + 3.5h = 02:00
+    
+    # === 仓位设置 ===
+    direction: long            # 交易方向: long=做多, short=做空
+    position_size: 100000      # 每次交易仓位（美元）
+
+# ---------- 回测配置 ----------
+backtest:
+  initial_capital: 1000000     # 初始资金
+  position_size: 100000        # 仓位大小
+  commission_rate: 0.00005     # 手续费率 (万分之0.5)
+  slippage: 0.0001             # 滑点 (1 pip)
+
+# ---------- 风控配置 ----------
+risk:
+  stop_loss_pct: 0.01          # 止损比例 (1%)
+  take_profit_pct: 0.02        # 止盈比例 (2%)
+  max_drawdown_pct: 0.2        # 最大回撤限制 (20%)

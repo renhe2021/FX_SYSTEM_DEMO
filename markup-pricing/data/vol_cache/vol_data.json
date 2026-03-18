@@ -1,0 +1,161 @@
+{
+  "timestamp": "2026-02-25T17:34:03.660246",
+  "data": {
+    "USD": {
+      "realized_vol_annual": 0.015122,
+      "realized_vol_pct": 1.5122,
+      "avg_move_bps": 0.12,
+      "std_move_bps": 0.26,
+      "max_move_bps": 3.49,
+      "data_points": 1528,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "USDCNY Curncy",
+      "last_price": 6.8685
+    },
+    "HKD": {
+      "realized_vol_annual": 0.015385,
+      "realized_vol_pct": 1.5385,
+      "avg_move_bps": 0.12,
+      "std_move_bps": 0.27,
+      "max_move_bps": 4.64,
+      "data_points": 2671,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "HKDCNY Curncy",
+      "last_price": 0.87834
+    },
+    "EUR": {
+      "realized_vol_annual": 0.072135,
+      "realized_vol_pct": 7.2135,
+      "avg_move_bps": 0.64,
+      "std_move_bps": 1.25,
+      "max_move_bps": 30.66,
+      "data_points": 3129,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "EURCNY Curncy",
+      "last_price": 8.09805
+    },
+    "GBP": {
+      "realized_vol_annual": 0.042222,
+      "realized_vol_pct": 4.2222,
+      "avg_move_bps": 0.53,
+      "std_move_bps": 0.73,
+      "max_move_bps": 6.51,
+      "data_points": 1533,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "GBPCNY Curncy",
+      "last_price": 9.282
+    },
+    "SGD": {
+      "realized_vol_annual": 0.05317,
+      "realized_vol_pct": 5.317,
+      "avg_move_bps": 0.45,
+      "std_move_bps": 0.92,
+      "max_move_bps": 29.89,
+      "data_points": 2662,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "SGDCNY Curncy",
+      "last_price": 5.4281
+    },
+    "JPY": {
+      "realized_vol_annual": 0.08129,
+      "realized_vol_pct": 8.129,
+      "avg_move_bps": 0.94,
+      "std_move_bps": 1.41,
+      "max_move_bps": 16.99,
+      "data_points": 1439,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "JPYCNY Curncy",
+      "last_price": 0.04389
+    },
+    "CAD": {
+      "realized_vol_annual": 0.05889,
+      "realized_vol_pct": 5.889,
+      "avg_move_bps": 0.51,
+      "std_move_bps": 1.02,
+      "max_move_bps": 29.06,
+      "data_points": 2672,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "CADCNY Curncy",
+      "last_price": 5.0169
+    },
+    "THB": {
+      "realized_vol_annual": 0.087418,
+      "realized_vol_pct": 8.7418,
+      "avg_move_bps": 0.8,
+      "std_move_bps": 1.52,
+      "max_move_bps": 40.69,
+      "data_points": 2720,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "THBCNY Curncy",
+      "last_price": 0.221064
+    },
+    "AUD": {
+      "realized_vol_annual": 0.089429,
+      "realized_vol_pct": 8.9429,
+      "avg_move_bps": 0.89,
+      "std_move_bps": 1.55,
+      "max_move_bps": 37.52,
+      "data_points": 2672,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "AUDCNY Curncy",
+      "last_price": 4.87135
+    },
+    "SEK": {
+      "realized_vol_annual": 0.095697,
+      "realized_vol_pct": 9.5697,
+      "avg_move_bps": 0.94,
+      "std_move_bps": 1.66,
+      "max_move_bps": 31.44,
+      "data_points": 2951,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "SEKCNY Curncy",
+      "last_price": 0.7598
+    },
+    "NZD": {
+      "realized_vol_annual": 0.089058,
+      "realized_vol_pct": 8.9058,
+      "avg_move_bps": 0.89,
+      "std_move_bps": 1.54,
+      "max_move_bps": 48.12,
+      "data_points": 2825,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "NZDCNY Curncy",
+      "last_price": 4.105
+    },
+    "CHF": {
+      "realized_vol_annual": 0.085108,
+      "realized_vol_pct": 8.5108,
+      "avg_move_bps": 0.74,
+      "std_move_bps": 1.48,
+      "max_move_bps": 57.35,
+      "data_points": 2824,
+      "data_source": "BBG-1min-MID",
+      "data_period": "5d",
+      "ticker": "CHFCNY Curncy",
+      "last_price": 8.877
+    },
+    "MOP": {
+      "realized_vol_annual": 0.015385,
+      "realized_vol_pct": 1.5385,
+      "avg_move_bps": 0.12,
+      "std_move_bps": 0.27,
+      "max_move_bps": 4.64,
+      "data_points": 2671,
+      "data_source": "pegged->HKD",
+      "data_period": "5d",
+      "ticker": "HKDCNY Curncy",
+      "last_price": 0.87834
+    }
+  }
+}

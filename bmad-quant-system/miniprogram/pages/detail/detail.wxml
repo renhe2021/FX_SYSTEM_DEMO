@@ -1,0 +1,119 @@
+<view class="container">
+  <!-- 头部信息 -->
+  <view class="header">
+    <view class="strategy-name">{{backtest.strategy_name}}</view>
+    <view class="backtest-id">ID: {{backtest.backtest_id}}</view>
+    <view class="time">{{backtest.created_at}}</view>
+  </view>
+
+  <!-- 核心指标卡片 -->
+  <view class="metrics-grid">
+    <view class="metric-card {{backtest.total_return >= 0 ? 'positive' : 'negative'}}">
+      <view class="metric-value">{{backtest.total_return}}%</view>
+      <view class="metric-label">总收益率</view>
+    </view>
+    <view class="metric-card">
+      <view class="metric-value">{{backtest.sharpe_ratio}}</view>
+      <view class="metric-label">夏普比率</view>
+    </view>
+    <view class="metric-card negative">
+      <view class="metric-value">{{backtest.max_drawdown}}%</view>
+      <view class="metric-label">最大回撤</view>
+    </view>
+    <view class="metric-card">
+      <view class="metric-value">{{backtest.win_rate}}%</view>
+      <view class="metric-label">胜率</view>
+    </view>
+  </view>
+
+  <!-- 资金曲线图 -->
+  <view class="chart-section">
+    <view class="section-title">资金曲线</view>
+    <canvas canvas-id="equityChart" class="chart-canvas"></canvas>
+  </view>
+
+  <!-- 收益分布图 -->
+  <view class="chart-section">
+    <view class="section-title">月度收益</view>
+    <canvas canvas-id="monthlyChart" class="chart-canvas"></canvas>
+  </view>
+
+  <!-- 详细指标 -->
+  <view class="detail-section">
+    <view class="section-title">详细指标</view>
+    <view class="detail-list">
+      <view class="detail-item">
+        <text class="label">初始资金</text>
+        <text class="value">${{backtest.initial_capital}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">最终资金</text>
+        <text class="value">${{backtest.final_capital}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">总盈亏</text>
+        <text class="value {{backtest.total_pnl >= 0 ? 'positive' : 'negative'}}">${{backtest.total_pnl}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">交易次数</text>
+        <text class="value">{{backtest.total_trades}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">盈利次数</text>
+        <text class="value">{{backtest.winning_trades}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">亏损次数</text>
+        <text class="value">{{backtest.losing_trades}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">平均盈利</text>
+        <text class="value positive">${{backtest.avg_win}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">平均亏损</text>
+        <text class="value negative">${{backtest.avg_loss}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">盈亏比</text>
+        <text class="value">{{backtest.profit_factor}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">年化收益</text>
+        <text class="value">{{backtest.annual_return}}%</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">年化波动</text>
+        <text class="value">{{backtest.annual_volatility}}%</text>
+      </view>
+      <view class="detail-item">
+        <text class="label">卡尔玛比率</text>
+        <text class="value">{{backtest.calmar_ratio}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 交易记录 -->
+  <view class="trades-section">
+    <view class="section-title">交易记录 ({{trades.length}}笔)</view>
+    <view class="trades-list">
+      <view class="trade-item" wx:for="{{trades}}" wx:key="index">
+        <view class="trade-header">
+          <text class="trade-date">{{item.date}}</text>
+          <text class="trade-pnl {{item.pnl >= 0 ? 'positive' : 'negative'}}">
+            {{item.pnl >= 0 ? '+' : ''}}${{item.pnl}}
+          </text>
+        </view>
+        <view class="trade-detail">
+          <text>{{item.action}} {{item.symbol}} @ {{item.price}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="btn-export" bindtap="exportReport">导出报告</button>
+    <button class="btn-share" open-type="share">分享</button>
+  </view>
+</view>

@@ -1,0 +1,6 @@
+{
+  "name": "反射性理论分析",
+  "description": "运用索罗斯的反射性理论分析市场，识别正反馈循环和反转信号",
+  "tools": ["analyze_reflexivity"],
+  "version": "1.0"
+}

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TenPay 智研 · 产品汇报</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Noto Sans SC', 'Inter', 'PingFang SC', -apple-system, 'Helvetica Neue', sans-serif;
+    background: #fff; color: #1a1a2e; line-height: 1.85; font-size: 15px;
+    max-width: 980px; margin: 0 auto; padding: 0 40px 80px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    letter-spacing: 0.01em;
+}
+
+/* ── 封面 ── */
+.cover {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 80px 0;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 48px;
+}
+.cover-brand {
+    font-family: 'Inter', 'Noto Sans SC', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.15em;
+    color: #0052D9; text-transform: uppercase; margin-bottom: 24px;
+}
+.cover h1 {
+    font-family: 'Noto Serif SC', 'Georgia', serif;
+    font-size: 36px; font-weight: 600; color: #0F172A;
+    line-height: 1.3; margin-bottom: 16px; letter-spacing: 0.04em;
+}
+.cover h1 span { color: #0052D9; }
+.cover-subtitle {
+    font-size: 17px; color: #64748B; font-weight: 300;
+    line-height: 1.7; margin-bottom: 32px; max-width: 640px;
+}
+.cover-meta {
+    font-size: 13px; color: #94A3B8; letter-spacing: 0.05em;
+}
+.cover-meta strong { color: #64748B; font-weight: 500; }
+
+/* ── 标题层级 ── */
+h2 {
+    font-family: 'Noto Serif SC', 'Georgia', serif;
+    font-size: 22px; font-weight: 600; color: #0F172A;
+    margin: 56px 0 16px; padding-bottom: 10px;
+    border-bottom: 2px solid #0052D9; letter-spacing: 0.03em;
+}
+h2 .section-num {
+    font-family: 'Inter', monospace; font-weight: 700;
+    color: #0052D9; margin-right: 8px; font-size: 20px;
+}
+h3 {
+    font-size: 16px; font-weight: 600; color: #1E293B;
+    margin: 28px 0 10px; letter-spacing: 0.02em;
+}
+p { margin-bottom: 14px; color: #334155; }
+ul, ol { margin: 8px 0 18px 24px; color: #334155; }
+li { margin-bottom: 6px; }
+li strong { color: #0F172A; }
+a { color: #0052D9; text-decoration: none; font-weight: 500; }
+a:hover { text-decoration: underline; }
+code {
+    background: #F1F5F9; padding: 2px 6px; border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; color: #0052D9;
+}
+
+/* ── 数据卡片 ── */
+.metrics-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin: 20px 0 28px;
+}
+.metric-card {
+    background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+    border: 1px solid #E2E8F0; border-radius: 12px;
+    padding: 20px; text-align: center;
+}
+.metric-card .metric-value {
+    font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700;
+    color: #0052D9; margin-bottom: 4px;
+}
+.metric-card .metric-label {
+    font-size: 12px; color: #64748B; letter-spacing: 0.08em; font-weight: 500;
+}
+
+/* ── 产品矩阵 ── */
+.product-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin: 20px 0 28px;
+}
+.product-card {
+    border: 1px solid #E2E8F0; border-radius: 12px;
+    padding: 24px; background: #fff; position: relative;
+    transition: box-shadow 0.2s;
+}
+.product-card:hover { box-shadow: 0 4px 20px rgba(0,82,217,0.08); }
+.product-card .pc-tag {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+    padding: 3px 10px; border-radius: 20px;
+}
+.pc-tag-live { background: #D1FAE5; color: #065F46; }
+.pc-tag-beta { background: #FEF3C7; color: #92400E; }
+.pc-tag-mvp { background: #EDE9FE; color: #5B21B6; }
+.product-card .pc-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 12px;
+}
+.product-card .pc-name {
+    font-size: 16px; font-weight: 700; color: #0F172A; margin-bottom: 2px;
+}
+.product-card .pc-name-en {
+    font-size: 12px; color: #94A3B8; font-weight: 400; margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+}
+.product-card .pc-desc {
+    font-size: 13.5px; color: #475569; line-height: 1.7;
+}
+.product-card .pc-stats {
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid #F1F5F9;
+    display: flex; gap: 16px;
+}
+.product-card .pc-stat {
+    font-size: 12px; color: #64748B;
+}
+.product-card .pc-stat strong {
+    color: #0052D9; font-weight: 600; font-family: 'Inter', sans-serif;
+}
+
+/* ── 架构图容器 ── */
+.arch-container {
+    overflow-x: auto; margin: 16px 0 24px;
+    border: 1px solid #E2E8F0; border-radius: 12px;
+    padding: 24px; background: #FAFBFF;
+}
+
+/* ── 截图框 ── */
+.screenshot {
+    border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;
+    margin: 16px 0 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.screenshot img { width: 100%; display: block; }
+.screenshot iframe { width: 100%; height: 520px; border: none; display: block; }
+.screenshot-label {
+    background: #F8FAFC; border-top: 1px solid #E2E8F0; padding: 10px 16px;
+    font-size: 12px; color: #94A3B8; letter-spacing: 0.03em;
+}
+
+/* ── 表格 ── */
+table { width: 100%; border-collapse: collapse; margin: 14px 0 24px; font-size: 13.5px; }
+thead th {
+    background: #0F172A; color: #fff; padding: 10px 14px;
+    text-align: left; font-weight: 500; font-size: 12px;
+    letter-spacing: 0.05em;
+}
+thead th:first-child { border-radius: 8px 0 0 0; }
+thead th:last-child { border-radius: 0 8px 0 0; }
+tbody td { padding: 9px 14px; border-bottom: 1px solid #F1F5F9; color: #334155; }
+tbody tr:nth-child(even) { background: #FAFBFF; }
+tbody tr:hover td { background: #EFF6FF; }
+
+/* ── 流程步骤 ── */
+.demo-step { margin: 32px 0; }
+.demo-step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.demo-step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #0052D9; color: #fff; font-size: 13px; font-weight: 700;
+    flex-shrink: 0; font-family: 'Inter', sans-serif;
+}
+.demo-step-title { font-size: 16px; font-weight: 600; color: #0F172A; }
+
+/* ── 价值主张 ── */
+.value-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin: 20px 0 28px;
+}
+.value-card {
+    padding: 20px 24px; border-radius: 12px;
+    border: 1px solid #E2E8F0; background: #fff;
+}
+.value-card .vc-title {
+    font-size: 15px; font-weight: 700; color: #0F172A; margin-bottom: 6px;
+}
+.value-card .vc-desc {
+    font-size: 13.5px; color: #475569; line-height: 1.7;
+}
+.value-card .vc-number {
+    font-family: 'Inter', sans-serif; font-size: 22px;
+    font-weight: 700; color: #0052D9; margin-bottom: 4px;
+}
+
+/* ── 时间线 ── */
+.timeline { margin: 20px 0 28px; position: relative; padding-left: 28px; }
+.timeline::before {
+    content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px;
+    width: 2px; background: #E2E8F0;
+}
+.tl-item { position: relative; margin-bottom: 20px; }
+.tl-item::before {
+    content: ''; position: absolute; left: -24px; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #0052D9; border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #0052D9;
+}
+.tl-item.done::before { background: #059669; box-shadow: 0 0 0 2px #059669; }
+.tl-item.current::before { background: #0052D9; box-shadow: 0 0 0 4px rgba(0,82,217,0.2); }
+.tl-item.future::before { background: #E2E8F0; box-shadow: 0 0 0 2px #CBD5E1; }
+.tl-date {
+    font-family: 'Inter', monospace; font-size: 12px; color: #94A3B8;
+    font-weight: 500; letter-spacing: 0.05em; margin-bottom: 2px;
+}
+.tl-title { font-size: 14px; font-weight: 600; color: #0F172A; }
+.tl-desc { font-size: 13px; color: #64748B; }
+
+/* ── 提示框 ── */
+.callout {
+    background: #F0F7FF; border: 1px solid #BFDBFE; border-radius: 10px;
+    padding: 16px 20px; margin: 16px 0 24px; font-size: 14px; color: #1E40AF;
+}
+.callout-green {
+    background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 10px;
+    padding: 16px 20px; margin: 16px 0 24px; font-size: 14px; color: #166534;
+}
+
+/* ── 分隔 ── */
+.divider { border: none; border-top: 1px solid #E2E8F0; margin: 56px 0; }
+
+/* ── 页脚 ── */
+.footer {
+    text-align: center; color: #94A3B8; font-size: 12px;
+    letter-spacing: 0.08em; padding-top: 40px;
+}
+
+@media (max-width: 768px) {
+    body { padding: 0 20px 60px; }
+    .cover h1 { font-size: 26px; }
+    .metrics-row { grid-template-columns: 1fr 1fr; }
+    .product-grid { grid-template-columns: 1fr; }
+    .value-grid { grid-template-columns: 1fr; }
+}
+@media print {
+    body { padding: 20px; max-width: 100%; }
+    .cover { min-height: auto; page-break-after: always; }
+    h2 { page-break-before: always; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ 封面 ═══════════════ -->
+<div class="cover">
+    <div class="cover-brand">TENPAY GLOBAL &middot; FX INTELLIGENCE</div>
+    <h1><span>TenPay 智研</span><br>外汇智能研究平台</h1>
+    <p class="cover-subtitle">
+        整合多源市场数据、AI 实时新闻解读与区域知识库，为跨境支付业务提供从市场研判、走廊定价到量化回测的一站式外汇智能基础设施。
+    </p>
+    <p class="cover-meta">
+        <strong>Tenpay Global FX 团队</strong> &middot; 2026年3月 &middot; 内部汇报
+    </p>
+</div>
+
+<!-- ═══════════════ 一、定位 ═══════════════ -->
+<h2><span class="section-num">01</span>一句话说清楚</h2>
+
+<p>
+    <strong>TenPay 智研</strong> 是 Tenpay Global 外汇团队自建的智能研究基础设施。它不是一个工具，而是<strong>四个产品组成的产品矩阵</strong>，覆盖外汇业务的核心场景：
+</p>
+
+<div class="metrics-row">
+    <div class="metric-card">
+        <div class="metric-value">4</div>
+        <div class="metric-label">产品模块</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">24</div>
+        <div class="metric-label">覆盖币对</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">7</div>
+        <div class="metric-label">客户画像</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">5</div>
+        <div class="metric-label">数据源接入</div>
+    </div>
+</div>
+
+<!-- ═══════════════ 二、产品矩阵 ═══════════════ -->
+<h2><span class="section-num">02</span>产品矩阵</h2>
+
+<div class="product-grid">
+    <!-- 研报平台 -->
+    <div class="product-card">
+        <span class="pc-tag pc-tag-live">LIVE</span>
+        <div class="pc-icon" style="background:#EFF6FF; color:#0052D9;">&#128202;</div>
+        <div class="pc-name">外汇研报平台</div>
+        <div class="pc-name-en">FX Research Hub &middot; Port 8890</div>
+        <div class="pc-desc">
+            选客户 &rarr; 系统按走廊过滤数据 &rarr; AI 生成新闻 + 评论 &rarr; 一键产出投行级研报。
+            支持中英双语、7 个客户画像、Perplexity 实时新闻 + Claude 执行摘要。
+        </div>
+        <div class="pc-stats">
+            <span class="pc-stat"><strong>14+</strong> 份报告已产出</span>
+            <span class="pc-stat"><strong>7</strong> 个客户画像</span>
+            <span class="pc-stat"><strong>~3min</strong> 端到端</span>
+        </div>
+    </div>
+    <!-- 加价定价 -->
+    <div class="product-card">
+        <span class="pc-tag pc-tag-live">LIVE</span>
+        <div class="pc-icon" style="background:#FEF3C7; color:#D97706;">&#128176;</div>
+        <div class="pc-name">走廊加价引擎</div>
+        <div class="pc-name-en">Markup Pricing Engine &middot; Port 8891</div>
+        <div class="pc-desc">
+            多维度加价模拟器，支持 6 种定价策略（统一加价 / 波动率加权 / 阶梯式 / 隐蔽式等）。
+            输入目标增收额，系统自动反算各币种 BPS 分配方案。离线版双击即用。
+        </div>
+        <div class="pc-stats">
+            <span class="pc-stat"><strong>6</strong> 种定价策略</span>
+            <span class="pc-stat"><strong>在线+离线</strong> 双模式</span>
+        </div>
+    </div>
+    <!-- 量化回测 -->
+    <div class="product-card">
+        <span class="pc-tag pc-tag-beta">BETA</span>
+        <div class="pc-icon" style="background:#EDE9FE; color:#7C3AED;">&#129302;</div>
+        <div class="pc-name">量化回测系统</div>
+        <div class="pc-name-en">Quant Backtest System &middot; Port 8889</div>
+        <div class="pc-desc">
+            完整的 ML 信号回测框架，含网格搜索、权益曲线、PnL 热力图。
+            已跑通 USD_SIGNAL_V3 策略，支持 Bloomberg 实盘数据和微信小程序端。
+        </div>
+        <div class="pc-stats">
+            <span class="pc-stat"><strong>7,900+</strong> 条信号数据</span>
+            <span class="pc-stat"><strong>Bloomberg</strong> 接入</span>
+        </div>
+    </div>
+    <!-- 策略实验室 -->
+    <div class="product-card">
+        <span class="pc-tag pc-tag-mvp">MVP</span>
+        <div class="pc-icon" style="background:#F0FDF4; color:#059669;">&#128300;</div>
+        <div class="pc-name">策略实验室</div>
+        <div class="pc-name-en">Strategy Lab &middot; Port 8888</div>
+        <div class="pc-desc">
+            轻量级策略验证工具。支持周五夜盘策略、均线交叉等，快速调参、查看胜率 / 夏普 / 回撤，
+            几秒钟验证策略想法。
+        </div>
+        <div class="pc-stats">
+            <span class="pc-stat"><strong>2</strong> 种内置策略</span>
+            <span class="pc-stat"><strong>&lt;10s</strong> 回测完成</span>
+        </div>
+    </div>
+</div>
+
+<div class="callout">
+    <strong>串联使用，价值最大：</strong>量化系统发现信号 &rarr; 策略实验室验证参数 &rarr; 加价引擎转化为定价 &rarr; 研报平台输出给客户。四个产品形成闭环。
+</div>
+
+<!-- ═══════════════ 三、为什么做 ═══════════════ -->
+<h2><span class="section-num">03</span>为什么做这个</h2>
+
+<h3>需求端 — 客户在要</h3>
+<p>
+    跨境支付的竞争已经从通道竞争走向<strong>服务竞争</strong>。客户（东南亚 PSP、银行、电商平台）希望合作方能提供 FX 领域的专业洞察，不只是换汇管道。我们收到的走廊分析、汇率研判的咨询越来越多，但缺少标准化产品来响应。
+</p>
+
+<h3>供给端 — 我们有条件</h3>
+<p>
+    我们已有 5 个数据源覆盖 24 个币对（ECB、Bloomberg、ExchangeRate-API、Alpha Vantage、Open Exchange），有团队沉淀的东南亚各市场分析框架，有客户画像和走廊配置。AI（Perplexity + Claude）提供了把这些串起来的能力——按走廊搜索新闻、生成市场评论、标注 sentiment，<strong>几分钟出一份完整研报</strong>。
+</p>
+
+<h3>商业端 — 可以变现</h3>
+<p>
+    研报产品天然支持<strong>分级定价</strong>：
+</p>
+<ul>
+    <li><strong>基础版</strong>（月报、核心走廊）— 增值服务，强化客户关系</li>
+    <li><strong>高级版</strong>（周报 / 日报、定制分析、对冲建议）— 独立变现</li>
+    <li>同时建立 Tenpay Global 在 FX 领域的<strong>品牌专业度</strong></li>
+</ul>
+
+<!-- ═══════════════ 四、研报产品详解 ═══════════════ -->
+<h2><span class="section-num">04</span>核心产品：研报平台</h2>
+
+<h3>产品架构</h3>
+<div class="arch-container">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 300" style="width:100%;max-width:940px;">
+  <style>
+    .a-title { font: 700 15px/1 'Noto Sans SC','Inter','PingFang SC',sans-serif; }
+    .a-sub { font: 400 11.5px/1.4 'Noto Sans SC','Inter','PingFang SC',sans-serif; }
+    .a-label { font: 600 10px/1 'Inter','Noto Sans SC','PingFang SC',sans-serif; letter-spacing: 0.5px; }
+    .a-pill { font: 500 10px/1 'Inter','Noto Sans SC','PingFang SC',sans-serif; }
+    .a-hl { font: 600 12.5px/1.5 'Noto Sans SC','Inter',sans-serif; }
+    .a-desc { font: 400 11.5px/1.5 'Noto Sans SC','Inter',sans-serif; }
+  </style>
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><path d="M0,0 L10,3.5 L0,7" fill="#0052D9"/></marker>
+    <linearGradient id="gB" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0052D9"/><stop offset="100%" stop-color="#2563EB"/></linearGradient>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.08"/></filter>
+    <filter id="sh2"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-opacity="0.12"/></filter>
+  </defs>
+
+  <!-- Step 1 -->
+  <rect x="10" y="45" width="170" height="88" rx="16" fill="#E8F5E9" stroke="#66BB6A" stroke-width="1.5" filter="url(#sh)"/>
+  <text x="95" y="72" text-anchor="middle" class="a-label" fill="#43A047">STEP 1</text>
+  <text x="95" y="94" text-anchor="middle" class="a-title" fill="#2E7D32">选择客户</text>
+  <text x="95" y="114" text-anchor="middle" class="a-sub" fill="#666">画像 &middot; 走廊 &middot; Tier 分级</text>
+
+  <line x1="180" y1="89" x2="218" y2="89" stroke="#0052D9" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Step 2 -->
+  <rect x="228" y="45" width="190" height="88" rx="16" fill="#E3F2FD" stroke="#64B5F6" stroke-width="1.5" filter="url(#sh)"/>
+  <text x="323" y="72" text-anchor="middle" class="a-label" fill="#1976D2">STEP 2</text>
+  <text x="323" y="94" text-anchor="middle" class="a-title" fill="#1565C0">数据聚合</text>
+  <text x="323" y="114" text-anchor="middle" class="a-sub" fill="#666">5 源汇率 &middot; 走廊过滤</text>
+
+  <line x1="418" y1="89" x2="456" y2="89" stroke="#0052D9" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Step 3 -->
+  <rect x="466" y="45" width="210" height="88" rx="16" fill="#EDE7F6" stroke="#B39DDB" stroke-width="1.5" filter="url(#sh)"/>
+  <text x="571" y="72" text-anchor="middle" class="a-label" fill="#7B1FA2">STEP 3</text>
+  <text x="571" y="94" text-anchor="middle" class="a-title" fill="#5E35B1">AI 分析 + 知识库</text>
+  <text x="571" y="114" text-anchor="middle" class="a-sub" fill="#666">新闻搜索 &middot; 评论生成 &middot; 可编辑</text>
+
+  <line x1="676" y1="89" x2="714" y2="89" stroke="#0052D9" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Step 4 -->
+  <rect x="724" y="33" width="200" height="112" rx="18" fill="url(#gB)" filter="url(#sh2)"/>
+  <text x="824" y="64" text-anchor="middle" class="a-label" fill="rgba(255,255,255,0.7)">OUTPUT</text>
+  <text x="824" y="88" text-anchor="middle" font-size="17" font-weight="700" fill="#fff" font-family="'Noto Sans SC','Inter',sans-serif">定制化研报</text>
+  <text x="824" y="108" text-anchor="middle" class="a-sub" fill="rgba(255,255,255,0.85)">投行级排版 &middot; PDF / HTML</text>
+  <text x="824" y="128" text-anchor="middle" class="a-sub" fill="rgba(255,255,255,0.85)">中英双语 &middot; 一键导出</text>
+
+  <!-- Data Sources -->
+  <text x="10" y="172" class="a-label" fill="#9E9E9E">DATA SOURCES</text>
+  <rect x="100" y="160" width="50" height="20" rx="10" fill="#F5F5F7" stroke="#E0E0E0" stroke-width="0.8"/>
+  <text x="125" y="174" text-anchor="middle" class="a-pill" fill="#555">ECB</text>
+  <rect x="156" y="160" width="78" height="20" rx="10" fill="#F5F5F7" stroke="#E0E0E0" stroke-width="0.8"/>
+  <text x="195" y="174" text-anchor="middle" class="a-pill" fill="#555">Bloomberg</text>
+  <rect x="240" y="160" width="92" height="20" rx="10" fill="#F5F5F7" stroke="#E0E0E0" stroke-width="0.8"/>
+  <text x="286" y="174" text-anchor="middle" class="a-pill" fill="#555">ExchangeRate</text>
+  <rect x="338" y="160" width="86" height="20" rx="10" fill="#F5F5F7" stroke="#E0E0E0" stroke-width="0.8"/>
+  <text x="381" y="174" text-anchor="middle" class="a-pill" fill="#555">Alpha Vantage</text>
+  <rect x="430" y="160" width="90" height="20" rx="10" fill="#F5F5F7" stroke="#E0E0E0" stroke-width="0.8"/>
+  <text x="475" y="174" text-anchor="middle" class="a-pill" fill="#555">Open Exchange</text>
+
+  <!-- AI -->
+  <text x="545" y="172" class="a-label" fill="#9E9E9E">AI + KNOWLEDGE</text>
+  <rect x="640" y="160" width="76" height="20" rx="10" fill="#F3E5F5" stroke="#CE93D8" stroke-width="0.8"/>
+  <text x="678" y="174" text-anchor="middle" class="a-pill" fill="#6A1B9A">Perplexity</text>
+  <rect x="722" y="160" width="60" height="20" rx="10" fill="#F3E5F5" stroke="#CE93D8" stroke-width="0.8"/>
+  <text x="752" y="174" text-anchor="middle" class="a-pill" fill="#6A1B9A">Claude</text>
+  <rect x="788" y="160" width="64" height="20" rx="10" fill="#FFF3E0" stroke="#FFB74D" stroke-width="0.8"/>
+  <text x="820" y="174" text-anchor="middle" class="a-pill" fill="#E65100">知识库</text>
+
+  <!-- Divider -->
+  <line x1="10" y1="200" x2="930" y2="200" stroke="#F0F0F0" stroke-width="1"/>
+
+  <!-- Highlights -->
+  <circle cx="24" cy="228" r="4" fill="#4CAF50"/>
+  <text x="36" y="232" class="a-hl" fill="#333">Client-specific</text>
+  <text x="150" y="232" class="a-desc" fill="#666">不同客户看到完全不同的报告</text>
+
+  <circle cx="484" cy="228" r="4" fill="#1565C0"/>
+  <text x="496" y="232" class="a-hl" fill="#333">几分钟产出</text>
+  <text x="585" y="232" class="a-desc" fill="#666">选客户到出报告，全自动</text>
+
+  <circle cx="24" cy="258" r="4" fill="#5E35B1"/>
+  <text x="36" y="262" class="a-hl" fill="#333">24 币对 &middot; 5 数据源</text>
+  <text x="185" y="262" class="a-desc" fill="#666">实时 + 历史 + 波动率，来源可追溯</text>
+
+  <circle cx="484" cy="258" r="4" fill="#E65100"/>
+  <text x="496" y="262" class="a-hl" fill="#333">可分级变现</text>
+  <text x="585" y="262" class="a-desc" fill="#666">基础版增值，高级版独立收费</text>
+</svg>
+</div>
+
+<h3>使用流程（以越南 PSP 为例）</h3>
+
+<!-- Step 1 -->
+<div class="demo-step">
+    <div class="demo-step-header">
+        <span class="demo-step-num">1</span>
+        <span class="demo-step-title">选择客户</span>
+    </div>
+    <p>点击「Vietnam PSP」，系统自动加载客户画像：走廊 USD&rarr;VND、CNH&rarr;VND，月交易量 $50M，关注央行干预和侨汇流入。</p>
+    <div class="screenshot">
+        <img src="/static/images/step1_select_client.png" alt="Step 1: 选择客户"/>
+        <div class="screenshot-label">客户卡片区 — 点击选中，画像自动加载到右侧面板</div>
+    </div>
+</div>
+
+<!-- Step 2 -->
+<div class="demo-step">
+    <div class="demo-step-header">
+        <span class="demo-step-num">2</span>
+        <span class="demo-step-title">勾选报告章节 + 配置 AI</span>
+    </div>
+    <p>勾选需要的章节（汇率概览、走廊分析、波动率、新闻等），可选输入 Perplexity / Claude API Key 启用 AI 新闻搜索和执行摘要自动生成。</p>
+    <div class="screenshot">
+        <iframe src="/" loading="lazy"></iframe>
+        <div class="screenshot-label">实时嵌入 — 研报平台完整界面（可交互）</div>
+    </div>
+</div>
+
+<!-- Step 3 -->
+<div class="demo-step">
+    <div class="demo-step-header">
+        <span class="demo-step-num">3</span>
+        <span class="demo-step-title">AI 新闻搜索 + 评论生成</span>
+    </div>
+    <p>一键搜索 VND 相关实时新闻，AI 结合新闻、汇率数据和客户画像生成市场评论。评论内容可在界面上直接编辑后再出报告。</p>
+    <div class="callout">
+        <strong>AI 引擎：</strong>Perplexity Sonar 搜索实时新闻 + Claude Sonnet 生成执行摘要，按客户走廊和关注点定制化搜索 prompt。
+    </div>
+</div>
+
+<!-- Step 4 -->
+<div class="demo-step">
+    <div class="demo-step-header">
+        <span class="demo-step-num">4</span>
+        <span class="demo-step-title">一键生成报告</span>
+    </div>
+    <p>产出一份聚焦 VND 走廊的投行级研报，包含实时汇率表格、波动率图表、AI 新闻解读和市场展望，可直接发送给客户。</p>
+</div>
+
+<div class="callout-green">
+    <strong>试一下：</strong>换一个马来银行客户，同样的流程，输出完全不同 — 走廊变为 USD&rarr;MYR，新闻聚焦 BNM 利率政策和棕榈油出口数据。
+</div>
+
+<!-- ═══════════════ 五、已有数据 ═══════════════ -->
+<h2><span class="section-num">05</span>当前进展</h2>
+
+<h3>已配置客户画像</h3>
+<table id="clientTable">
+    <thead><tr><th>机构名称</th><th>类型</th><th>Tier</th><th>国家</th><th>基础货币</th><th>月交易量</th><th>走廊数</th></tr></thead>
+    <tbody id="clientTableBody"></tbody>
+</table>
+
+<h3>已生成报告（可直接查看）</h3>
+<table id="reportTable">
+    <thead><tr><th>报告名称</th><th>客户</th><th>日期</th><th>操作</th></tr></thead>
+    <tbody id="reportTableBody"></tbody>
+</table>
+
+<!-- ═══════════════ 六、商业价值 ═══════════════ -->
+<h2><span class="section-num">06</span>商业价值</h2>
+
+<div class="value-grid">
+    <div class="value-card">
+        <div class="vc-number">80%+</div>
+        <div class="vc-title">研报产出效率提升</div>
+        <div class="vc-desc">传统人工编写一份走廊分析报告需要 2-3 小时，TenPay 智研全自动流程压缩到 3 分钟。</div>
+    </div>
+    <div class="value-card">
+        <div class="vc-number">0 &rarr; 1</div>
+        <div class="vc-title">研报产品从无到有</div>
+        <div class="vc-desc">团队首次具备系统化、可复用的 FX 研报能力，不再依赖个人经验和临时拼凑。</div>
+    </div>
+    <div class="value-card">
+        <div class="vc-number">7 &times; 24</div>
+        <div class="vc-title">客户画像全覆盖</div>
+        <div class="vc-desc">越南、菲律宾、印尼、泰国、马来、巴西及全球概览，覆盖主要业务市场，24 个币对。</div>
+    </div>
+    <div class="value-card">
+        <div class="vc-number">增收抓手</div>
+        <div class="vc-title">加价策略量化支撑</div>
+        <div class="vc-desc">加价引擎支持目标反算，输入增收目标自动推荐 BPS 分配方案，定价决策从经验驱动变为数据驱动。</div>
+    </div>
+</div>
+
+<!-- ═══════════════ 七、下一步 ═══════════════ -->
+<h2><span class="section-num">07</span>下一步规划</h2>
+
+<div class="timeline">
+    <div class="tl-item done">
+        <div class="tl-date">2026.02 — 已完成</div>
+        <div class="tl-title">MVP 上线</div>
+        <div class="tl-desc">研报平台 + 加价引擎 + 量化回测 + 策略实验室，端到端跑通</div>
+    </div>
+    <div class="tl-item done">
+        <div class="tl-date">2026.03 W1 — 已完成</div>
+        <div class="tl-title">AI 增强 + 客户门户</div>
+        <div class="tl-desc">接入 Perplexity 实时新闻 + Claude 执行摘要，完成客户画像系统（7 个预设 + 自定义新增）</div>
+    </div>
+    <div class="tl-item current">
+        <div class="tl-date">2026.03 W2 — 进行中</div>
+        <div class="tl-title">定价会议实战 + 第一份客户研报外发</div>
+        <div class="tl-desc">本周定价会议使用加价引擎辅助决策；选择 1-2 个客户试发研报，收集反馈</div>
+    </div>
+    <div class="tl-item future">
+        <div class="tl-date">2026.03 — 计划中</div>
+        <div class="tl-title">Client Portal 完整上线</div>
+        <div class="tl-desc">80+ 字段的完整客户数据模型，支持走廊偏好、风控参数、KYC 信息管理</div>
+    </div>
+    <div class="tl-item future">
+        <div class="tl-date">2026.04 — 计划中</div>
+        <div class="tl-title">自动化定投 + 邮件分发</div>
+        <div class="tl-desc">定时任务每周自动生成研报，通过邮件直达客户，研报服务产品化</div>
+    </div>
+    <div class="tl-item future">
+        <div class="tl-date">2026.Q2 — 计划中</div>
+        <div class="tl-title">分级定价商业化</div>
+        <div class="tl-desc">基础版免费增值 + 高级版独立定价，作为跨境支付增值服务包的核心模块</div>
+    </div>
+</div>
+
+<!-- ═══════════════ 八、需要的支持 ═══════════════ -->
+<h2><span class="section-num">08</span>需要的支持</h2>
+
+<ol>
+    <li><strong>Bloomberg 终端接入审批</strong> — 当前 5 个数据源中 Bloomberg 需要内部终端授权，接入后数据质量和专业度大幅提升</li>
+    <li><strong>Claude API 预算</strong> — AI 执行摘要需要 Anthropic Claude API，建议申请团队级别额度</li>
+    <li><strong>客户研报试发许可</strong> — 选择 2-3 个合作关系深的客户（如 MoMo、GCash）试发研报，收集产品反馈</li>
+    <li><strong>定价会议推广</strong> — 下次定价会议引入加价引擎辅助决策，验证数据驱动定价的可行性</li>
+</ol>
+
+<hr class="divider">
+<p class="footer">TENPAY GLOBAL &middot; FX INTELLIGENCE &middot; CONFIDENTIAL</p>
+
+<script>
+// 加载客户数据
+fetch('/api/portal/clients')
+    .then(r => r.json())
+    .then(data => {
+        const clients = data.clients || [];
+        const tbody = document.getElementById('clientTableBody');
+        clients.forEach(c => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${c.name}</strong></td>
+                <td>${c.client_type}</td>
+                <td>${c.tier}</td>
+                <td>${(c.flag||'')} ${c.country}</td>
+                <td>${c.base_currency}</td>
+                <td class="vol-cell" data-id="${c.client_id}">-</td>
+                <td class="cor-cell" data-id="${c.client_id}">-</td>
+            `;
+            tbody.appendChild(row);
+        });
+        clients.forEach(c => {
+            fetch('/api/portal/clients/' + c.client_id)
+                .then(r => r.json())
+                .then(d => {
+                    const vol = d.monthly_volume_usd || 0;
+                    const vs = vol >= 1e9 ? '$'+(vol/1e9).toFixed(1)+'B' : vol >= 1e6 ? '$'+(vol/1e6).toFixed(0)+'M' : vol > 0 ? '$'+(vol/1e3).toFixed(0)+'K' : '-';
+                    const cl = (d.corridors || []).length;
+                    document.querySelectorAll('.vol-cell[data-id="'+c.client_id+'"]').forEach(el => el.textContent = vs);
+                    document.querySelectorAll('.cor-cell[data-id="'+c.client_id+'"]').forEach(el => el.textContent = cl);
+                });
+        });
+    });
+
+// 报告列表
+const reports = [
+    { file: 'FX_Report_2026-03-06_20260306_085102.html', client: 'Global Overview', date: '2026-03-06' },
+    { file: 'FX_Report_2026-03-04_malaysia_psp_20260305_090432.html', client: 'Malaysia PSP', date: '2026-03-05' },
+    { file: 'FX_Report_2026-03-04_vietnam_psp_20260304_115215.html', client: 'Vietnam PSP', date: '2026-03-04' },
+    { file: 'FX_Report_2026-03-02_20260302_144320.html', client: 'Global (24 Pairs)', date: '2026-03-02' },
+    { file: 'FX_Report_2026-03-02_vietnam_psp_20260302_112637.html', client: 'Vietnam PSP', date: '2026-03-02' },
+    { file: 'FX_Report_2026-02-27_philippines_psp_20260302_094421.html', client: 'Philippines PSP', date: '2026-03-02' },
+];
+const rtbody = document.getElementById('reportTableBody');
+reports.forEach(r => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td style="font-size:13px;">${r.file.replace('FX_Report_','').replace('.html','')}</td>
+        <td><strong>${r.client}</strong></td>
+        <td>${r.date}</td>
+        <td><a href="/api/download?file=${r.file}" target="_blank">查看报告 &rarr;</a></td>
+    `;
+    rtbody.appendChild(row);
+});
+</script>
+</body>
+</html>

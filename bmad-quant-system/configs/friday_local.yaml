@@ -1,0 +1,41 @@
+name: 周五夜盘策略 - USDCNH
+version: 1.0.0
+log_level: INFO
+
+# 数据源配置
+data_source:
+  type: local_csv
+  symbol: USDCNH
+  frequency: 15m
+  days_back: 730
+  local_file:
+    path: './usdcnh_intraday.csv'
+    date_column: timestamp
+
+# 策略配置 - 周五夜盘策略
+# 逻辑：周五晚22:30开始判断，每半小时一次至01:30，周六02:00出场
+# 利用外汇市场周末效应
+strategy:
+  name: 周五夜盘策略
+  type: FridayNightStrategy
+  enabled: true
+  parameters:
+    entry_day: 4          # 周五（0=周一，4=周五）
+    entry_hour: 22        # 22:30 首次入场判断
+    entry_minute: 30      # 半点入场
+    hold_hours: 3.5       # 持仓至02:00（22:30 + 3.5h = 02:00）
+    direction: long       # 做多方向
+    position_size: 100000 # 仓位10万美元
+
+# 回测配置
+backtest:
+  initial_capital: 1000000   # 初始资金100万
+  position_size: 100000      # 每次交易10万
+  commission_rate: 0.00005   # 手续费万分之0.5
+  slippage: 0.0001           # 滑点1pip
+
+# 风控配置
+risk:
+  stop_loss_pct: 0.01        # 止损1%
+  take_profit_pct: 0.02      # 止盈2%
+  max_drawdown_pct: 0.2      # 最大回撤20%

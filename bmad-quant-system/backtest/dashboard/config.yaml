@@ -1,0 +1,77 @@
+# ============================================
+# Weekend Pre-Lock Strategy - Backtest Config
+# ============================================
+
+name: Weekend Pre-Lock Strategy
+version: 4.0.0
+
+# ---------- Data Sources ----------
+data:
+  signal_file: "data/signals/USD_SIGNAL_V3_processed.csv"
+  price_file: "data/market/weekend_prices_bbg.csv"
+  grid_results_file: "backtest/results/grid_search_fine_001.csv"
+
+# ---------- Trading Rules ----------
+trading:
+  symbol: USDCNH
+  trade_size_usd: 55000000          # 55M USD per week
+  direction: long_only              # long_only / both
+  trading_window:
+    start: "22:30"                  # Friday (Beijing Time) - first signal
+    end: "01:30"                    # Saturday (Beijing Time) - last trade
+  exit_time: "02:00"                # Saturday reference/exit price
+  signal_selection: last            # last / best / weighted_avg
+
+# ---------- Signal Logic ----------
+signal:
+  # prediction >= 0.5 -> BULLISH (use confidence_1)
+  # prediction <  0.5 -> BEARISH (use confidence_0)
+  prediction_threshold: 0.50        # BUY when prediction >= this
+  confidence_threshold: 0.00        # BUY when confidence > this
+
+# ---------- Grid Search ----------
+grid_search:
+  prediction_range:
+    min: 0.40
+    max: 0.85
+    step: 0.01
+  confidence_range:
+    min: 0.00
+    max: 1.00
+    step: 0.01
+  min_trades: 0                     # Minimum trades for valid result (0 = no filter)
+
+# ---------- Tranche Execution ----------
+tranche:
+  enabled: false                    # Set to true to use tranche mode by default
+  # Each signal time point = one execution slot (equal weight: 1/N per slot)
+  # Grid search: pred_threshold x conf_threshold (same threshold for all slots)
+  # Skip logic: unmet threshold -> accumulate to next slot; remainder forfeited
+
+# ---------- Risk ----------
+risk:
+  max_drawdown_pct: 0.20
+  stop_loss_bps: null              # Intraday stop loss in bps (e.g. 10 = 10bps). null = disabled.
+  stop_loss_pips: null              # Not applicable for weekend lock
+  take_profit_pips: null
+
+# ---------- LLM (OpenAI-compatible API) ----------
+llm:
+  enabled: true
+  api_key: "ftp-fArt6LXSkYQvGGwGmn94FtC7"
+  # Environment URLs:
+  #   Dev:  http://dev.fit-ai.woa.com/api/llmproxy
+  #   Test: http://devidc.fit-ai.woa.com/api/llmproxy
+  #   IDC:  http://idc.fit-ai.woa.com/api/llmproxy
+  base_url: "http://dev.fit-ai.woa.com/api/llmproxy"   # Current: Dev environment
+  model: "claude-opus-4-6"
+  temperature: 0.1                        # 严谨性问答推荐 0.1
+  top_p: 0.8                              # 严谨性问答推荐 0.8
+  max_tokens: 4096
+  timeout: 120                            # Claude Opus 响应较慢，适当加长超时
+
+# ---------- Dashboard ----------
+dashboard:
+  host: "0.0.0.0"
+  port: 8889
+  debug: true

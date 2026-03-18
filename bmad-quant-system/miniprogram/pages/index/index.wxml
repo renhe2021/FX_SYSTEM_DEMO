@@ -1,0 +1,67 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- 头部统计 -->
+  <view class="header-stats">
+    <view class="stats-title">BMAD量化系统</view>
+    <view class="stats-subtitle">专业回测 · 策略管理</view>
+  </view>
+
+  <!-- 核心指标 -->
+  <view class="metrics-grid">
+    <view class="metric-item">
+      <view class="metric-card blue">
+        <view class="metric-label">总回测数</view>
+        <view class="metric-value">{{statistics.total_backtests || 0}}</view>
+      </view>
+    </view>
+    <view class="metric-item">
+      <view class="metric-card purple">
+        <view class="metric-label">策略数量</view>
+        <view class="metric-value">{{statistics.strategies.length || 0}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 策略表现 -->
+  <view class="card" wx:if="{{statistics.strategy_stats.length > 0}}">
+    <view class="card-title">策略表现</view>
+    <view class="list-item" wx:for="{{statistics.strategy_stats}}" wx:key="strategy_name">
+      <view class="list-item-left">
+        <view class="list-item-title">{{item.strategy_name}}</view>
+        <view class="list-item-subtitle">{{item.count}}次回测</view>
+      </view>
+      <view class="list-item-right">
+        <view class="list-item-value {{item.avg_return > 0 ? 'positive' : 'negative'}}">
+          {{item.avg_return > 0 ? '+' : ''}}{{(item.avg_return * 100).toFixed(2)}}%
+        </view>
+        <view class="list-item-subtitle">平均收益</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近回测 -->
+  <view class="card">
+    <view class="card-title">最近回测</view>
+    <view wx:if="{{recentBacktests.length > 0}}">
+      <view class="list-item" wx:for="{{recentBacktests}}" wx:key="id" bindtap="goToReport" data-id="{{item.id}}">
+        <view class="list-item-left">
+          <view class="list-item-title">{{item.strategy_name}}</view>
+          <view class="list-item-subtitle">{{item.symbol}} · {{item.created_at}}</view>
+        </view>
+        <view class="list-item-right">
+          <view class="list-item-value {{item.total_return > 0 ? 'positive' : 'negative'}}">
+            {{item.total_return > 0 ? '+' : ''}}{{(item.total_return * 100).toFixed(2)}}%
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="empty-state" wx:else>
+      <view class="empty-text">暂无回测记录</view>
+    </view>
+  </view>
+
+  <!-- 快速操作 -->
+  <view class="quick-actions">
+    <button class="btn btn-primary" bindtap="goToStrategies">选择策略回测</button>
+  </view>
+</view>

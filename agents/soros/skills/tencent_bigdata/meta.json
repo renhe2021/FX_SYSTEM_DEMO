@@ -1,0 +1,8 @@
+{
+  "name": "腾讯大数据平台",
+  "description": "查询腾讯大数据平台任务状态，包括US、Oceanus、HDFS、TDBank等",
+  "tools": [],
+  "version": "1.0",
+  "author": "腾讯大数据团队",
+  "source": "iWiki"
+}

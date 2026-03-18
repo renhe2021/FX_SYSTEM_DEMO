@@ -1,0 +1,218 @@
+{
+  "USDCNH": {
+    "rate": 6.8868,
+    "chg_1d": -0.13,
+    "chg_1w": 0.14,
+    "chg_1m": -0.32,
+    "chg_ytd": -1.63,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDJPY": {
+    "rate": 158.95,
+    "chg_1d": -0.12,
+    "chg_1w": 0.74,
+    "chg_1m": 3.69,
+    "chg_ytd": 1.46,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDPHP": {
+    "rate": 59.559,
+    "chg_1d": -0.32,
+    "chg_1w": 0.92,
+    "chg_1m": 2.94,
+    "chg_ytd": 1.03,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDIDR": {
+    "rate": 16958,
+    "chg_1d": -0.04,
+    "chg_1w": 0.55,
+    "chg_1m": 0.8,
+    "chg_ytd": 1.45,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDTHB": {
+    "rate": 32.32,
+    "chg_1d": -0.12,
+    "chg_1w": 2.2,
+    "chg_1m": 4.01,
+    "chg_ytd": 2.04,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDMYR": {
+    "rate": 3.918,
+    "chg_1d": -0.32,
+    "chg_1w": -0.18,
+    "chg_1m": 0.27,
+    "chg_ytd": -3.45,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDSGD": {
+    "rate": 1.2768,
+    "chg_1d": -0.14,
+    "chg_1w": 0.36,
+    "chg_1m": 1.02,
+    "chg_ytd": -0.68,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDHKD": {
+    "rate": 7.8358,
+    "chg_1d": 0.07,
+    "chg_1w": 0.16,
+    "chg_1m": 0.24,
+    "chg_ytd": 0.66,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDKRW": {
+    "rate": 1487.18,
+    "chg_1d": -0.24,
+    "chg_1w": 1.16,
+    "chg_1m": 2.82,
+    "chg_ytd": 2.98,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDINR": {
+    "rate": 92.37,
+    "chg_1d": 0.13,
+    "chg_1w": 0.45,
+    "chg_1m": 1.94,
+    "chg_ytd": 2.78,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDMXN": {
+    "rate": 17.662,
+    "chg_1d": -0.78,
+    "chg_1w": 0.58,
+    "chg_1m": 2.56,
+    "chg_ytd": -1.73,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDBRL": {
+    "rate": 5.2089,
+    "chg_1d": -1.17,
+    "chg_1w": 0.6,
+    "chg_1m": -0.21,
+    "chg_ytd": -4.91,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "EURUSD": {
+    "rate": 1.1531,
+    "chg_1d": 0.46,
+    "chg_1w": -0.94,
+    "chg_1m": -2.79,
+    "chg_ytd": -1.86,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "GBPUSD": {
+    "rate": 1.3341,
+    "chg_1d": 0.44,
+    "chg_1w": -0.82,
+    "chg_1m": -1.97,
+    "chg_ytd": -0.93,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "AUDUSD": {
+    "rate": 0.7106,
+    "chg_1d": 0.74,
+    "chg_1w": -0.16,
+    "chg_1m": 0.79,
+    "chg_ytd": 6.32,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "CNHPHP": {
+    "rate": 8.6482,
+    "chg_1d": -0.18,
+    "chg_1w": 0.77,
+    "chg_1m": 3.27,
+    "chg_ytd": 2.71,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "CNHIDR": {
+    "rate": 2462.35,
+    "chg_1d": 0.1,
+    "chg_1w": 0.4,
+    "chg_1m": 1.12,
+    "chg_ytd": 3.13,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "CNHTHB": {
+    "rate": 4.693,
+    "chg_1d": 0.01,
+    "chg_1w": 2.05,
+    "chg_1m": 4.34,
+    "chg_ytd": 3.73,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "SGDPHP": {
+    "rate": 46.646,
+    "chg_1d": -0.18,
+    "chg_1w": 0.55,
+    "chg_1m": 1.9,
+    "chg_ytd": 1.72,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "SGDIDR": {
+    "rate": 13281,
+    "chg_1d": 0.1,
+    "chg_1w": 0.18,
+    "chg_1m": -0.22,
+    "chg_ytd": 2.14,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "SGDMYR": {
+    "rate": 3.0685,
+    "chg_1d": -0.18,
+    "chg_1w": -0.54,
+    "chg_1m": -0.75,
+    "chg_ytd": -2.79,
+    "source": "frankfurter",
+    "as_of": "2026-03-17"
+  },
+  "USDVND": {
+    "rate": 26192.51,
+    "chg_1d": null,
+    "chg_1w": null,
+    "chg_1m": null,
+    "chg_ytd": null,
+    "source": "exchangerate-api",
+    "note": "Historical changes unavailable from free API"
+  },
+  "USDTWD": {
+    "rate": 31.89,
+    "chg_1d": null,
+    "chg_1w": null,
+    "chg_1m": null,
+    "chg_ytd": null,
+    "source": "exchangerate-api",
+    "note": "Historical changes unavailable from free API"
+  },
+  "CNHVND": {
+    "rate": 3816.79,
+    "chg_1d": null,
+    "chg_1w": null,
+    "chg_1m": null,
+    "chg_ytd": null,
+    "source": "exchangerate-api",
+    "note": "Historical changes unavailable from free API"
+  }
+}
