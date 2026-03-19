@@ -1,0 +1,28 @@
+{
+  "category": "insights",
+  "key": "insight_20260318_215903",
+  "content": {
+    "user_query": "今晚是什么大日子，然后你来预测下结果",
+    "key_points": [
+      "现在给你一个完整的判断",
+      "点阵图大概率会验证这个判断",
+      "#### 第三层：鲍威尔的措辞——这是最难预测的（也是最值钱的）\n\n我的 Base Case：鲍威尔会说 **\"look through\"** 能源冲击——即承认油价推高通胀，但认为这是暂时的，不改变降息方向，只是推迟节奏"
+    ],
+    "predictions": [
+      {
+        "target": "EUR/USD",
+        "direction": "down",
+        "text": "EUR/USD 可能在今晚直接突破 1.16"
+      },
+      {
+        "target": "EUR/USD",
+        "direction": "down",
+        "text": "EUR/USD 可能在今晚直接突破 1.16，那将"
+      }
+    ],
+    "quality_score": 0.8,
+    "archived_at": "2026-03-18T21:59:03.679884"
+  },
+  "created_at": "2026-03-18T21:59:03.680939",
+  "updated_at": "2026-03-18T21:59:03.680949"
+}

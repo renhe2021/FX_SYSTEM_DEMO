@@ -373,7 +373,7 @@ class MemorySystem:
     # ═══════════════════════════════════════════════
     
     def build_context(self, session_id: str, user_id: str = "default") -> str:
-        """构建 LLM 上下文提示"""
+        """构建 LLM 上下文提示 — 增强版：含预测追踪、知识库精华"""
         context_parts = []
         
         # 1. 用户偏好
@@ -382,12 +382,32 @@ class MemorySystem:
             context_parts.append("## 用户偏好：")
             context_parts.append(json.dumps(prefs, ensure_ascii=False, indent=2))
         
-        # 2. 最近反思
+        # 2. 预测追踪统计（让索罗斯知道自己的准确率）
+        stats = self.get_prediction_stats()
+        if stats.get("total", 0) > 0:
+            context_parts.append("## 我的预测追踪：")
+            context_parts.append(f"- 总预测数: {stats['total']}, 正确: {stats['correct']}, 准确率: {stats['accuracy']}%")
+            if stats.get("by_target"):
+                for target, ts in stats["by_target"].items():
+                    context_parts.append(f"  - {target}: {ts['correct']}/{ts['total']} ({ts['accuracy']}%)")
+        
+        # 3. 最近未验证的预测（提醒索罗斯去验证）
+        unverified = self.load_predictions(verified_only=False, limit=5)
+        unverified = [p for p in unverified if not p.get("verified")]
+        if unverified:
+            context_parts.append("## 待验证的预测（我应该检查这些是否兑现了）：")
+            for p in unverified[:3]:
+                context_parts.append(
+                    f"- {p.get('target')} {p.get('direction')} ({p.get('timeframe')}) "
+                    f"— 发表于 {p.get('created_at', 'unknown')[:10]}"
+                )
+        
+        # 4. 最近反思
         reflection_summary = self.get_reflection_summary()
         if reflection_summary:
             context_parts.append(reflection_summary)
         
-        # 3. 相关知识检索（如果有会话历史）
+        # 5. 相关知识检索（基于最新用户消息）
         session = self.load_session(session_id)
         if session and session.get("messages"):
             last_user_msg = None

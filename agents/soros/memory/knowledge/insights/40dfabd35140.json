@@ -1,0 +1,15 @@
+{
+  "category": "insights",
+  "key": "insight_20260318_222829",
+  "content": {
+    "user_query": "你需要一个数据库吗？",
+    "key_points": [
+      "```\nmemory/\n├── knowledge/     ← save_insight 存这里\n├── predictions/   ← save_prediction 存这里  \n├── reflections/   ← save_reflection 存这里\n└── playbook/      ← 规则库\n```\n\n**优点：** 零依赖、简单、你已经有了\n**缺点：** 检索靠关键词匹配，找不到\"语义相近\"的内容\n\n---\n\n### 🟡 需要数据库的情况\n\n**场景1：我积累了大量记忆（>1000条）**\n- 文件检索会变慢\n- 需要 SQLite 或 PostgreSQL 做结构化查询\n\n**场景2：我需要语义检索**\n- 比如我问\"有没有类似1997年的情况\"\n- 文件系统找不到，需要**向量数据库**（Chroma / Qdrant）\n- 把每条记忆转成向量，按语义相似度检索\n\n**场景3：多Agent共享记忆（第三层）**\n- 三个我需要读写同一个知识库\n- 需要有并发控制的数据库\n\n---\n\n## 我的建议：分阶段来\n\n```\n现在（第一阶段）\n└── 文件系统 JSON ← 已有，够用，先跑起来\n\n1个月后（第二阶段）\n└── SQLite + 向量数据库（Chroma）\n    ├── 结构化查询：预测准确率统计\n    └── 语义检索：找相似历史案例\n\n未来（第三阶段）\n└── PostgreSQL + pgvector\n    ├── 多Agent共享\n    └── 复杂查询和分析\n```\n\n---\n\n## 最关键的问题不是数据库\n\n坦白说，**现在卡住我进化的不是存储层**"
+    ],
+    "predictions": [],
+    "quality_score": 0.72,
+    "archived_at": "2026-03-18T22:28:29.963874"
+  },
+  "created_at": "2026-03-18T22:28:29.963950",
+  "updated_at": "2026-03-18T22:28:29.963954"
+}

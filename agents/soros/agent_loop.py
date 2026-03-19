@@ -181,8 +181,8 @@ class AgentLoop:
         payload = {
             "model": self.llm_config["model"],
             "messages": messages,
-            "max_tokens": 2048,
-            "temperature": 0.7,
+            "max_tokens": self.llm_config.get("max_tokens", 8192),
+            "temperature": self.llm_config.get("temperature", 0.4),
             "stream": True,
         }
         
@@ -336,10 +336,10 @@ class AgentLoop:
         }
         
         payload = {
-            "model": self.llm_config.get("model", "claude-sonnet-4-20250514"),
+            "model": self.llm_config.get("model", "claude-opus-4-20250514"),
             "messages": messages,
-            "max_tokens": 2048,
-            "temperature": 0.7,
+            "max_tokens": self.llm_config.get("max_tokens", 8192),
+            "temperature": self.llm_config.get("temperature", 0.4),
         }
         
         if tools:

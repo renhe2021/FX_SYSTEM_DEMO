@@ -3,276 +3,883 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soros FX Agent v2.0</title>
+<title>Soros FX Agent v5.1 — Research First</title>
+<!-- Marked.js for Markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Highlight.js for code syntax highlighting -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 <style>
-:root {
-  --bg: #0a0a0f;
-  --surface: #13131a;
-  --surface2: #1c1c28;
-  --border: #2a2a3a;
-  --text: #e8e8f0;
-  --text2: #8888a0;
-  --gold: #d4a853;
-  --gold-dim: rgba(212,168,83,.15);
-  --gold-glow: rgba(212,168,83,.3);
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: 'Georgia','Times New Roman',serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* Header */
+:root {
+  --bg: #09090b;
+  --surface: #111113;
+  --surface2: #18181b;
+  --surface3: #27272a;
+  --border: #27272a;
+  --border-hover: #3f3f46;
+  --text: #fafafa;
+  --text2: #a1a1aa;
+  --text3: #71717a;
+  --gold: #f59e0b;
+  --gold-soft: #fbbf24;
+  --gold-dim: rgba(245,158,11,.08);
+  --gold-glow: rgba(245,158,11,.2);
+  --accent-blue: #3b82f6;
+  --accent-green: #22c55e;
+  --accent-red: #ef4444;
+  --accent-purple: #a855f7;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.5);
+  --transition: all .2s cubic-bezier(.4,0,.2,1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size: 15px; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+/* ═══════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════ */
 .header {
-  background: linear-gradient(135deg, #1a1510 0%, #13131a 100%);
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 20px 28px;
-  display: flex; align-items: center; gap: 16px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+  backdrop-filter: blur(20px);
 }
 .avatar {
-  width:56px; height:56px; border-radius:50%;
-  background: linear-gradient(135deg, var(--gold) 0%, #b8922f 100%);
-  display:flex; align-items:center; justify-content:center;
-  font-size:28px; color:#0a0a0f; font-weight:700;
-  box-shadow: 0 0 20px var(--gold-glow);
-  flex-shrink:0;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: #09090b; font-weight: 700;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--gold-glow), 0 0 24px var(--gold-glow);
+  flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -1px;
 }
-.header-info h1 { font-size:22px; font-weight:700; color:var(--gold); letter-spacing:0.5px; display:flex; align-items:center; gap:8px; }
-.header-info h1 .badge { font-size:10px; background:var(--gold-dim); color:var(--gold); padding:2px 6px; border-radius:4px; }
-.header-info p { font-size:12px; color:var(--text2); margin-top:2px; font-style:italic; }
-
-/* Memory indicator */
-.memory-bar {
-  background:var(--surface2); padding:8px 24px; font-size:11px; color:var(--text2);
-  display:flex; gap:16px; border-bottom:1px solid var(--border);
+.header-info { flex: 1; min-width: 0; }
+.header-info h1 {
+  font-size: 18px; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+  letter-spacing: -0.3px;
 }
-.memory-bar span { display:flex; align-items:center; gap:4px; }
-.memory-bar .dot { width:6px; height:6px; border-radius:50%; background:var(--gold); }
+.header-info h1 .badge {
+  font-size: 9px; font-weight: 600; letter-spacing: .5px;
+  background: linear-gradient(135deg, var(--gold-dim), rgba(245,158,11,.15));
+  color: var(--gold);
+  padding: 2px 8px; border-radius: 99px;
+  border: 1px solid rgba(245,158,11,.2);
+  text-transform: uppercase;
+}
+.header-info .subtitle {
+  font-size: 12px; color: var(--text3); margin-top: 2px;
+  font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-weight: 300;
+}
+.header-actions {
+  display: flex; gap: 6px;
+}
+.header-btn {
+  width: 36px; height: 36px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.header-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-dim);
+}
 
-/* Chat area */
+/* ═══════════════════════════════════════════════
+   STATUS BAR
+   ═══════════════════════════════════════════════ */
+.status-bar {
+  background: var(--surface);
+  padding: 6px 24px;
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.status-bar .status-item {
+  display: flex; align-items: center; gap: 5px;
+  font-weight: 500;
+}
+.status-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+.status-dot.green { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
+.status-dot.gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+.status-dot.blue { background: var(--accent-blue); box-shadow: 0 0 6px var(--accent-blue); }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+/* ═══════════════════════════════════════════════
+   CHAT AREA
+   ═══════════════════════════════════════════════ */
 .chat-area {
-  flex:1; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:16px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scroll-behavior: smooth;
 }
-.msg { max-width:85%; animation: fadeIn .3s ease; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.msg.assistant {
-  align-self:flex-start;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:2px 16px 16px 16px;
-  padding:16px 20px;
-  position:relative;
+.chat-area > * {
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
 }
-.msg.assistant::before {
-  content:'';position:absolute;left:-3px;top:12px;width:6px;height:6px;
-  background:var(--gold);border-radius:50%;
+
+/* Messages */
+.msg {
+  animation: msgIn .35s cubic-bezier(.22,.68,0,1.1);
+  position: relative;
 }
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* User message */
 .msg.user {
-  align-self:flex-end;
-  background: linear-gradient(135deg, #2a2a3a 0%, #1c1c28 100%);
-  border:1px solid #3a3a4a;
-  border-radius:16px 2px 16px 16px;
-  padding:14px 18px;
+  display: flex;
+  justify-content: flex-end;
 }
-.msg p { font-size:15px; line-height:1.75; }
-.msg.assistant p { color:var(--text); }
-.msg.user p { color:#d0d0e0; }
-.msg .meta { font-size:11px; color:var(--text2); margin-top:8px; display:flex; justify-content:space-between; }
-
-/* Tool call indicator */
-.tool-call {
-  background:var(--surface2); border:1px solid var(--gold); border-radius:8px;
-  padding:8px 12px; margin:8px 0; font-size:12px; color:var(--gold);
-  font-family:monospace;
+.msg.user .msg-bubble {
+  background: linear-gradient(135deg, #1e293b, #1e1b4b);
+  border: 1px solid #334155;
+  border-radius: var(--radius-lg) 4px var(--radius-lg) var(--radius-lg);
+  padding: 12px 18px;
+  max-width: 75%;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #e2e8f0;
 }
 
-/* Welcome */
+/* Assistant message */
+.msg.assistant .msg-bubble {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px var(--radius-lg) var(--radius-lg) var(--radius-lg);
+  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.msg.assistant .msg-bubble::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--gold) 0%, transparent 100%);
+  border-radius: 3px;
+}
+
+/* Message meta */
+.msg-meta {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2px;
+}
+
+/* ═══════════════════════════════════════════════
+   MARKDOWN CONTENT STYLING
+   ═══════════════════════════════════════════════ */
+.md-content {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text);
+  word-wrap: break-word;
+}
+.md-content h1, .md-content h2, .md-content h3, .md-content h4 {
+  color: var(--text);
+  font-weight: 700;
+  margin: 1.2em 0 .5em;
+  line-height: 1.3;
+}
+.md-content h1 { font-size: 1.5em; border-bottom: 1px solid var(--border); padding-bottom: .3em; }
+.md-content h2 { font-size: 1.3em; border-bottom: 1px solid var(--border); padding-bottom: .25em; }
+.md-content h3 { font-size: 1.1em; color: var(--gold-soft); }
+.md-content h4 { font-size: 1em; color: var(--text2); }
+.md-content h1:first-child, .md-content h2:first-child,
+.md-content h3:first-child, .md-content h4:first-child { margin-top: 0; }
+
+.md-content p { margin: .6em 0; }
+.md-content p:first-child { margin-top: 0; }
+.md-content p:last-child { margin-bottom: 0; }
+
+.md-content strong { color: var(--gold-soft); font-weight: 600; }
+.md-content em { color: var(--text2); font-style: italic; }
+
+/* Links */
+.md-content a {
+  color: var(--accent-blue);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: var(--transition);
+}
+.md-content a:hover { border-bottom-color: var(--accent-blue); }
+
+/* Inline code */
+.md-content code:not(pre code) {
+  background: var(--surface3);
+  color: var(--gold-soft);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: .88em;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid var(--border);
+}
+
+/* Code blocks */
+.md-content pre {
+  background: #0d1117;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: .8em 0;
+  overflow-x: auto;
+  font-size: .85em;
+  line-height: 1.6;
+}
+.md-content pre code {
+  font-family: 'JetBrains Mono', monospace;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  color: #c9d1d9;
+}
+
+/* Blockquotes — used for research status */
+.md-content blockquote {
+  border-left: 3px solid var(--gold);
+  background: var(--gold-dim);
+  margin: .8em 0;
+  padding: 10px 16px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .92em;
+  color: var(--text2);
+}
+.md-content blockquote p { margin: .3em 0; }
+
+/* Lists */
+.md-content ul, .md-content ol {
+  padding-left: 1.6em;
+  margin: .5em 0;
+}
+.md-content li {
+  margin: .3em 0;
+  line-height: 1.7;
+}
+.md-content li::marker {
+  color: var(--gold);
+}
+.md-content ul li { list-style-type: '▸  '; }
+
+/* Tables */
+.md-content table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: .8em 0;
+  font-size: .9em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.md-content thead th {
+  background: var(--surface3);
+  color: var(--gold-soft);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: .85em;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+.md-content tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.md-content tbody tr:last-child td { border-bottom: none; }
+.md-content tbody tr:hover { background: rgba(245,158,11,.03); }
+
+/* Horizontal rule */
+.md-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.2em 0;
+}
+
+/* Emoji rendering */
+.md-content .emoji { font-size: 1.1em; }
+
+/* ═══════════════════════════════════════════════
+   TOOL CALL BADGE (research process)
+   ═══════════════════════════════════════════════ */
+.tool-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(59,130,246,.1), rgba(168,85,247,.1));
+  border: 1px solid rgba(59,130,246,.2);
+  border-radius: 99px;
+  padding: 4px 12px;
+  margin: 4px 2px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent-blue);
+  animation: toolPulse 1.5s ease-in-out infinite;
+}
+.tool-badge.done {
+  animation: none;
+  opacity: .6;
+  background: var(--surface2);
+  border-color: var(--border);
+  color: var(--text3);
+}
+@keyframes toolPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+
+/* ═══════════════════════════════════════════════
+   WELCOME SCREEN
+   ═══════════════════════════════════════════════ */
 .welcome {
-  text-align:center; padding:60px 20px; color:var(--text2);
+  text-align: center;
+  padding: 60px 20px 40px;
+  max-width: 600px !important;
 }
-.welcome .big-icon { font-size:64px; margin-bottom:16px; display:block; }
-.welcome h2 { color:var(--gold); font-size:24px; margin-bottom:8px; }
-.welcome p { font-size:14px; line-height:1.6; max-width:500px; margin:0 auto; }
-.suggestions { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:20px; }
+.welcome-icon {
+  width: 80px; height: 80px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  box-shadow: 0 0 0 8px var(--gold-dim), 0 0 48px var(--gold-glow);
+}
+.welcome h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+.welcome .tagline {
+  font-size: 13px;
+  color: var(--text3);
+  font-style: italic;
+  font-weight: 300;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+.suggestions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
 .suggestion {
-  background:var(--surface); border:1px solid var(--border); border-radius:20px;
-  padding:8px 16px; font-size:12px; color:var(--text); cursor:pointer;
-  transition:all .2s; font-family:inherit;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  text-align: left;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.suggestion:hover { border-color:var(--gold); color:var(--gold); background:var(--gold-dim); }
+.suggestion .sg-icon {
+  font-size: 16px; flex-shrink: 0;
+}
+.suggestion:hover {
+  border-color: var(--gold);
+  color: var(--gold-soft);
+  background: var(--gold-dim);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
 
-/* Input */
+/* ═══════════════════════════════════════════════
+   INPUT AREA
+   ═══════════════════════════════════════════════ */
 .input-area {
-  padding:16px 24px 20px; border-top:1px solid var(--border);
-  background:var(--surface);
+  padding: 12px 24px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
 }
-.input-row { display:flex; gap:10px; max-width:900px; margin:0 auto; }
+.input-container {
+  max-width: 860px;
+  margin: 0 auto;
+}
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 4px 4px 4px 16px;
+  transition: var(--transition);
+}
+.input-row:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-dim);
+}
 .input-row textarea {
-  flex:1; background:var(--bg); color:var(--text); border:1px solid var(--border);
-  border-radius:12px; padding:12px 16px; font-size:15px; font-family:inherit;
-  resize:none; outline:none; min-height:48px; max-height:120px;
-  transition: border-color .2s;
+  flex: 1;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  padding: 10px 0;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  min-height: 24px;
+  max-height: 120px;
+  line-height: 1.5;
 }
-.input-row textarea:focus { border-color:var(--gold); }
-.input-row textarea::placeholder { color:var(--text2); font-style:italic; }
+.input-row textarea::placeholder {
+  color: var(--text3);
+  font-style: normal;
+}
 .send-btn {
-  width:48px; height:48px; border-radius:12px; border:none;
-  background:linear-gradient(135deg, var(--gold) 0%, #b8922f 100%);
-  color:#0a0a0f; font-size:20px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  transition:all .2s; flex-shrink:0;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+  color: #09090b;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+  flex-shrink: 0;
 }
-.send-btn:hover { transform:scale(1.05); box-shadow:0 0 16px var(--gold-glow); }
-.send-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
-.typing-indicator { display:inline-block; }
-.typing-indicator span {
-  display:inline-block; width:6px; height:6px; border-radius:50%;
-  background:var(--gold); margin:0 2px; animation:bounce 1.4s infinite;
+.send-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 16px var(--gold-glow);
 }
-.typing-indicator span:nth-child(2) { animation-delay:.2s; }
-.typing-indicator span:nth-child(3) { animation-delay:.4s; }
-@keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
+.send-btn:disabled {
+  opacity: .3;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.send-btn svg {
+  width: 18px; height: 18px;
+}
 
-/* Tool buttons */
-.tool-buttons { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-.tool-btn {
-  background:var(--surface2); border:1px solid var(--border); border-radius:8px;
-  padding:6px 12px; font-size:11px; color:var(--text2); cursor:pointer;
-  transition:all .2s;
+/* Quick tools */
+.quick-tools {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding: 0 4px;
 }
-.tool-btn:hover { border-color:var(--gold); color:var(--gold); }
+.quick-tool {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  display: flex; align-items: center; gap: 4px;
+}
+.quick-tool:hover {
+  border-color: var(--border-hover);
+  color: var(--text2);
+  background: var(--surface2);
+}
+
+/* ═══════════════════════════════════════════════
+   TYPING INDICATOR
+   ═══════════════════════════════════════════════ */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+}
+.typing-indicator span {
+  display: block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: typing 1.2s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: .15s; }
+.typing-indicator span:nth-child(3) { animation-delay: .3s; }
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .header { padding: 12px 16px; }
+  .chat-area { padding: 16px; }
+  .input-area { padding: 10px 16px 14px; }
+  .suggestions { grid-template-columns: 1fr; }
+  .msg.user .msg-bubble { max-width: 90%; }
+  .status-bar { padding: 6px 16px; gap: 12px; font-size: 10px; }
+}
 </style>
 </head>
 <body>
 
+<!-- ═══ HEADER ═══ -->
 <div class="header">
   <div class="avatar">GS</div>
   <div class="header-info">
-    <h1>George Soros <span class="badge">v2.0</span></h1>
-    <p>"Markets are constantly in a state of uncertainty and flux, and money is made by discounting the obvious and betting on the unexpected."</p>
+    <h1>George Soros <span class="badge">Research First</span></h1>
+    <div class="subtitle">"The financial markets generally are unpredictable. So that one has to have different scenarios."</div>
+  </div>
+  <div class="header-actions">
+    <button class="header-btn" title="新对话" onclick="newSession()">✦</button>
+    <button class="header-btn" title="Agent 状态" onclick="showStatus()">⚙</button>
   </div>
 </div>
 
-<div class="memory-bar">
-  <span><span class="dot"></span> Memory: ON</span>
-  <span><span class="dot"></span> Tools: 7 Available</span>
-  <span><span class="dot"></span> Reflexivity: Enabled</span>
+<!-- ═══ STATUS BAR ═══ -->
+<div class="status-bar" id="statusBar">
+  <span class="status-item"><span class="status-dot green"></span> Memory</span>
+  <span class="status-item"><span class="status-dot gold"></span> Reflexivity</span>
+  <span class="status-item"><span class="status-dot blue"></span> Research Tools</span>
+  <span class="status-item" style="margin-left:auto;color:var(--text3)">Model: <span id="modelName" style="color:var(--text2)">claude-sonnet</span></span>
 </div>
 
+<!-- ═══ CHAT ═══ -->
 <div class="chat-area" id="chatArea">
   <div class="welcome">
-    <span class="big-icon">🦅</span>
+    <div class="welcome-icon">🦅</div>
     <h2>The Man Who Broke the Bank of England</h2>
-    <p>我是乔治·索罗斯。问我任何关于外汇市场、央行政策、宏观交易的问题。<br>我会用我 60 年的市场经验来分析。</p>
+    <p class="tagline">
+      我是乔治·索罗斯。问我任何关于外汇市场、央行政策、宏观交易的问题。<br>
+      我会先去搜集最新情报，再用 60 年的市场经验给你分析。
+    </p>
     <div class="suggestions">
-      <button class="suggestion" onclick="sendSuggestion(this)">美元现在处于周期的什么阶段？</button>
-      <button class="suggestion" onclick="sendSuggestion(this)">EUR/USD 最近走势如何？</button>
-      <button class="suggestion" onclick="sendSuggestion(this)">人民币汇率有什么分析？</button>
-      <button class="suggestion" onclick="sendSuggestion(this)">亚洲货币会重演 1997 年危机吗？</button>
+      <button class="suggestion" onclick="sendSuggestion(this)">
+        <span class="sg-icon">💵</span> 美元现在处于周期的什么阶段？
+      </button>
+      <button class="suggestion" onclick="sendSuggestion(this)">
+        <span class="sg-icon">🇪🇺</span> EUR/USD 最近走势如何？
+      </button>
+      <button class="suggestion" onclick="sendSuggestion(this)">
+        <span class="sg-icon">🇨🇳</span> 人民币汇率有什么分析？
+      </button>
+      <button class="suggestion" onclick="sendSuggestion(this)">
+        <span class="sg-icon">⚡</span> 亚洲货币会重演 1997 年危机吗？
+      </button>
     </div>
   </div>
 </div>
 
+<!-- ═══ INPUT ═══ -->
 <div class="input-area">
-  <div class="input-row">
-    <textarea id="userInput" placeholder="向索罗斯提问..." rows="1"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
-      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-    <button class="send-btn" id="sendBtn" onclick="sendMessage()">&#10148;</button>
-  </div>
-  <div class="tool-buttons">
-    <button class="tool-btn" onclick="quickTool('get_spot_rates')">📊 查汇率</button>
-    <button class="tool-btn" onclick="quickTool('get_vol_data')">📈 查波动率</button>
-    <button class="tool-btn" onclick="quickTool('get_news')">📰 查新闻</button>
-    <button class="tool-btn" onclick="quickTool('get_economic_calendar')">📅 经济日历</button>
+  <div class="input-container">
+    <div class="input-row">
+      <textarea id="userInput" placeholder="向索罗斯提问..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+        oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <div class="quick-tools">
+      <button class="quick-tool" onclick="quickTool('get_spot_rates')">📊 查汇率</button>
+      <button class="quick-tool" onclick="quickTool('get_vol_data')">📈 波动率</button>
+      <button class="quick-tool" onclick="quickTool('get_news')">📰 新闻</button>
+      <button class="quick-tool" onclick="quickTool('get_economic_calendar')">📅 经济日历</button>
+    </div>
   </div>
 </div>
 
 <script>
+// ═══════════════════════════════════════════════
+// CONFIG & STATE
+// ═══════════════════════════════════════════════
 const chatArea = document.getElementById('chatArea');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 let sessionId = 'soros_' + Date.now();
 let isStreaming = false;
 
-function quickTool(tool) {
-  const toolQuestions = {
-    'get_spot_rates': '请给我 USD/CNH, EUR/USD, GBP/USD 的当前汇率',
-    'get_vol_data': '请给我主要货币对的波动率数据',
-    'get_news': '最近外汇市场有什么重要新闻？',
-    'get_economic_calendar': '本周有什么重要经济数据发布？'
-  };
-  userInput.value = toolQuestions[tool];
-  sendMessage();
+// Configure marked
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+  highlight: function(code, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      return hljs.highlight(code, { language: lang }).value;
+    }
+    return hljs.highlightAuto(code).value;
+  }
+});
+
+// ═══════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
-function sendSuggestion(el) {
-  userInput.value = el.textContent;
-  sendMessage();
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+function renderMarkdown(text) {
+  // Sanitize any raw HTML but keep markdown
+  try {
+    return marked.parse(text);
+  } catch(e) {
+    return text.replace(/\n/g, '<br>');
+  }
+}
+
+function scrollToBottom() {
+  requestAnimationFrame(() => {
+    chatArea.scrollTop = chatArea.scrollHeight;
+  });
+}
+
+function timeNow() {
+  return new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+}
+
+// ═══════════════════════════════════════════════
+// MESSAGE RENDERING
+// ═══════════════════════════════════════════════
+function createUserMsg(text) {
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `
+    <div class="msg-bubble">${escapeHtml(text)}</div>
+  `;
+  return div;
+}
+
+function createAssistantMsg() {
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+  div.innerHTML = `
+    <div class="msg-bubble">
+      <div class="md-content">
+        <div class="typing-indicator"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+// ═══════════════════════════════════════════════
+// TOOL CALL HANDLING
+// ═══════════════════════════════════════════════
+const TOOL_ICONS = {
+  'get_news': '📰 搜索最新新闻',
+  'deep_research': '🔬 深度研究',
+  'search_web': '🌐 网络搜索',
+  'verify_claim': '✅ 事实验证',
+  'get_spot_rates': '📊 获取实时汇率',
+  'get_vol_data': '📈 获取波动率',
+  'get_economic_calendar': '📅 查看经济日历',
+  'search_knowledge_base': '🧠 检索知识库',
+  'review_predictions': '🔄 回顾预测记录',
+  'analyze_reflexivity': '🔄 反射性分析',
+  'save_insight': '💾 保存洞察',
+  'save_prediction': '💾 保存预测',
+  'save_reflection': '💾 保存反思',
+};
+
+function renderToolBadges(tools, round) {
+  const badges = tools.map(t => {
+    const label = TOOL_ICONS[t] || ('🔧 ' + t);
+    return `<span class="tool-badge">${label}</span>`;
+  }).join('');
+  const roundLabel = round > 1 ? `<span style="font-size:10px;color:var(--text3);margin-left:4px">第${round}轮</span>` : '';
+  return `<div style="margin:10px 0;display:flex;flex-wrap:wrap;align-items:center;gap:4px">${badges}${roundLabel}</div>`;
+}
+
+function markToolBadgesDone(container) {
+  container.querySelectorAll('.tool-badge:not(.done)').forEach(b => b.classList.add('done'));
+}
+
+// ═══════════════════════════════════════════════
+// SEND MESSAGE (streaming)
+// ═══════════════════════════════════════════════
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text || isStreaming) return;
 
+  // Remove welcome
   const welcome = chatArea.querySelector('.welcome');
   if (welcome) welcome.remove();
 
-  appendMsg('user', text);
+  // User msg
+  chatArea.appendChild(createUserMsg(text));
   userInput.value = '';
   userInput.style.height = 'auto';
+  scrollToBottom();
 
-  const assistantDiv = appendMsg('assistant', '<div class="typing-indicator"><span></span><span></span><span></span></div>');
+  // Assistant msg
+  const assistantDiv = createAssistantMsg();
+  chatArea.appendChild(assistantDiv);
+  scrollToBottom();
+
+  const contentEl = assistantDiv.querySelector('.md-content');
   
   isStreaming = true;
   sendBtn.disabled = true;
 
+  let fullText = '';
+  let typingRemoved = false;
+
+  function removeTyping() {
+    if (!typingRemoved) {
+      const ti = contentEl.querySelector('.typing-indicator');
+      if (ti) ti.remove();
+      typingRemoved = true;
+    }
+  }
+
   try {
     const resp = await fetch('/api/chat', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text, session_id: sessionId }),
     });
 
     const reader = resp.body.getReader();
     const decoder = new TextDecoder();
-    let fullText = '';
-    const pEl = assistantDiv.querySelector('p');
-    let typingRemoved = false;
+    let buffer = '';
 
     while (true) {
-      const {done, value} = await reader.read();
+      const { done, value } = await reader.read();
       if (done) break;
-      const chunk = decoder.decode(value, {stream:true});
-      const lines = chunk.split('\n');
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete line
+
       for (const line of lines) {
         if (!line.startsWith('data:')) continue;
         const dataStr = line.slice(5).trimStart();
+        
         try {
           const data = JSON.parse(dataStr);
-          if (data.content) {
-            if (!typingRemoved) {
-              const ti = assistantDiv.querySelector('.typing-indicator');
-              if (ti) ti.remove();
-              typingRemoved = true;
-            }
-            fullText += data.content;
-            pEl.innerHTML = formatText(fullText);
-            chatArea.scrollTop = chatArea.scrollHeight;
+
+          // Tool calling event
+          if (data.event === 'tool_calling') {
+            removeTyping();
+            // Mark previous badges as done
+            markToolBadgesDone(contentEl);
+            // Insert tool badges
+            const badgeHtml = renderToolBadges(data.tools || [], data.round);
+            contentEl.insertAdjacentHTML('beforeend', badgeHtml);
+            scrollToBottom();
           }
+
+          // Tool result
+          if (data.event === 'tool_result') {
+            // silent — handled above
+          }
+
+          // Content
+          if (data.content) {
+            removeTyping();
+            // Mark all tool badges as done once content starts flowing
+            markToolBadgesDone(contentEl);
+            fullText += data.content;
+            // Render markdown
+            // We need to keep existing tool badge HTML and append rendered content after it
+            const toolBadgesHtml = Array.from(contentEl.querySelectorAll('[style*="margin:10px"]'))
+              .map(el => el.outerHTML).join('');
+            contentEl.innerHTML = toolBadgesHtml + renderMarkdown(fullText);
+            scrollToBottom();
+          }
+
           if (data.done) break;
         } catch(e) {}
       }
     }
-    // 确保清除 typing indicator
-    const ti = assistantDiv.querySelector('.typing-indicator');
-    if (ti) ti.remove();
-    if (!fullText) pEl.innerHTML = '<em style="color:var(--text2)">（无响应）</em>';
-    
+
+    // Final cleanup
+    removeTyping();
+    if (!fullText) {
+      contentEl.innerHTML = '<em style="color:var(--text3)">（索罗斯沉默了一会...没有响应）</em>';
+    }
+
+    // Add meta
     const meta = document.createElement('div');
-    meta.className = 'meta';
-    meta.innerHTML = '<span>' + new Date().toLocaleTimeString('zh-CN') + '</span><span>v2.0</span>';
-    assistantDiv.appendChild(meta);
+    meta.className = 'msg-meta';
+    meta.innerHTML = `<span>${timeNow()}</span><span style="opacity:.5">v5.1 · Research First</span>`;
+    assistantDiv.querySelector('.msg-bubble').appendChild(meta);
 
   } catch(e) {
-    assistantDiv.querySelector('p').innerHTML = '<span style="color:#f87171">连接错误: ' + e.message + '</span>';
+    removeTyping();
+    contentEl.innerHTML = `<div style="color:var(--accent-red);font-size:13px;">⚠ 连接错误: ${escapeHtml(e.message)}</div>`;
   }
 
   isStreaming = false;
@@ -280,29 +887,69 @@ async function sendMessage() {
   userInput.focus();
 }
 
-function appendMsg(role, html) {
-  const div = document.createElement('div');
-  div.className = 'msg ' + role;
-  div.innerHTML = '<p>' + (role === 'user' ? escapeHtml(html) : html) + '</p>';
-  chatArea.appendChild(div);
-  chatArea.scrollTop = chatArea.scrollHeight;
-  return div;
+// ═══════════════════════════════════════════════
+// QUICK ACTIONS
+// ═══════════════════════════════════════════════
+function quickTool(tool) {
+  const questions = {
+    'get_spot_rates': '请给我 USD/CNH, EUR/USD, GBP/USD, USD/JPY 的当前汇率',
+    'get_vol_data': '请给我主要货币对的波动率数据和分析',
+    'get_news': '最近外汇市场有什么重要新闻和动态？',
+    'get_economic_calendar': '本周有什么重要经济数据发布？'
+  };
+  userInput.value = questions[tool];
+  sendMessage();
 }
 
-function escapeHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function sendSuggestion(el) {
+  // Get text content without the icon
+  const text = el.textContent.trim().replace(/^[^\s]+\s/, '');
+  userInput.value = text;
+  sendMessage();
 }
 
-function formatText(text) {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\*\*/g, '')
-    .replace(/\*/g, '')
-    .replace(/`(.+?)`/g, '<code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:13px;">$1</code>')
-    .replace(/\n/g, '<br>');
+function newSession() {
+  sessionId = 'soros_' + Date.now();
+  chatArea.innerHTML = '';
+  // Rebuild welcome
+  chatArea.innerHTML = `
+    <div class="welcome">
+      <div class="welcome-icon">🦅</div>
+      <h2>The Man Who Broke the Bank of England</h2>
+      <p class="tagline">
+        我是乔治·索罗斯。问我任何关于外汇市场、央行政策、宏观交易的问题。<br>
+        我会先去搜集最新情报，再用 60 年的市场经验给你分析。
+      </p>
+      <div class="suggestions">
+        <button class="suggestion" onclick="sendSuggestion(this)">
+          <span class="sg-icon">💵</span> 美元现在处于周期的什么阶段？
+        </button>
+        <button class="suggestion" onclick="sendSuggestion(this)">
+          <span class="sg-icon">🇪🇺</span> EUR/USD 最近走势如何？
+        </button>
+        <button class="suggestion" onclick="sendSuggestion(this)">
+          <span class="sg-icon">🇨🇳</span> 人民币汇率有什么分析？
+        </button>
+        <button class="suggestion" onclick="sendSuggestion(this)">
+          <span class="sg-icon">⚡</span> 亚洲货币会重演 1997 年危机吗？
+        </button>
+      </div>
+    </div>
+  `;
 }
+
+async function showStatus() {
+  try {
+    const resp = await fetch('/api/status');
+    const data = await resp.json();
+    alert(JSON.stringify(data, null, 2));
+  } catch(e) {
+    alert('无法获取状态: ' + e.message);
+  }
+}
+
+// Focus input on load
+userInput.focus();
 </script>
 </body>
 </html>

@@ -271,6 +271,117 @@ TOOL_SCHEMAS = [
             }
         }
     },
+    # ═══ 深度研究与事实验证工具 ═══
+    {
+        "type": "function",
+        "function": {
+            "name": "search_web",
+            "description": "通用网络搜索工具。搜索任何话题的最新信息 — 不限于金融，时事、政策、科技、历史什么都能搜。当你需要了解任何最新情况时，用这个。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "搜索查询，尽量具体和有针对性，如 'latest Fed interest rate decision March 2026' 或 '特朗普最新贸易政策'"
+                    },
+                    "topic_type": {
+                        "type": "string",
+                        "enum": ["finance", "economics", "politics", "technology", "general"],
+                        "description": "话题类型，帮助优化搜索结果"
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "deep_research",
+            "description": "深度研究工具。当你不确定某个事实、数据、历史事件或市场机制时，必须调用此工具搜索权威信息。绝不能凭印象编造。返回带有引用来源的研究结果。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "需要研究的问题，尽量具体，如 '2024年日本央行YCC政策调整的具体时间线和市场反应'"
+                    },
+                    "context": {
+                        "type": "string",
+                        "description": "为什么需要研究这个问题，提供对话上下文"
+                    },
+                    "depth": {
+                        "type": "string",
+                        "enum": ["quick", "standard", "deep"],
+                        "description": "研究深度：quick(快速确认事实)、standard(标准分析)、deep(深度研究)"
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "verify_claim",
+            "description": "事实验证工具。当用户提出一个断言、或你自己要做一个判断时，调用此工具验证其真实性。返回验证结果和可信度评分。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "claim": {
+                        "type": "string",
+                        "description": "需要验证的断言，如 '美联储2024年降息了3次'"
+                    },
+                    "source_hint": {
+                        "type": "string",
+                        "description": "可能的信息来源提示，如 'Fed official statements, FOMC minutes'"
+                    }
+                },
+                "required": ["claim"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_knowledge_base",
+            "description": "搜索索罗斯自己的知识库，检索过往的洞察、预测和反思。在做新分析前先看看自己之前说过什么。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "搜索关键词，如 'USD/CNH 预测' 或 '美联储政策'"
+                    },
+                    "category": {
+                        "type": "string",
+                        "description": "知识类别筛选，如 'fx_view', 'central_bank', 'insights'"
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "review_predictions",
+            "description": "回顾自己过去的预测记录，检查哪些对了哪些错了。用于保持诚实和校准认知。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target": {
+                        "type": "string",
+                        "description": "特定货币对，如 'USD/CNH'，留空则查看所有"
+                    },
+                    "include_stats": {
+                        "type": "boolean",
+                        "description": "是否包含准确率统计"
+                    }
+                }
+            }
+        }
+    },
     # Wedata 工具
     {
         "type": "function",
@@ -382,6 +493,12 @@ class ToolRegistry:
             "save_insight": self._save_insight,
             "save_reflection": self._save_reflection,
             "save_prediction": self._save_prediction,
+            # 深度研究与事实验证
+            "search_web": self._search_web,
+            "deep_research": self._deep_research,
+            "verify_claim": self._verify_claim,
+            "search_knowledge_base": self._search_knowledge_base,
+            "review_predictions": self._review_predictions,
             # Wedata 工具
             "query_us_task": self._query_us_task,
             "query_yarn_app": self._query_yarn_app,
@@ -776,7 +893,7 @@ class ToolRegistry:
         cfg = _get_config()
         llm_key = cfg.get("llm", {}).get("api_key", "")
         llm_url = cfg.get("llm", {}).get("base_url", "")
-        llm_model = cfg.get("llm", {}).get("model", "claude-sonnet-4-20250514")
+        llm_model = cfg.get("llm", {}).get("model", "claude-opus-4-20250514")
         
         obs_text = "\n".join(f"- {o}" for o in observations)
         market_str = json.dumps(market_data, ensure_ascii=False, indent=2) if market_data else "无额外数据"
@@ -900,6 +1017,335 @@ class ToolRegistry:
             }
         except Exception as e:
             return {"error": f"Failed to save prediction: {str(e)}"}
+    
+    # ═══════════════════════════════════════════════
+    # 深度研究与事实验证工具实现
+    # ═══════════════════════════════════════════════
+    
+    def _search_web(self, query: str, topic_type: str = "general") -> Dict:
+        """
+        通用网络搜索 — 搜索任何话题的最新信息
+        使用 Perplexity sonar 做快速网络搜索
+        """
+        cfg = _get_config()
+        pplx_key = cfg.get("ai", {}).get("perplexity", {}).get("api_key", "")
+        
+        if not pplx_key:
+            return self._research_via_llm(query, f"Web search for: {topic_type}")
+        
+        # 根据话题类型优化 system prompt
+        topic_prompts = {
+            "finance": "你是金融市场分析师，专注于外汇、利率、大宗商品等市场动态。",
+            "economics": "你是宏观经济研究员，关注各国经济数据、政策变化和经济趋势。",
+            "politics": "你是国际政治分析师，关注地缘政治、贸易政策和政治事件对市场的影响。",
+            "technology": "你是科技行业分析师，关注技术发展趋势和其对经济的影响。",
+            "general": "你是一个全能的信息搜索助手，提供准确、最新的信息。"
+        }
+        
+        system_msg = (
+            f"{topic_prompts.get(topic_type, topic_prompts['general'])} "
+            "请提供准确的、有时效性的信息。"
+            "包含具体的日期、数字和来源。"
+            "如果信息不确定或有争议，明确说明。"
+            "用中文回答，关键术语保留英文。"
+        )
+        
+        try:
+            url = "https://api.perplexity.ai/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {pplx_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": "sonar",
+                "messages": [
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": query}
+                ],
+                "max_tokens": 1500,
+                "temperature": 0.1
+            }
+            
+            resp = requests.post(url, headers=headers, json=payload, timeout=30)
+            resp.raise_for_status()
+            
+            data = resp.json()
+            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            citations = data.get("citations", [])
+            
+            return {
+                "search_result": content,
+                "citations": citations[:8] if citations else [],
+                "query": query,
+                "topic_type": topic_type,
+                "source": "Perplexity AI (sonar) — 实时网络搜索",
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.warning(f"Web search failed: {e}")
+            return self._research_via_llm(query, f"Web search fallback for: {topic_type}")
+    
+    def _deep_research(self, query: str, context: str = "", depth: str = "standard") -> Dict:
+        """
+        深度研究工具 — 当不确定某个事实时，主动搜索权威信息
+        使用 Perplexity sonar-pro 进行深度搜索，返回带引用的结果
+        """
+        cfg = _get_config()
+        pplx_key = cfg.get("ai", {}).get("perplexity", {}).get("api_key", "")
+        
+        if not pplx_key:
+            # 降级：用主 LLM 做研究（明确标注这是基于训练数据，非实时）
+            return self._research_via_llm(query, context)
+        
+        # 根据深度选择模型和 token 限制
+        depth_config = {
+            "quick": {"model": "sonar", "max_tokens": 1000, "temperature": 0.1},
+            "standard": {"model": "sonar-pro", "max_tokens": 2500, "temperature": 0.1},
+            "deep": {"model": "sonar-pro", "max_tokens": 4000, "temperature": 0.2},
+        }
+        config = depth_config.get(depth, depth_config["standard"])
+        
+        # 构建研究 prompt
+        system_msg = (
+            "You are a professional financial research analyst. "
+            "Provide factual, well-sourced information. "
+            "Always cite specific dates, numbers, and sources. "
+            "If information is uncertain or conflicting, clearly state that. "
+            "Respond in Chinese, but keep technical terms in English. "
+            "Structure your response with clear sections and bullet points."
+        )
+        
+        user_msg = query
+        if context:
+            user_msg = f"Research context: {context}\n\nResearch question: {query}"
+        
+        try:
+            url = "https://api.perplexity.ai/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {pplx_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": config["model"],
+                "messages": [
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": user_msg}
+                ],
+                "max_tokens": config["max_tokens"],
+                "temperature": config["temperature"]
+            }
+            
+            resp = requests.post(url, headers=headers, json=payload, timeout=60)
+            resp.raise_for_status()
+            
+            data = resp.json()
+            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            citations = data.get("citations", [])
+            
+            return {
+                "research_result": content,
+                "citations": citations[:10] if citations else [],
+                "query": query,
+                "depth": depth,
+                "source": f"Perplexity AI ({config['model']})",
+                "confidence": "high" if citations else "medium",
+                "note": "基于实时网络搜索的研究结果，附有引用来源",
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            # 降级到 LLM
+            logger.warning(f"Perplexity research failed: {e}, falling back to LLM")
+            return self._research_via_llm(query, context)
+    
+    def _research_via_llm(self, query: str, context: str = "") -> Dict:
+        """LLM 降级研究 — 明确标注这不是实时数据"""
+        cfg = _get_config()
+        llm_key = cfg.get("llm", {}).get("api_key", "")
+        llm_url = cfg.get("llm", {}).get("base_url", "")
+        llm_model = cfg.get("llm", {}).get("model", "claude-opus-4-20250514")
+        
+        if not llm_key or not llm_url:
+            return {"error": "研究工具不可用：Perplexity 和 LLM 都未配置"}
+        
+        prompt = f"""请基于你的知识回答以下研究问题。
+
+重要要求：
+1. 只回答你确定知道的事实
+2. 对于不确定的信息，明确标注"[需验证]"
+3. 标注你的知识截止日期
+4. 给出具体的数据点、日期和来源（如果知道的话）
+5. 用中文回答，关键术语保留英文
+
+{'研究上下文: ' + context if context else ''}
+
+研究问题: {query}"""
+        
+        try:
+            url = f"{llm_url}/chat/completions"
+            headers = {"Authorization": f"Bearer {llm_key}", "Content-Type": "application/json"}
+            resp = requests.post(url, headers=headers, json={
+                "model": llm_model,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 2000,
+                "temperature": 0.2
+            }, timeout=60)
+            resp.raise_for_status()
+            
+            data = resp.json()
+            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            
+            return {
+                "research_result": content,
+                "citations": [],
+                "query": query,
+                "depth": "llm_fallback",
+                "source": f"LLM ({llm_model}) — 基于训练数据，非实时",
+                "confidence": "medium",
+                "note": "⚠️ 此结果基于 LLM 训练数据，非实时搜索。重要决策请交叉验证。",
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            return {"error": f"研究失败: {str(e)}"}
+    
+    def _verify_claim(self, claim: str, source_hint: str = "") -> Dict:
+        """
+        事实验证工具 — 验证一个断言的真实性
+        """
+        cfg = _get_config()
+        pplx_key = cfg.get("ai", {}).get("perplexity", {}).get("api_key", "")
+        
+        if not pplx_key:
+            return {
+                "claim": claim,
+                "verdict": "unable_to_verify",
+                "reason": "验证工具不可用（Perplexity 未配置）",
+                "suggestion": "请自行查证此断言的真实性"
+            }
+        
+        system_msg = (
+            "You are a fact-checker. Your job is to verify claims about financial markets, "
+            "economics, central bank policies, and related topics. "
+            "For each claim, provide: "
+            "1. VERDICT: true / mostly_true / partially_true / misleading / false / unverifiable "
+            "2. EVIDENCE: specific facts and data that support or contradict the claim "
+            "3. NUANCE: important context that might be missing "
+            "4. SOURCES: where the information comes from "
+            "Respond in Chinese, keep technical terms in English."
+        )
+        
+        user_msg = f"请验证以下断言的真实性：\n\n「{claim}」"
+        if source_hint:
+            user_msg += f"\n\n可能的信息来源提示：{source_hint}"
+        
+        try:
+            url = "https://api.perplexity.ai/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {pplx_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": "sonar-pro",
+                "messages": [
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": user_msg}
+                ],
+                "max_tokens": 1500,
+                "temperature": 0.1
+            }
+            
+            resp = requests.post(url, headers=headers, json=payload, timeout=30)
+            resp.raise_for_status()
+            
+            data = resp.json()
+            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            citations = data.get("citations", [])
+            
+            return {
+                "claim": claim,
+                "verification": content,
+                "citations": citations[:5] if citations else [],
+                "source": "Perplexity AI (sonar-pro)",
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            return {
+                "claim": claim,
+                "verdict": "verification_failed",
+                "error": str(e)
+            }
+    
+    def _search_knowledge_base(self, query: str, category: str = None) -> Dict:
+        """搜索索罗斯自己的知识库 — 过往洞察、反思、预测"""
+        try:
+            memory = _get_memory()
+            
+            # 搜索知识库
+            results = memory.search_knowledge(query, category=category, limit=5)
+            
+            # 搜索最近反思
+            reflections = memory.load_recent_reflections(limit=5)
+            relevant_reflections = []
+            query_lower = query.lower()
+            for r in reflections:
+                if query_lower in json.dumps(r, ensure_ascii=False).lower():
+                    relevant_reflections.append({
+                        "topic": r.get("topic"),
+                        "reflection": r.get("reflection", "")[:300],
+                        "date": r.get("created_at")
+                    })
+            
+            return {
+                "knowledge_results": results,
+                "relevant_reflections": relevant_reflections[:3],
+                "query": query,
+                "category": category,
+                "total_found": len(results) + len(relevant_reflections),
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            return {"error": f"知识库搜索失败: {str(e)}"}
+    
+    def _review_predictions(self, target: str = None, include_stats: bool = True) -> Dict:
+        """回顾过去的预测记录 — 保持诚实，校准认知"""
+        try:
+            memory = _get_memory()
+            
+            # 获取预测记录
+            predictions = memory.load_predictions(target=target, limit=20)
+            
+            # 获取统计
+            stats = memory.get_prediction_stats() if include_stats else None
+            
+            # 格式化输出
+            formatted = []
+            for p in predictions:
+                entry = {
+                    "target": p.get("target"),
+                    "direction": p.get("direction"),
+                    "timeframe": p.get("timeframe"),
+                    "rationale": p.get("rationale", "")[:200],
+                    "date": p.get("created_at"),
+                    "verified": p.get("verified", False),
+                }
+                if p.get("verified"):
+                    entry["correct"] = p.get("correct")
+                    entry["outcome"] = p.get("outcome")
+                formatted.append(entry)
+            
+            return {
+                "predictions": formatted,
+                "total": len(formatted),
+                "stats": stats,
+                "target_filter": target,
+                "message": f"共找到 {len(formatted)} 条预测记录" + 
+                          (f"（准确率: {stats['accuracy']}%）" if stats and stats.get('total') > 0 else ""),
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            return {"error": f"预测记录查询失败: {str(e)}"}
     
     # ═══════════════════════════════════════════════
     # Wedata 工具实现

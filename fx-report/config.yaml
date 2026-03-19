@@ -314,9 +314,9 @@ llm:
   #   IDC:  http://idc.fit-ai.woa.com/api/llmproxy
   base_url: "http://dev.fit-ai.woa.com/api/llmproxy"   # Current: Dev environment
   model: "claude-sonnet-4-20250514"
-  temperature: 0.1
-  max_tokens: 4096
-  timeout: 120
+  temperature: 0.4
+  max_tokens: 8192
+  timeout: 180
 
 # Data sources
 data:
