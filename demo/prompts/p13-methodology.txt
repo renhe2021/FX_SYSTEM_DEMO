@@ -1,0 +1,60 @@
+Generate an elegant infographic diagram for a presentation slide (1920x900 px, white background).
+
+TOPIC: 复杂系统的通用化路径（三步方法论）
+
+IMPORTANT: ALL text must be in Chinese. NO English anywhere. Keep text minimal and concise.
+
+DESIGN STYLE:
+- Modern, polished, professional — like a fintech keynote
+- Clean sans-serif font, all Chinese text
+- Primary color: green #2BA471; accent: orange #E37318; blue #0052D9
+- Thin card borders with subtle rounded corners (radius ~12px)
+- Light colored fills, generous white space
+- No heavy shadows, no gradients, no 3D effects
+
+LAYOUT (left-to-right three-step flow):
+
+THREE CARDS in a horizontal row with arrow connectors between them:
+
+CARD 1 (leftmost, ~30% width):
+- Orange top-border accent (3px)
+- Faint orange background #FFF8F0
+- Large circled "①" in orange at top
+- Title: "做透一个场景" (bold, dark)
+- Body: "先跑通最小闭环" (bold green #2BA471)
+- Small example at bottom: "预锁价 → 数据→回测→结果" (small, italic gray)
+
+Thin green arrow → connecting to Card 2
+
+CARD 2 (center, ~30% width):
+- Blue top-border accent (3px) #0052D9
+- Faint blue background #F0F8FF
+- Large circled "②" in blue at top
+- Title: "拆可复用零件" (bold, dark)
+- Four small badges in 2x2 grid:
+  "数据获取" "信号生成" "回测引擎" "结果输出"
+  (each: small rounded pill, light blue outline)
+
+Thin green arrow → connecting to Card 3
+
+CARD 3 (rightmost, ~30% width):
+- Green top-border accent (3px) #2BA471
+- Faint green background #F0FFF4
+- Large circled "③" in green at top
+- Title: "抽象成框架" (bold, dark)
+- Body: "新场景只需实现接口" (bold green)
+- Small example at bottom: "换策略 → 改信号 → 引擎复用" (small, italic gray)
+
+BOTTOM SECTION (below the three cards):
+Horizontal bar with faint green-to-blue gradient bg, centered:
+Four colored tag pills with small arrows:
+  [具体问题](red) → [最小闭环](orange) → [拆模块](green) → [抽框架](blue)
+Then: "= 通用性从实践中长出来" ("通用性" and "长" in bold green, rest gray)
+
+CRITICAL RULES:
+- ALL text Chinese, NO English title or subtitle
+- Chinese characters must be perfectly rendered and clear
+- Keep text minimal — fewer words, more breathing room
+- Cards should feel like floating UI components
+- Thin lines, subtle fills, restrained colors
+- Overall: Tencent/Apple keynote aesthetic

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <p:cSld>
+    <p:bg>
+      <p:bgPr>
+        <a:solidFill>
+          <a:srgbClr val="F8F9FC"/>
+        </a:solidFill>
+        <a:effectLst/>
+      </p:bgPr>
+    </p:bg>
+    <p:spTree>
+      <p:nvGrpSpPr>
+        <p:cNvPr id="1" name=""/>
+        <p:cNvGrpSpPr/>
+        <p:nvPr/>
+      </p:nvGrpSpPr>
+      <p:grpSpPr/>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="2" name="Rectangle 1"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="0" y="0"/>
+            <a:ext cx="9144000" cy="914400"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:solidFill>
+            <a:srgbClr val="1E2761"/>
+          </a:solidFill>
+          <a:ln>
+            <a:noFill/>
+          </a:ln>
+        </p:spPr>
+        <p:style>
+          <a:lnRef idx="1">
+            <a:schemeClr val="accent1"/>
+          </a:lnRef>
+          <a:fillRef idx="3">
+            <a:schemeClr val="accent1"/>
+          </a:fillRef>
+          <a:effectRef idx="2">
+            <a:schemeClr val="accent1"/>
+          </a:effectRef>
+          <a:fontRef idx="minor">
+            <a:schemeClr val="lt1"/>
+          </a:fontRef>
+        </p:style>
+        <p:txBody>
+          <a:bodyPr rtlCol="0" anchor="ctr"/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr algn="ctr"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="3" name="TextBox 2"/>
+          <p:cNvSpPr txBox="1"/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="457200" y="228600"/>
+            <a:ext cx="8229600" cy="548640"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="none">
+            <a:spAutoFit/>
+          </a:bodyPr>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr>
+              <a:defRPr sz="2800" b="1">
+                <a:solidFill>
+                  <a:srgbClr val="FFFFFF"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>The backtest engine: parameter grid scan</a:t>
+            </a:r>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="4" name="TextBox 3"/>
+          <p:cNvSpPr txBox="1"/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="457200" y="1188720"/>
+            <a:ext cx="8229600" cy="3657600"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="square">
+            <a:spAutoFit/>
+          </a:bodyPr>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>What we scan:</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>• Pre-lock confidence: 0.70 ~ 0.95</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>• Forecast sensitivity: 0.001 ~ 0.009</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>What we measure:</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>• PnL, Sharpe Ratio, Win Rate, Max Drawdown</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>• Trade Count, Monthly Returns</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>Method: Grid search, all combos in parallel</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr>
+              <a:spcAft>
+                <a:spcPts val="1200"/>
+              </a:spcAft>
+              <a:defRPr sz="1800">
+                <a:solidFill>
+                  <a:srgbClr val="1E293B"/>
+                </a:solidFill>
+              </a:defRPr>
+            </a:pPr>
+            <a:r>
+              <a:t>Engine: BacktestEngine + FridayNightStrategy</a:t>
+            </a:r>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+    </p:spTree>
+  </p:cSld>
+  <p:clrMapOvr>
+    <a:masterClrMapping/>
+  </p:clrMapOvr>
+</p:sld>

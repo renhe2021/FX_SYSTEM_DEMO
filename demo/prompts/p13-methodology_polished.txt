@@ -1,0 +1,34 @@
+An elegant, professional, and modern infographic diagram for a presentation slide, with dimensions 1920x900 pixels. The background is pure white (#FFFFFF). The overall aesthetic is clean, polished, reminiscent of a fintech keynote or Apple/Tencent presentation, with ample white space and a focus on clarity and readability. The central topic is "复杂系统的通用化路径（三步方法论）". ALL text within the diagram MUST be in Chinese, rendered perfectly clear and legible, using a clean, modern sans-serif font. There must be absolutely NO English text anywhere in the diagram itself. Text should be minimal and concise.
+
+**Color Palette:** Primary green: `#2BA471`. Accent orange: `#E37318`. Accent blue: `#0052D9`. Subtle background fills for cards.
+
+**Layout - Three Cards (Horizontal Flow):**
+Three distinct, floating UI-like cards are arranged horizontally in a left-to-right flow, occupying the upper-middle section of the slide. Each card has a very thin, light gray border (1px, `#E0E0E0`) with subtle rounded corners (radius 12px), giving them a soft, modern feel. They appear to be slightly raised from the background with a very subtle, almost imperceptible shadow beneath them (alpha 0.1, blur 5px), reinforcing a floating effect without being heavy or distracting. There is generous spacing between cards and around their content.
+
+**Card 1 (leftmost):**
+This card is approximately 30% of the total width. It features a prominent 3px thick solid orange accent border along its top edge (`#E37318`). Its background fill is a very faint orange (`#FFF8F0`). At the top center of the card, there's a large, perfectly circular badge (diameter approx. 60px) containing the Chinese character "①" (U+2460). This circle has a solid orange fill (`#E37318`) and the "①" is white, bold, and perfectly centered within it. Below this, the title "做透一个场景" is displayed in a bold, dark gray sans-serif font (`#333333`). Below the title, the body text "先跑通最小闭环" is prominent, in a bold green sans-serif font (`#2BA471`). At the bottom of the card, a small, italic light gray sans-serif text (`#888888`) provides an example: "预锁价 → 数据→回测→结果". All text elements are clearly spaced from each other and from the card edges with ample internal padding.
+
+**Connector 1:**
+A thin, elegant green arrow (`#2BA471`, 2px thickness) points horizontally from the right edge of Card 1 to the left edge of Card 2, indicating a clear flow. The arrow has a simple, clean head.
+
+**Card 2 (center):**
+This card is also approximately 30% of the total width, identical in style (borders, rounded corners, subtle shadow) to Card 1. It features a 3px thick solid blue accent border along its top edge (`#0052D9`). Its background fill is a very faint blue (`#F0F8FF`). At the top center, a large, perfectly circular badge (diameter approx. 60px) contains the Chinese character "②" (U+2461) with a solid blue fill (`#0052D9`) and the "②" in white, bold, and centered. Below this, the title "拆可复用零件" is in a bold, dark gray sans-serif font (`#333333`). Below the title, four small, modern badges are arranged in a 2x2 grid. Each badge is a small, rounded pill shape (with a radius of ~8px), featuring a light blue outline (1px, `#ADD8E6`) and a very faint blue fill (`#F0F8FF`). Inside each badge, the Chinese text is centered: "数据获取", "信号生成", "回测引擎", "结果输出". The badges are neatly spaced from each other and from the surrounding text.
+
+**Connector 2:**
+A thin, elegant green arrow (`#2BA471`, 2px thickness) points horizontally from the right edge of Card 2 to the left edge of Card 3, indicating a clear flow. The arrow has a simple, clean head.
+
+**Card 3 (rightmost):**
+This card is approximately 30% of the total width, identical in style (borders, rounded corners, subtle shadow) to the other cards. It features a 3px thick solid green accent border along its top edge (`#2BA471`). Its background fill is a very faint green (`#F0FFF4`). At the top center, a large, perfectly circular badge (diameter approx. 60px) contains the Chinese character "③" (U+2462) with a solid green fill (`#2BA471`) and the "③" in white, bold, and centered. Below this, the title "抽象成框架" is in a bold, dark gray sans-serif font (`#333333`). Below the title, the body text "新场景只需实现接口" is prominent, in a bold green sans-serif font (`#2BA471`). At the bottom of the card, a small, italic light gray sans-serif text (`#888888`) provides an example: "换策略 → 改信号 → 引擎复用". All text elements are clearly spaced.
+
+**Bottom Section:**
+Below the three cards, centered horizontally across the width of the slide, there is a prominent horizontal bar or panel. This bar has a subtle, linear gradient background transitioning smoothly from faint green on the left (`#F0FFF4`) to faint blue on the right (`#F0F8FF`). This bar contains a sequence of four small, distinctively colored, rounded tag pills, each connected by small, simple dark gray arrow icons. These tags appear to float slightly within the bar.
+The tag pills are presented in order from left to right:
+1.  **Red pill:** "具体问题" (solid red fill `#DC3545`, white bold sans-serif text, rounded corners).
+2.  **Orange pill:** "最小闭环" (solid orange fill `#E37318`, white bold sans-serif text, rounded corners).
+3.  **Green pill:** "拆模块" (solid green fill `#2BA471`, white bold sans-serif text, rounded corners).
+4.  **Blue pill:** "抽框架" (solid blue fill `#0052D9`, white bold sans-serif text, rounded corners).
+Small, dark gray, simple right-pointing arrow icons (e.g., `→`) connect these pills.
+Following these pills, the concluding sentence " = 通用性从实践中长出来" is displayed. The characters "通用性" and "长" are rendered in bold green sans-serif font (`#2BA471`), while the rest of the text " = 从实践中出来" is in a standard light gray sans-serif font (`#888888`). All text and pills in this bottom section are perfectly centered vertically and horizontally within the bar, with adequate spacing.
+
+**General Aesthetics & Font:**
+Ensure an extremely clean, crisp rendering of all Chinese characters, prioritizing perfect legibility. Use a modern, professional, clean sans-serif font (e.g., Noto Sans CJK SC, PingFang SC, or similar that supports good Chinese typography) for all text. Maintain ample padding and margins within and around all elements to enhance readability and a premium feel. Avoid any heavy shadows, strong gradients, or obvious 3D effects; instead, focus on subtle depth, clear separation of elements, and restrained use of color. The overall impression should be of sophistication, clarity, and ease of understanding, resembling a high-quality UI design.

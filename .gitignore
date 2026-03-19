@@ -73,6 +73,10 @@ output/
 *.png
 *.jpg
 
+# Keep demo slides assets (presentations need images/fonts)
+!demo/slides-v2/assets/**
+!demo/slides-output/assets/**
+
 # Logs
 *.log
 logs/

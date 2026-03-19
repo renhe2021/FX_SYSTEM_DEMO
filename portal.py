@@ -387,14 +387,14 @@ def api_shutdown():
 if __name__ == '__main__':
     port = 8899
     print("=" * 60)
-    print("  🏠 FX_SYSTEM Portal — 统一入口")
+    print("  FX_SYSTEM Portal")
     print(f"  http://localhost:{port}")
     print("=" * 60)
 
     # 检测各模块状态
     for m in MODULES:
-        status = "✅ 运行中" if _is_port_open(m['port']) else "⬚ 未启动" if m['port'] else "📓 Notebook"
-        print(f"  {m['icon']} {m['name']:20s} {status}")
+        status = "[OK]" if _is_port_open(m['port']) else "[--]" if m['port'] else "[NB]"
+        print(f"  {m['name']:20s} {status}")
     print("=" * 60)
 
     app.run(host='0.0.0.0', port=port, debug=False)

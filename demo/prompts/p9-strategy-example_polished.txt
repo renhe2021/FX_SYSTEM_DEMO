@@ -1,0 +1,48 @@
+An elegant, modern, and polished infographic presentation slide for a fintech pitch deck. Aspect ratio 1920x900px, with a pristine white background (#FFFFFF). The overall aesthetic is clean, minimalist, and sophisticated, reminiscent of a Tencent or Apple keynote slide, with ample negative space and carefully considered element placement.
+
+**COLOR PALETTE:** Primary green: #2BA471. Accent orange: #E37318. Text dark gray: #333333. Light gray text: #555555. Lightest green background: #F0FFF4. Lightest gray background: #F8F9FC. Lightest orange background: #FFF8F0. Connector gray: light gray.
+
+**TYPOGRAPHY:** All text uses a clean, contemporary sans-serif font. All Chinese text must be perfectly rendered, crisp, and highly legible, appearing as small (14-18pt) unless otherwise specified. Text colors are dark gray #333333 or light gray #555555.
+
+**VISUAL STYLE:** Flat UI elements. Cards have subtle, thin borders and soft, 12px rounded corners. No heavy shadows, no gradients, no 3D effects. Subtle, very faint background fills for cards. Thin lines are preferred for borders and connectors. Elements should appear as floating, refined UI components.
+
+**LAYOUT:**
+
+**TOP SECTION:**
+A single, horizontally-oriented, elongated rounded rectangle (pill shape) is centered at the top. It has a very faint green background (#F0FFF4). Inside, centered, is the following small (approx. 16pt) light gray text (#555555): "周五晚模型预测涨跌 → 是否锁价 → 参数怎么选？".
+
+**MIDDLE SECTION:**
+Three distinct vertical columns or panels, well-spaced horizontally, across the middle of the slide.
+
+**LEFT CARD (approx. 35% width of the middle section):**
+A rectangular card with a very faint green background (#F0FFF4) and subtle rounded corners (12px radius). It features a 3px high solid green accent line (#2BA471) along its top edge.
+*   Inside, at the top, a small green title (#2BA471): "模型信号端".
+*   Below it, a tiny light gray subtitle (#555555): "预测周五晚外币涨跌方向".
+*   Below the subtitle, two small parameter pills/badges are horizontally arranged. Each badge has a thin green outline (#2BA471), white fill, and crisp black text.
+    *   First badge: "信号强弱".
+    *   Second badge: "二次确认".
+
+**CONNECTOR 1 (Left to Center):** A thin, light gray arrow (→) points from the right edge of the LEFT CARD towards the left edge of the CENTER CARD.
+
+**CENTER CARD (approx. 40% width of the middle section):**
+A rectangular card with a very faint gray background (#F8F9FC) and subtle rounded corners (12px radius). It features a 3px high solid green accent line (#2BA471) along its top edge.
+*   Inside, at the top, a small green title (#2BA471): "交易执行端".
+*   Below it, a tiny light gray subtitle (#555555): "5000万美金怎么做？".
+*   Below the subtitle, five distinct parameter rows are vertically stacked. Each row begins with a small, solid green circle (#2BA471) followed by its label in dark gray text (#333333).
+    *   Row 1: • 头寸规模
+    *   Row 2: • 执行方式
+    *   Row 3: • 分配策略
+    *   Row 4: • 止损线
+    *   Row 5: • 止盈线
+
+**CONNECTOR 2 (Center to Right):** A thin, light gray arrow (→) points from the right edge of the CENTER CARD towards the left edge of the RIGHT PANEL.
+
+**RIGHT PANEL (approx. 15% width of the middle section):**
+A rectangular panel with a very faint orange background (#FFF8F0) and subtle rounded corners (12px radius). It features a 3px high solid orange accent line (#E37318) along its top edge.
+*   At the top, a prominent orange circular icon with a white exclamation mark inside.
+*   Below the icon, the text "10,000+" in medium-large, bold orange text (#E37318).
+*   Below that, the text "种组合" in tiny light gray text (#555555).
+
+**BOTTOM SECTION:**
+A single line of small, centered light gray text (#555555) at the very bottom of the slide:
+"模型 × 参数 × 执行 = 海量组合 → 系统化回测找最优解".

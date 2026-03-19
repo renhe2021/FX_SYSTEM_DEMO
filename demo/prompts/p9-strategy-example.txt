@@ -1,0 +1,59 @@
+Generate an elegant infographic diagram for a presentation slide (1920x900 px, white background).
+
+DESIGN STYLE:
+- Modern, polished, professional — like a fintech pitch deck
+- Clean sans-serif font, all Chinese text SMALL (14-18pt)
+- Primary color: green #2BA471; accent: orange #E37318; text: #333
+- Thin card borders with subtle rounded corners (radius ~12px)
+- Light colored fills: left card uses very faint green background #F0FFF4, right card uses very faint gray #F8F9FC
+- Cards have a thin green top-border accent line (3px)
+- Generous white space between all elements
+- Use thin arrow connectors (→) between cards, light gray color
+- No heavy shadows, no gradients, no 3D effects
+
+LAYOUT:
+
+TOP: A thin horizontal pill/banner centered, with faint green background:
+"周五晚模型预测涨跌 → 是否锁价 → 参数怎么选？"
+(small text ~16pt, gray #555)
+
+MIDDLE ROW with three columns, good spacing:
+
+LEFT CARD (about 35% width):
+- Green top border accent
+- Small green title: "模型信号端"
+- Tiny gray subtitle: "预测周五晚外币涨跌方向"
+- Two parameter pills/badges below:
+  ① 信号强弱 (small green outline badge)
+  ② 二次确认 (small green outline badge)
+
+A thin gray arrow → connecting left to center
+
+CENTER CARD (about 40% width):
+- Green top border accent  
+- Small green title: "交易执行端"
+- Tiny gray subtitle: "5000万美金怎么做？"
+- Five parameter rows, each with a small green dot + label:
+  • 头寸规模
+  • 执行方式
+  • 分配策略
+  • 止损线
+  • 止盈线
+
+A thin gray arrow → connecting center to right
+
+RIGHT PANEL (about 15% width):
+- Orange border, faint orange background #FFF8F0
+- A circled exclamation mark icon in orange at top
+- "10,000+" in medium-large orange bold text (only large element)
+- "种组合" in tiny gray text below
+
+BOTTOM: Single line centered, small gray text:
+"模型 × 参数 × 执行 = 海量组合 → 系统化回测找最优解"
+
+CRITICAL RULES:
+- Chinese text must be PERFECTLY rendered — each character correct
+- Keep text small and elegant, lots of breathing room
+- The overall feeling should match a Tencent/Apple keynote slide
+- Use thin lines, subtle fills, restrained colors
+- Cards should feel like floating UI components

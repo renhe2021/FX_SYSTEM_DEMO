@@ -42,7 +42,7 @@ html, body {
 .slide.active { display: block; }
 
 /* ============================================
-   SHARED CONTENT SLIDE STYLES
+   SHARED: HEADER / FOOTER / HEADING
    ============================================ */
 .slide-header {
   position: absolute; left: 59px; top: 48px;
@@ -54,6 +54,9 @@ html, body {
   display: flex; align-items: center; justify-content: center;
 }
 .badge span { color: #FFFFFF; font-size: 24px; font-weight: 700; }
+.badge-green { background: #2BA471; }
+.badge-purple { background: #7B61FF; }
+.badge-orange { background: #E37318; }
 .section-label { font-size: 26px; font-weight: 700; color: #0052D9; }
 
 .content-heading {
@@ -75,7 +78,7 @@ html, body {
 }
 
 /* ============================================
-   COVER SLIDE
+   P1: COVER
    ============================================ */
 [data-slide="1"] { background: linear-gradient(135deg, #0a0a2e 0%, #0d1b3e 30%, #0052D9 100%); }
 .cover-pattern { position: absolute; inset: 0; }
@@ -92,47 +95,38 @@ html, body {
 }
 
 /* ============================================
-   SLIDE 2: ABOUT ME
+   P2: 先说说我的工作 + 三幕预告
    ============================================ */
-.about-content {
-  position: absolute; left: 98px; top: 190px; right: 98px; bottom: 70px;
+[data-slide="2"] .s2-body {
+  position: absolute; left: 98px; top: 180px; right: 98px; bottom: 70px;
   display: flex; flex-direction: column; justify-content: center; gap: 40px;
 }
-.about-text { font-size: 36px; color: #000; line-height: 1.8; }
-.about-text strong { color: #0052D9; }
-.question-box {
-  display: flex; align-items: center; gap: 20px;
-  background: #F0F5FF; border-left: 5px solid #0052D9;
-  padding: 30px 40px; border-radius: 8px;
+[data-slide="2"] .s2-intro {
+  font-size: 32px; color: #333; line-height: 1.7;
 }
-.question-icon { font-size: 48px; }
-.question-text { font-size: 36px; color: #000; line-height: 1.6; }
-.question-text strong { color: #0052D9; }
-.about-note { font-size: 30px; color: #797979; line-height: 1.6; }
+[data-slide="2"] .s2-toc-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+}
+[data-slide="2"] .s2-toc-card {
+  padding: 40px 32px; border-radius: 12px;
+  border-bottom: 5px solid transparent;
+  display: flex; flex-direction: column; gap: 10px;
+}
+[data-slide="2"] .s2-toc-num {
+  font-size: 36px; font-weight: 700; color: #999;
+}
+[data-slide="2"] .s2-toc-card h3 {
+  font-size: 34px; font-weight: 700; color: #1a1a1a; margin: 0;
+}
+[data-slide="2"] .s2-toc-card p {
+  font-size: 24px; color: #797979; margin: 0; line-height: 1.4;
+}
+[data-slide="2"] .s2-toc-blue   { background: #F0F5FF; border-bottom-color: #0052D9; }
+[data-slide="2"] .s2-toc-green  { background: #F0FFF4; border-bottom-color: #2BA471; }
+[data-slide="2"] .s2-toc-purple { background: #F5F0FF; border-bottom-color: #7B61FF; }
 
 /* ============================================
-   SLIDE 3: FOUR PILLARS
-   ============================================ */
-.four-cards {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
-  display: flex; gap: 28px; align-items: stretch;
-}
-.pillar-card {
-  flex: 1; padding: 36px 28px; border-radius: 12px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; transition: transform 0.2s;
-}
-.pillar-blue { background: #F0F5FF; border-bottom: 5px solid #0052D9; }
-.pillar-green { background: #F0FFF4; border-bottom: 5px solid #2BA471; }
-.pillar-purple { background: #F5F0FF; border-bottom: 5px solid #7B61FF; }
-.pillar-orange { background: #FFF5F0; border-bottom: 5px solid #E37318; }
-.pillar-icon { font-size: 64px; margin-bottom: 20px; }
-.pillar-title { font-size: 42px; font-weight: 700; color: #000; margin-bottom: 8px; }
-.pillar-subtitle { font-size: 28px; font-weight: 700; color: #797979; margin-bottom: 16px; }
-.pillar-desc { font-size: 26px; color: #797979; line-height: 1.5; }
-
-/* ============================================
-   SECTION DIVIDER
+   SECTION DIVIDER (shared)
    ============================================ */
 .section-divider { background: #FFFFFF; }
 .section-pattern { position: absolute; inset: 0; overflow: hidden; }
@@ -165,337 +159,424 @@ html, body {
 }
 
 /* ============================================
-   SLIDE 5: METHODOLOGY
+   P4: 思维方式转变
    ============================================ */
-.methodology-content {
+[data-slide="4"] .s4-body {
+  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
+  display: flex; flex-direction: column; justify-content: center; gap: 44px;
+}
+[data-slide="4"] .s4-compare {
+  display: flex; gap: 0; align-items: stretch;
+}
+[data-slide="4"] .s4-col {
+  flex: 1; padding: 40px 48px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+[data-slide="4"] .s4-col-old { background: #FFF5F5; border-radius: 12px 0 0 12px; }
+[data-slide="4"] .s4-col-new { background: #F0FFF4; border-radius: 0 12px 12px 0; }
+[data-slide="4"] .s4-col-label {
+  font-size: 34px; font-weight: 700; margin-bottom: 24px;
+}
+[data-slide="4"] .s4-col-old .s4-col-label { color: #C62828; }
+[data-slide="4"] .s4-col-new .s4-col-label { color: #0D7A3F; }
+[data-slide="4"] .s4-col ul { list-style: none; padding: 0; }
+[data-slide="4"] .s4-col li {
+  font-size: 28px; color: #333; line-height: 2.0;
+  padding-left: 20px; position: relative;
+}
+[data-slide="4"] .s4-col li::before { content: '•'; position: absolute; left: 0; }
+[data-slide="4"] .s4-col-old li::before { color: #E34D59; }
+[data-slide="4"] .s4-col-new li::before { color: #2BA471; }
+[data-slide="4"] .s4-divider { width: 3px; background: #E7E6E6; flex-shrink: 0; }
+[data-slide="4"] .s4-shift {
+  text-align: center; padding: 28px 40px;
+  background: #F0F5FF; border-radius: 12px; border: 2px solid #B8D4FF;
+}
+[data-slide="4"] .s4-shift p { font-size: 34px; color: #333; line-height: 1.6; }
+[data-slide="4"] .s4-shift strong { color: #0052D9; }
+[data-slide="4"] .s4-shift-sub { font-size: 26px !important; color: #797979 !important; margin-top: 8px; }
+
+/* ============================================
+   P5: 方法论 — 工具箱思维
+   ============================================ */
+[data-slide="5"] .s5-method {
   position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
   display: flex; flex-direction: column; justify-content: center; gap: 50px;
 }
-.method-wrong, .method-right {
+[data-slide="5"] .s5-wrong,
+[data-slide="5"] .s5-right {
   display: flex; align-items: center; gap: 20px;
   padding: 24px 36px; border-radius: 12px; font-size: 34px;
 }
-.method-wrong { background: #FFF0F0; }
-.method-right { background: #F0FFF4; }
-.method-icon { font-size: 40px; flex-shrink: 0; }
-.method-text { color: #000; line-height: 1.5; }
-.method-flow {
+[data-slide="5"] .s5-wrong { background: #FFF0F0; }
+[data-slide="5"] .s5-right { background: #F0FFF4; }
+[data-slide="5"] .s5-icon { font-size: 40px; flex-shrink: 0; }
+[data-slide="5"] .s5-wrong p,
+[data-slide="5"] .s5-right p { color: #000; line-height: 1.5; }
+[data-slide="5"] .s5-flow {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   margin-top: 10px;
 }
-.flow-circle {
+[data-slide="5"] .s5-step {
   width: 110px; height: 110px; border-radius: 50%;
   background: #F0F5FF; border: 3px solid #0052D9;
   display: flex; align-items: center; justify-content: center;
-  font-size: 24px; font-weight: 700; color: #0052D9; text-align: center;
-  line-height: 1.2;
+  font-size: 24px; font-weight: 700; color: #0052D9; text-align: center; line-height: 1.2;
 }
-.flow-highlight { background: #0052D9; color: #FFFFFF; }
-.flow-arrow { width: 40px; height: 20px; flex-shrink: 0; }
+[data-slide="5"] .s5-step-hi { background: #0052D9; color: #FFFFFF; }
+[data-slide="5"] .s5-arrow { width: 40px; height: 20px; flex-shrink: 0; }
 
 /* ============================================
-   SLIDE 6: COMPARISON
+   P6: 损益分析案例
    ============================================ */
-[data-slide="6"] .comparison {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
-  display: flex; gap: 0; align-items: stretch;
-}
-[data-slide="6"] .comparison-side {
-  flex: 1; padding: 50px 60px;
-  display: flex; flex-direction: column; justify-content: center;
-}
-[data-slide="6"] .comparison-left { background: #FFF5F0; border-radius: 12px 0 0 12px; }
-[data-slide="6"] .comparison-right { background: #F0FFF4; border-radius: 0 12px 12px 0; }
-[data-slide="6"] .comparison-label { font-size: 38px; font-weight: 700; color: #000; margin-bottom: 30px; }
-[data-slide="6"] .comparison-list { list-style: none; padding: 0; }
-[data-slide="6"] .comparison-list li {
-  font-size: 30px; color: #333; line-height: 2.2;
-  padding-left: 20px; position: relative;
-}
-[data-slide="6"] .comparison-list li::before {
-  content: '•'; position: absolute; left: 0; color: #0052D9;
-}
-[data-slide="6"] .comparison-divider { width: 3px; background: #E7E6E6; flex-shrink: 0; }
-
-/* ============================================
-   SLIDE 7: REVERSE ENGINEER
-   ============================================ */
-.re-content {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
-  display: flex; flex-direction: column; justify-content: center; gap: 40px;
-}
-.re-problem { font-size: 30px; color: #333; line-height: 1.6; }
-.re-timeline {
-  position: relative; display: flex; align-items: center;
-  justify-content: space-between; padding: 30px 40px;
-}
-.re-line {
-  position: absolute; left: 40px; right: 40px; top: 50%;
-  height: 4px; background: #DFEBFA; transform: translateY(-50%);
-}
-.re-version {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  position: relative; z-index: 1;
-}
-.re-dot {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: #0052D9;
-}
-.re-dot-final { background: #2BA471; width: 28px; height: 28px; }
-.re-label { font-size: 28px; font-weight: 700; color: #0052D9; }
-.re-note { font-size: 24px; color: #797979; }
-.insight-box {
-  display: flex; align-items: center; gap: 20px;
-  background: #F0F5FF; padding: 24px 36px; border-radius: 8px;
-  border-left: 5px solid #0052D9;
-}
-.insight-icon { font-size: 40px; }
-.insight-text { font-size: 28px; color: #333; line-height: 1.6; }
-
-/* ============================================
-   SLIDE 8: TOOLS GRID
-   ============================================ */
-.tools-grid {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
-  align-content: center;
-}
-.tool-card {
-  padding: 32px; background: #F8F9FD; border-radius: 8px;
-  border-left: 4px solid #0052D9;
-}
-.tool-card-highlight { border-left-color: #2BA471; background: #F0FFF4; }
-.tool-icon { font-size: 40px; margin-bottom: 12px; }
-.tool-name { font-size: 34px; font-weight: 700; color: #000; margin-bottom: 10px; }
-.tool-desc { font-size: 26px; color: #797979; line-height: 1.5; }
-.tool-desc strong { color: #0052D9; }
-
-/* ============================================
-   SLIDE 10: EVOLUTION
-   ============================================ */
-.evo-cards {
-  position: absolute; left: 98px; top: 210px; right: 98px;
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-}
-.evo-card {
-  flex: 1; padding: 36px 28px; border-radius: 12px;
-  text-align: center; min-height: 340px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.evo-card-1 { background: #FFF5F0; border: 2px solid #F5C5B0; }
-.evo-card-2 { background: #FFF8F0; border: 2px solid #F5D5A0; }
-.evo-card-3 { background: #F0FFF4; border: 2px solid #A0D5B0; }
-.evo-emoji { font-size: 56px; margin-bottom: 16px; }
-.evo-title { font-size: 36px; font-weight: 700; color: #000; margin-bottom: 12px; }
-.evo-desc { font-size: 28px; color: #797979; margin-bottom: 16px; }
-.evo-pain { font-size: 26px; color: #E34D59; padding: 10px 20px; background: rgba(227,77,89,0.08); border-radius: 8px; }
-.evo-win { font-size: 26px; color: #2BA471; padding: 10px 20px; background: rgba(43,164,113,0.08); border-radius: 8px; }
-.evo-arrow { flex-shrink: 0; }
-.evo-note {
-  position: absolute; left: 98px; bottom: 80px; right: 98px;
-  text-align: center; font-size: 30px; color: #797979;
-}
-
-/* ============================================
-   SLIDE 11: BMAD
-   ============================================ */
-.bmad-content {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px;
-}
-.bmad-stat { display: flex; align-items: baseline; gap: 8px; }
-.bmad-number { font-size: 96px; font-weight: 700; color: #2BA471; }
-.bmad-label { font-size: 36px; color: #797979; }
-.bmad-modules { display: flex; gap: 28px; }
-.bmad-mod {
-  flex: 1; text-align: center; padding: 28px 20px;
-  background: #F8F9FD; border-radius: 8px;
-}
-.bmad-mod-icon { font-size: 44px; margin-bottom: 12px; }
-.bmad-mod h4 { font-size: 30px; font-weight: 700; color: #000; margin-bottom: 8px; }
-.bmad-mod p { font-size: 24px; color: #797979; }
-.bmad-insight {
-  background: #F0FFF4; padding: 20px 36px; border-radius: 8px;
-  border-left: 4px solid #2BA471;
-}
-.bmad-insight p { font-size: 28px; color: #333; }
-
-/* ============================================
-   SLIDE 12: STRATEGY LAB
-   ============================================ */
-.stratlab-content {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
-  display: flex; flex-direction: column; justify-content: center; gap: 40px;
-}
-.stratlab-flow {
-  display: flex; gap: 20px; justify-content: center;
-}
-.strat-step {
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-  padding: 20px 40px; background: #F0FFF4; border-radius: 8px;
-}
-.strat-step-num {
-  width: 44px; height: 44px; border-radius: 50%; background: #2BA471;
-  color: #FFF; font-size: 24px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-}
-.strat-step p { font-size: 28px; font-weight: 700; color: #000; }
-.strat-highlight-box {
-  background: #F0F5FF; padding: 30px 40px; border-radius: 12px;
-  border-left: 5px solid #0052D9;
-}
-.strat-highlight-box h4 { font-size: 34px; font-weight: 700; color: #000; margin-bottom: 12px; }
-.strat-highlight-box p { font-size: 28px; color: #333; line-height: 1.6; }
-.strat-why { color: #0052D9 !important; margin-top: 8px; font-style: italic; }
-.strat-note { font-size: 28px; color: #797979; text-align: center; }
-
-/* ============================================
-   SLIDE 13: TRADING TOOLS
-   ============================================ */
-.trading-tools {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
-  display: flex; gap: 40px; align-items: center;
-}
-.trading-tool-card {
-  flex: 1; padding: 48px 40px; background: #F8F9FD; border-radius: 12px;
-  border-top: 5px solid #2BA471; text-align: center;
-  display: flex; flex-direction: column; align-items: center; gap: 16px;
-  min-height: 400px; justify-content: center;
-}
-.tt-icon { font-size: 56px; }
-.trading-tool-card h3 { font-size: 36px; font-weight: 700; color: #000; }
-.tt-desc { font-size: 28px; color: #797979; line-height: 1.6; }
-.tt-tech {
-  font-size: 22px; color: #0052D9; background: #F0F5FF;
-  padding: 6px 16px; border-radius: 20px; font-weight: 700;
-}
-
-/* ============================================
-   SLIDE 15: KNOWLEDGE
-   ============================================ */
-.knowledge-content {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
+[data-slide="6"] .s6-case {
+  position: absolute; left: 98px; top: 195px; right: 98px; bottom: 70px;
   display: flex; flex-direction: column; justify-content: center; gap: 32px;
 }
-.ks-title, .km-title, .kr-title {
-  font-size: 32px; font-weight: 700; color: #7B61FF; margin-bottom: 16px;
+[data-slide="6"] .s6-before-after {
+  display: flex; align-items: stretch; gap: 0;
 }
-.skill-tags { display: flex; flex-wrap: wrap; gap: 12px; }
-.skill-tag {
-  padding: 10px 24px; background: #F5F0FF; border-radius: 24px;
-  font-size: 26px; font-weight: 700; color: #7B61FF; border: 2px solid #E0D5FF;
+[data-slide="6"] .s6-ba-col {
+  flex: 1; padding: 32px 36px; border-radius: 12px;
 }
-.memory-items { display: flex; gap: 40px; }
-.memory-item { display: flex; align-items: baseline; gap: 8px; }
-.mi-num { font-size: 52px; font-weight: 700; color: #7B61FF; }
-.mi-label { font-size: 26px; color: #797979; }
-.kr-desc { font-size: 28px; color: #333; line-height: 1.6; }
+[data-slide="6"] .s6-ba-before { background: #FFF5F5; }
+[data-slide="6"] .s6-ba-after { background: #F0FFF4; }
+[data-slide="6"] .s6-ba-label {
+  font-size: 28px; font-weight: 700; margin-bottom: 16px;
+}
+[data-slide="6"] .s6-ba-before .s6-ba-label { color: #C62828; }
+[data-slide="6"] .s6-ba-after .s6-ba-label { color: #0D7A3F; }
+[data-slide="6"] .s6-ba-col ul { list-style: none; padding: 0; margin: 0; }
+[data-slide="6"] .s6-ba-col li {
+  font-size: 26px; color: #333; line-height: 2; padding-left: 24px;
+  position: relative;
+}
+[data-slide="6"] .s6-ba-col li::before {
+  content: '•'; position: absolute; left: 0; color: #999;
+}
+[data-slide="6"] .s6-ba-col strong { color: #0052D9; }
+[data-slide="6"] .s6-ba-arrow {
+  display: flex; align-items: center; padding: 0 20px; flex-shrink: 0;
+}
+[data-slide="6"] .s6-detail-label {
+  font-size: 28px; font-weight: 700; color: #0052D9;
+}
+[data-slide="6"] .s6-detail-tags {
+  display: flex; flex-wrap: wrap; gap: 12px;
+}
+[data-slide="6"] .s6-dtag {
+  padding: 10px 24px; background: #F0F5FF; border-radius: 24px;
+  font-size: 24px; font-weight: 600; color: #0052D9; border: 2px solid #B8D4FF;
+}
 
 /* ============================================
-   SLIDE 16: QUOTE
+   P7: 工具箱全景
    ============================================ */
-[data-slide="16"] {
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 0 200px;
+[data-slide="7"] .s7-panorama {
+  position: absolute; left: 80px; top: 200px; right: 80px; bottom: 110px;
+  display: flex; gap: 28px;
 }
-[data-slide="16"] .slide-header { position: absolute; left: 59px; top: 48px; }
-[data-slide="16"] .quote-mark {
-  font-size: 180px; color: #E0D5FF; line-height: 0.6; margin-bottom: 20px;
+[data-slide="7"] .s7-category {
+  flex: 1; display: flex; flex-direction: column; gap: 20px;
 }
-[data-slide="16"] .quote-text {
-  font-size: 44px; font-weight: 700; line-height: 1.5;
-  max-width: 1200px; margin-bottom: 20px;
+[data-slide="7"] .s7-cat-label {
+  font-size: 26px; font-weight: 700; padding: 12px 20px;
+  border-radius: 10px; text-align: center; color: #FFF;
 }
-[data-slide="16"] .quote-attribution { font-size: 28px; color: #797979; margin-bottom: 40px; }
-.quote-tip {
-  background: #F5F0FF; padding: 20px 30px; border-radius: 8px;
-  border-left: 4px solid #7B61FF;
+[data-slide="7"] .s7-cat-blue { background: #0052D9; }
+[data-slide="7"] .s7-cat-green { background: #2BA471; }
+[data-slide="7"] .s7-cat-purple { background: #7B61FF; }
+[data-slide="7"] .s7-cat-items {
+  display: flex; flex-wrap: wrap; gap: 12px; flex: 1;
+  align-content: flex-start; padding: 4px 0;
 }
-.quote-tip p { font-size: 26px; color: #333; }
+[data-slide="7"] .s7-tag {
+  display: inline-block; padding: 12px 22px; background: #F3F5FB;
+  border-radius: 8px; font-size: 22px; font-weight: 600; color: #1a1a1a;
+  border-left: 4px solid #DDE3ED; line-height: 1.3;
+}
+[data-slide="7"] .s7-cat-blue + .s7-cat-items .s7-tag { border-left-color: #0052D9; }
+[data-slide="7"] .s7-cat-green + .s7-cat-items .s7-tag { border-left-color: #2BA471; }
+[data-slide="7"] .s7-cat-purple + .s7-cat-items .s7-tag { border-left-color: #7B61FF; }
+[data-slide="7"] .s7-bottom-note {
+  position: absolute; left: 80px; right: 80px; bottom: 52px;
+  text-align: center; z-index: 2;
+}
+[data-slide="7"] .s7-bottom-note p { font-size: 26px; color: #797979; }
+[data-slide="7"] .s7-bottom-note strong { color: #0052D9; }
 
 /* ============================================
-   SLIDE 18: SOROS AGENT
+   P9: 策略示例 — 周末预锁价（图片版）
    ============================================ */
-.agent-content {
-  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
-  display: flex; flex-direction: column; justify-content: center; gap: 40px;
-}
-.agent-flow {
-  display: flex; gap: 16px; justify-content: center;
-}
-.af-step {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  padding: 16px 24px; background: #FFF5F0; border-radius: 8px;
-}
-.af-num {
-  width: 40px; height: 40px; border-radius: 50%; background: #E37318;
-  color: #FFF; font-size: 22px; font-weight: 700;
+[data-slide="9"] .s9-diagram {
+  position: absolute; left: 30px; top: 180px; right: 30px; bottom: 50px;
   display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
 }
-.af-step p { font-size: 26px; font-weight: 700; color: #000; }
-.agent-stats { display: flex; gap: 80px; justify-content: center; }
-.as-item { display: flex; align-items: baseline; gap: 8px; }
-.as-num { font-size: 64px; font-weight: 700; color: #E37318; }
-.as-label { font-size: 28px; color: #797979; }
-.agent-note { text-align: center; }
-.agent-note p { font-size: 26px; color: #797979; line-height: 1.6; }
+[data-slide="9"] .s9-diagram-img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
 
 /* ============================================
-   SLIDE 19: LESSONS
+   P10: Strategy Lab 架构设计（图片版）
    ============================================ */
-.lessons-content {
+[data-slide="10"] .s10-diagram {
+  position: absolute; left: 30px; top: 180px; right: 30px; bottom: 50px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+[data-slide="10"] .s10-diagram-img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+/* ============================================
+   P11: 参数扫描热力图
+   ============================================ */
+[data-slide="11"] .s11-body {
   position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
   display: flex; flex-direction: column; justify-content: center; gap: 28px;
 }
-.lesson-item {
+[data-slide="11"] .s11-context {
+  text-align: center; font-size: 26px; color: #797979; font-weight: 600;
+}
+[data-slide="11"] .s11-params { display: flex; gap: 40px; justify-content: center; }
+[data-slide="11"] .s11-param {
+  display: flex; align-items: center; gap: 16px;
+  background: #F0FFF4; padding: 16px 32px; border-radius: 8px; border: 2px solid #C8E6D5;
+}
+[data-slide="11"] .s11-pname { font-size: 26px; font-weight: 700; color: #2BA471; }
+[data-slide="11"] .s11-prange { font-size: 26px; color: #333; }
+[data-slide="11"] .s11-heatmap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+[data-slide="11"] .s11-grid { display: grid; grid-template-columns: repeat(6, 100px); gap: 6px; }
+[data-slide="11"] .s11-cell {
+  width: 100px; height: 66px; border-radius: 6px;
+  border: 1px solid rgba(43,164,113,0.15);
+}
+[data-slide="11"] .s11-best {
+  border: 3px solid #2BA471; box-shadow: 0 0 16px rgba(43,164,113,0.4); position: relative;
+}
+[data-slide="11"] .s11-best::after {
+  content: '★'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-size: 28px; color: #FFF;
+}
+[data-slide="11"] .s11-axis {
+  display: flex; justify-content: space-between; width: 636px;
+  font-size: 20px; color: #999; margin-top: 4px;
+}
+[data-slide="11"] .s11-caption { font-size: 22px; color: #797979; }
+[data-slide="11"] .s11-insight { text-align: center; }
+[data-slide="11"] .s11-insight p { font-size: 28px; color: #333; }
+[data-slide="11"] .s11-insight strong { color: #2BA471; }
+
+/* ============================================
+   P12: LIVE DEMO
+   ============================================ */
+[data-slide="12"] {
+  background: linear-gradient(135deg, #0a2a1a 0%, #0d3b2e 30%, #2BA471 100%);
+}
+[data-slide="12"] .s13-content {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  text-align: center; z-index: 1;
+}
+[data-slide="12"] .s13-badge {
+  display: inline-block; background: #E34D59; color: #FFF;
+  font-size: 28px; font-weight: 700; padding: 8px 32px;
+  border-radius: 24px; margin-bottom: 32px;
+  animation: pulse-live 2s infinite;
+}
+@keyframes pulse-live {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(227,77,89,0.6); }
+  50% { box-shadow: 0 0 0 16px rgba(227,77,89,0); }
+}
+[data-slide="12"] .s13-title { font-size: 96px; font-weight: 700; color: #FFF; margin-bottom: 24px; }
+[data-slide="12"] .s13-subtitle { font-size: 36px; color: #FFF; opacity: 0.9; margin-bottom: 40px; line-height: 1.5; }
+[data-slide="12"] .s13-link {
+  display: inline-block; font-size: 32px; color: #FFF;
+  background: rgba(255,255,255,0.2); padding: 16px 48px;
+  border-radius: 12px; margin-bottom: 40px; font-weight: 700;
+  text-decoration: none; border: 2px solid rgba(255,255,255,0.4);
+  transition: background 0.3s, transform 0.2s; cursor: pointer;
+}
+[data-slide="12"] .s13-link:hover {
+  background: rgba(255,255,255,0.35); transform: scale(1.05);
+}
+
+/* ============================================
+   P13: 复杂系统的通用化路径（图片版）
+   ============================================ */
+[data-slide="13"] .s13-diagram {
+  position: absolute; left: 30px; top: 180px; right: 30px; bottom: 50px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+[data-slide="13"] .s13-diagram-img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+/* ============================================
+   P15: 知识体系建设
+   ============================================ */
+[data-slide="15"] .s15-body {
+  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
+  display: flex; flex-direction: column; justify-content: center; gap: 32px;
+}
+[data-slide="15"] .s15-body h3 { font-size: 32px; font-weight: 700; color: #7B61FF; margin-bottom: 16px; }
+[data-slide="15"] .s15-tags { display: flex; flex-wrap: wrap; gap: 12px; }
+[data-slide="15"] .s15-tag {
+  padding: 10px 24px; background: #F5F0FF; border-radius: 24px;
+  font-size: 26px; font-weight: 700; color: #7B61FF; border: 2px solid #E0D5FF;
+}
+[data-slide="15"] .s15-stats { display: flex; gap: 40px; }
+[data-slide="15"] .s15-stat { display: flex; align-items: baseline; gap: 8px; }
+[data-slide="15"] .s15-num { font-size: 52px; font-weight: 700; color: #7B61FF; }
+[data-slide="15"] .s15-lbl { font-size: 26px; color: #797979; }
+[data-slide="15"] .s15-reflection p { font-size: 28px; color: #333; line-height: 1.6; }
+
+/* ============================================
+   P16: Soros Agent（合并：架构+日常+踩坑）
+   ============================================ */
+[data-slide="16"] .s16-body {
+  position: absolute; left: 98px; top: 190px; right: 98px; bottom: 60px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+[data-slide="16"] .s16-top {
+  display: flex; justify-content: center;
+}
+[data-slide="16"] .s16-stats { display: flex; gap: 80px; }
+[data-slide="16"] .s16-stat { display: flex; align-items: baseline; gap: 8px; }
+[data-slide="16"] .s16-num { font-size: 56px; font-weight: 700; color: #7B61FF; }
+[data-slide="16"] .s16-lbl { font-size: 26px; color: #797979; }
+[data-slide="16"] .s16-usage { display: flex; gap: 20px; }
+[data-slide="16"] .s16-use-card {
+  flex: 1; padding: 24px 20px; background: #F5F0FF;
+  border-radius: 12px; text-align: center; border-top: 4px solid #7B61FF;
+}
+[data-slide="16"] .s16-use-card h4 { font-size: 28px; font-weight: 700; color: #000; margin-bottom: 8px; }
+[data-slide="16"] .s16-use-card p { font-size: 22px; color: #797979; line-height: 1.5; }
+[data-slide="16"] .s16-fail {
   display: flex; align-items: flex-start; gap: 20px;
-  padding: 24px 36px; border-radius: 12px; background: #FAFBFE;
+  background: #FFF0F0; border: 2px dashed #E34D59;
+  border-radius: 12px; padding: 20px 24px;
 }
-.lesson-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 8px; }
-.lesson-body h4 { font-size: 30px; font-weight: 700; color: #000; margin-bottom: 6px; }
-.lesson-body p { font-size: 26px; color: #797979; line-height: 1.5; }
+[data-slide="16"] .s16-fail-mark {
+  width: 44px; height: 44px; border-radius: 50%; background: #E34D59;
+  color: #FFF; font-size: 28px; font-weight: 700; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+[data-slide="16"] .s16-fail-body h4 { font-size: 28px; font-weight: 700; color: #E34D59; margin-bottom: 6px; }
+[data-slide="16"] .s16-fail-body p { font-size: 24px; color: #333; line-height: 1.5; }
+[data-slide="16"] .s16-fail-body strong { color: #E34D59; }
 
 /* ============================================
-   SLIDE 20: FUTURE
+   P17: 林徽因 Agent + OpenClaw + 通用性
    ============================================ */
-.future-content {
-  position: absolute; left: 98px; top: 220px; right: 98px;
-  display: flex; gap: 40px; justify-content: center;
+[data-slide="17"] .s17-body {
+  position: absolute; left: 98px; top: 190px; right: 98px; bottom: 60px;
+  display: flex; flex-direction: column; gap: 24px; justify-content: center;
 }
-.future-item {
-  flex: 1; padding: 48px 40px; background: #FAFBFE;
-  border-radius: 12px; border: 2px dashed #E37318; text-align: center;
+[data-slide="17"] .s17-cols { display: flex; gap: 32px; flex: 1; }
+[data-slide="17"] .s17-col {
+  flex: 1; padding: 28px; background: #FAFBFE; border-radius: 12px;
+  display: flex; flex-direction: column; gap: 12px;
 }
-.future-icon { font-size: 56px; margin-bottom: 16px; }
-.future-item h3 { font-size: 36px; font-weight: 700; color: #E37318; margin-bottom: 16px; }
-.future-item p { font-size: 26px; color: #797979; line-height: 1.6; }
-.future-note {
-  position: absolute; bottom: 100px; left: 0; right: 0;
-  text-align: center; font-size: 32px; color: #E37318; font-weight: 700;
+[data-slide="17"] .s17-col h3 { font-size: 32px; font-weight: 700; color: #7B61FF; margin-bottom: 4px; }
+[data-slide="17"] .s17-col p { font-size: 26px; color: #333; line-height: 1.5; }
+[data-slide="17"] .s17-example {
+  margin-top: 8px; padding: 16px 20px;
+  background: #F5F0FF; border: 2px dashed #C5B3FF; border-radius: 12px;
+}
+[data-slide="17"] .s17-example p { font-size: 24px; color: #333; line-height: 1.5; font-style: italic; }
+[data-slide="17"] .s17-openclaw-note {
+  margin-top: 8px; padding: 16px 20px;
+  background: #FFF5F0; border: 2px dashed #F5C5B0; border-radius: 12px;
+}
+[data-slide="17"] .s17-openclaw-note p { font-size: 24px; color: #797979; line-height: 1.5; }
+[data-slide="17"] .s17-col-div { width: 2px; background: #DFEBFA; flex-shrink: 0; }
+[data-slide="17"] .s17-tech { font-size: 24px !important; color: #797979 !important; margin-top: 8px; }
+
+/* ============================================
+   P18: Agent 四步法 + 踩坑
+   ============================================ */
+[data-slide="18"] .s18-steps {
+  position: absolute; left: 60px; top: 200px; right: 60px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+[data-slide="18"] .s18-card {
+  width: 320px; padding: 32px 24px; background: #F5F0FF;
+  border-radius: 12px; text-align: center; border: 2px solid #E0D5FF;
+}
+[data-slide="18"] .s18-num {
+  width: 48px; height: 48px; border-radius: 50%; background: #7B61FF;
+  color: #FFF; font-size: 26px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+}
+[data-slide="18"] .s18-card h3 { font-size: 32px; font-weight: 700; color: #000; margin-bottom: 10px; }
+[data-slide="18"] .s18-card p { font-size: 24px; color: #797979; line-height: 1.5; }
+[data-slide="18"] .s18-arrow { width: 40px; height: 20px; flex-shrink: 0; }
+[data-slide="18"] .s18-pitfalls {
+  position: absolute; left: 98px; right: 98px; bottom: 70px;
+  padding: 20px 32px; background: #FFF5F0; border-radius: 12px;
+  border-left: 4px solid #E37318;
+}
+[data-slide="18"] .s18-pitfalls h4 {
+  font-size: 26px; font-weight: 700; color: #E37318; margin-bottom: 12px;
+}
+[data-slide="18"] .s18-pit-items {
+  display: flex; flex-direction: column; gap: 8px;
+}
+[data-slide="18"] .s18-pit {
+  font-size: 22px; color: #333; padding-left: 20px; position: relative;
+  line-height: 1.6;
+}
+[data-slide="18"] .s18-pit::before {
+  content: '•'; position: absolute; left: 0; color: #E37318;
 }
 
 /* ============================================
-   SLIDE 21: SUMMARY CARDS
+   P19: 三条方法论
    ============================================ */
-[data-slide="21"] .card-grid {
+[data-slide="19"] .s19-cards {
   position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
   display: flex; gap: 28px; align-items: stretch;
 }
-[data-slide="21"] .card {
-  flex: 1; padding: 40px 32px;
-  background: #F8F9FD; border-radius: 12px;
+[data-slide="19"] .s19-card {
+  flex: 1; padding: 40px 32px; background: #F8F9FD; border-radius: 12px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center;
 }
-.summary-card-1 { border-bottom: 5px solid #0052D9; }
-.summary-card-2 { border-bottom: 5px solid #2BA471; }
-.summary-card-3 { border-bottom: 5px solid #7B61FF; }
-[data-slide="21"] .card-icon { font-size: 56px; margin-bottom: 20px; }
-[data-slide="21"] .card-title { font-size: 38px; font-weight: 700; color: #000; margin-bottom: 16px; }
-[data-slide="21"] .card-desc { font-size: 28px; color: #797979; line-height: 1.7; }
+[data-slide="19"] .s19-c1 { border-bottom: 5px solid #0052D9; }
+[data-slide="19"] .s19-c2 { border-bottom: 5px solid #2BA471; }
+[data-slide="19"] .s19-c3 { border-bottom: 5px solid #7B61FF; }
+[data-slide="19"] .s19-num {
+  font-size: 48px; font-weight: 700; color: #BFBFBF; margin-bottom: 20px;
+  line-height: 1;
+}
+[data-slide="19"] .s19-card h3 { font-size: 38px; font-weight: 700; color: #000; margin-bottom: 16px; }
+[data-slide="19"] .s19-card p { font-size: 28px; color: #797979; line-height: 1.7; }
 
 /* ============================================
-   SLIDE 22: ENDING
+   P20: 给大家的建议
+   ============================================ */
+[data-slide="20"] .s20-body {
+  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 70px;
+  display: flex; flex-direction: column; justify-content: center; gap: 24px;
+}
+[data-slide="20"] .s20-item {
+  display: flex; align-items: flex-start; gap: 24px;
+  padding: 28px 36px; background: #F8F9FD; border-radius: 12px;
+  border-left: 4px solid #0052D9;
+}
+[data-slide="20"] .s20-num {
+  width: 48px; height: 48px; border-radius: 50%; background: #0052D9;
+  color: #FFF; font-size: 26px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+[data-slide="20"] .s20-text h3 { font-size: 32px; font-weight: 700; color: #000; margin-bottom: 6px; }
+[data-slide="20"] .s20-text p { font-size: 26px; color: #797979; line-height: 1.5; }
+
+/* ============================================
+   P21: ENDING
    ============================================ */
 .ending-slide { background: #0052DA; }
 .ending-pattern {
@@ -503,21 +584,12 @@ html, body {
   object-fit: cover; mix-blend-mode: soft-light; opacity: 0.5;
 }
 .ending-content {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
   text-align: center; z-index: 1;
 }
-.ending-main {
-  font-size: 64px; font-weight: 700; color: #FFFFFF;
-  line-height: 1.3; margin-bottom: 24px;
-}
-.ending-sub {
-  font-size: 40px; color: #FFFFFF; opacity: 0.85;
-  margin-bottom: 60px;
-}
-.ending-thanks {
-  font-size: 120px; font-weight: 700; color: #FFFFFF;
-  opacity: 0.3;
-}
+.ending-main { font-size: 64px; font-weight: 700; color: #FFF; line-height: 1.3; margin-bottom: 24px; }
+.ending-sub { font-size: 40px; color: #FFF; opacity: 0.85; margin-bottom: 60px; }
+.ending-thanks { font-size: 120px; font-weight: 700; color: #FFF; opacity: 0.3; }
 .ending-logo {
   position: absolute; left: 78px; bottom: 74px;
   height: 31px; width: auto; z-index: 1;

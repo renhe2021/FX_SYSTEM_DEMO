@@ -1,0 +1,428 @@
+/* ============================================
+   FONTS
+   ============================================ */
+@font-face {
+  font-family: 'TencentSans';
+  src: url('assets/fonts/TencentSans-W3.ttf') format('truetype');
+  font-weight: 300;
+}
+@font-face {
+  font-family: 'TencentSans';
+  src: url('assets/fonts/TencentSans-W7.ttf') format('truetype');
+  font-weight: 700;
+}
+
+/* ============================================
+   GLOBAL RESET & VIEWPORT
+   ============================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #1a1a2e;
+  margin: 0;
+}
+
+.slide-viewport {
+  width: 100vw; height: 100vh;
+  position: relative;
+  background: #1a1a2e;
+  overflow: hidden;
+}
+
+.slide {
+  width: 1920px; height: 1080px;
+  position: absolute; overflow: hidden;
+  font-family: 'TencentSans', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  transform-origin: 0 0;
+  display: none;
+  background: #FFFFFF;
+}
+.slide.active { display: block; }
+
+/* ============================================
+   COVER SLIDE
+   ============================================ */
+.cover {
+  background: linear-gradient(135deg, #0a0a2e 0%, #0d1b3e 30%, #0052D9 100%);
+}
+.cover-pattern { position: absolute; inset: 0; }
+.pattern-img {
+  width: 100%; height: 100%; object-fit: cover;
+  mix-blend-mode: screen; opacity: 0.4;
+}
+.cover-content { position: absolute; left: 98px; top: 162px; z-index: 2; }
+.cover-logo { height: 42px; width: auto; margin-bottom: 58px; }
+.cover-title {
+  font-size: 72px; font-weight: 700; color: #FFFFFF;
+  line-height: 1.2; max-width: 1692px; margin-bottom: 24px;
+}
+.cover-subtitle {
+  font-size: 48px; font-weight: 700; color: #FFFFFF;
+  max-width: 1424px; opacity: 0.9; margin-bottom: 16px;
+}
+.cover-date {
+  font-size: 28px; font-weight: 300; color: #FFFFFF;
+  opacity: 0.7;
+}
+
+/* ============================================
+   SHARED CONTENT SLIDE STYLES
+   ============================================ */
+.slide-header {
+  position: absolute; left: 59px; top: 48px;
+  display: flex; align-items: center; gap: 12px;
+}
+.badge {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: #0052D9;
+  display: flex; align-items: center; justify-content: center;
+}
+.badge span { color: #FFFFFF; font-size: 24px; font-weight: 700; }
+.section-label { font-size: 26px; font-weight: 700; color: #0052D9; }
+
+.content-heading {
+  position: absolute; left: 98px; top: 110px;
+  font-size: 44px; font-weight: 700; color: #0052D9;
+  max-width: 1724px;
+}
+
+.slide-footer {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 50px; z-index: 1;
+}
+.footer-bar {
+  position: absolute; bottom: 0; left: 0;
+  width: 100%; height: 45px; object-fit: cover;
+}
+.page-number {
+  position: absolute; bottom: 18px; left: 17px;
+  font-size: 14px; font-weight: 300; color: #BFBFBF;
+}
+
+/* ============================================
+   TOC SLIDE
+   ============================================ */
+.toc-list {
+  position: absolute; left: 200px; top: 250px;
+  display: flex; flex-direction: column; gap: 56px;
+}
+.toc-item { display: flex; align-items: flex-start; gap: 30px; }
+.toc-number { font-size: 52px; font-weight: 700; color: #0052D9; line-height: 1; }
+.toc-title { font-size: 32px; font-weight: 700; color: #0052D9; margin-bottom: 8px; }
+.toc-desc { font-size: 28px; color: #797979; }
+
+/* ============================================
+   SECTION DIVIDER
+   ============================================ */
+.section-divider { background: #FFFFFF; }
+.section-pattern { position: absolute; inset: 0; overflow: hidden; }
+.section-pattern-img {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0.15; filter: saturate(0.5);
+}
+.section-content {
+  position: absolute; left: 92px; top: 50%; transform: translateY(-50%);
+  display: flex; align-items: flex-start; gap: 24px; z-index: 1;
+}
+.section-number-circle {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: #0052D9; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.section-num { font-size: 52px; font-weight: 700; color: #FFFFFF; }
+.section-text { display: flex; flex-direction: column; margin-top: 10px; }
+.section-title {
+  font-size: 60px; font-weight: 700; color: #0052D9;
+  line-height: 1.3; max-width: 1200px;
+}
+.section-desc {
+  font-size: 32px; color: #797979; margin-top: 20px;
+  line-height: 1.6; max-width: 1000px;
+}
+.section-divider .page-number {
+  position: absolute; left: 17px; bottom: 20px;
+  font-size: 14px; color: #BFBFBF; font-weight: 300;
+}
+.section-illustration {
+  position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+  height: 70%; width: auto; opacity: 0.18;
+}
+
+/* ============================================
+   QUOTE SLIDE
+   ============================================ */
+.quote-slide {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 0 200px; background: #FFFFFF;
+}
+.quote-mark {
+  font-size: 200px; color: #DFEBFA;
+  line-height: 0.6; margin-bottom: 20px;
+}
+.quote-text {
+  font-size: 44px; font-weight: 700; color: #0052D9;
+  line-height: 1.5; max-width: 1200px;
+}
+.quote-attribution {
+  margin-top: 30px; font-size: 30px; color: #797979;
+}
+
+/* ============================================
+   COMPARISON LAYOUT
+   ============================================ */
+.comparison {
+  position: absolute; left: 98px; top: 180px; right: 98px; bottom: 70px;
+  display: flex; gap: 0;
+}
+.comparison-side {
+  flex: 1; padding: 40px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.comparison-left { background: #F8F9FD; border-radius: 8px 0 0 8px; }
+.comparison-right { background: #DFEBFA; border-radius: 0 8px 8px 0; }
+.comparison-label {
+  font-size: 34px; font-weight: 700; color: #0052D9; margin-bottom: 28px;
+}
+.comparison-divider { width: 3px; background: #0052D9; }
+.comparison-list {
+  list-style: none; padding: 0;
+  font-size: 28px; color: #000000; line-height: 2.2;
+}
+.comparison-list li {
+  padding-left: 24px; position: relative;
+}
+.comparison-list li::before {
+  content: '•'; position: absolute; left: 0;
+  color: #0052D9; font-weight: 700;
+}
+
+/* ============================================
+   CARD GRID
+   ============================================ */
+.card-grid {
+  position: absolute; left: 98px; top: 180px; right: 98px; bottom: 70px;
+  display: flex; gap: 28px; align-items: stretch;
+}
+.card {
+  flex: 1; padding: 32px;
+  background: #F8F9FD; border-radius: 8px; border-left: 4px solid #0052D9;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.card-icon { font-size: 40px; margin-bottom: 16px; }
+.card-title { font-size: 34px; font-weight: 700; color: #000000; margin-bottom: 12px; }
+.card-desc { font-size: 26px; color: #797979; line-height: 1.6; }
+
+/* Multi-color card borders */
+.card-grid .card:nth-child(1) { border-left-color: #0052D9; }
+.card-grid .card:nth-child(2) { border-left-color: #FF7535; }
+.card-grid .card:nth-child(3) { border-left-color: #9BCF3F; }
+.card-grid .card:nth-child(4) { border-left-color: #3DC0DB; }
+
+/* Two-card layout */
+.card-grid.two-cards .card { flex: 1; }
+
+/* 2x4 card grid for knowledge modules */
+.card-grid.four-cards-2row {
+  flex-wrap: wrap;
+  gap: 20px;
+  align-content: stretch;
+}
+.card-grid.four-cards-2row .card.mini {
+  flex: 0 0 calc(25% - 15px);
+  padding: 24px;
+  min-height: 0;
+}
+.card-grid.four-cards-2row .card.mini .card-icon { font-size: 36px; margin-bottom: 10px; }
+.card-grid.four-cards-2row .card.mini .card-title { font-size: 30px; margin-bottom: 8px; }
+.card-grid.four-cards-2row .card.mini .card-desc { font-size: 24px; }
+
+/* color rotation for 8 cards */
+.card-grid.four-cards-2row .card:nth-child(1) { border-left-color: #0052D9; }
+.card-grid.four-cards-2row .card:nth-child(2) { border-left-color: #FF7535; }
+.card-grid.four-cards-2row .card:nth-child(3) { border-left-color: #9BCF3F; }
+.card-grid.four-cards-2row .card:nth-child(4) { border-left-color: #3DC0DB; }
+.card-grid.four-cards-2row .card:nth-child(5) { border-left-color: #0052D9; }
+.card-grid.four-cards-2row .card:nth-child(6) { border-left-color: #FF7535; }
+.card-grid.four-cards-2row .card:nth-child(7) { border-left-color: #9BCF3F; }
+.card-grid.four-cards-2row .card:nth-child(8) { border-left-color: #3DC0DB; }
+
+/* ============================================
+   TIMELINE
+   ============================================ */
+.timeline {
+  position: absolute; left: 98px; top: 200px; right: 98px; bottom: 120px;
+  display: flex; align-items: flex-start; padding-top: 40px;
+}
+.timeline-line {
+  position: absolute; top: 48px; left: 0; right: 0;
+  height: 3px; background: #DFEBFA;
+}
+.timeline-item {
+  flex: 1; text-align: center; position: relative; padding: 0 12px;
+}
+.timeline-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #0052D9; margin: 0 auto 20px; position: relative; z-index: 1;
+}
+.timeline-date {
+  font-size: 24px; color: #0052D9; font-weight: 700; margin-bottom: 12px;
+}
+.timeline-content h4 {
+  font-size: 28px; font-weight: 700; color: #000; margin-bottom: 8px;
+}
+.timeline-content p {
+  font-size: 24px; color: #797979; line-height: 1.5;
+}
+
+/* ============================================
+   STATS GRID
+   ============================================ */
+.stats-grid {
+  position: absolute; left: 98px; top: 180px; right: 98px; bottom: 70px;
+  display: flex; gap: 60px; justify-content: center; align-items: center;
+}
+.stat-item { text-align: center; flex: 1; }
+.stat-number {
+  display: block; font-size: 88px; font-weight: 700; color: #0052D9; margin-bottom: 16px;
+}
+.stat-label { font-size: 30px; color: #797979; }
+
+/* ============================================
+   TWO-COLUMN LAYOUT
+   ============================================ */
+.two-column {
+  position: absolute; left: 98px; top: 180px; right: 98px; bottom: 70px;
+  display: flex; gap: 0; align-items: stretch;
+}
+.column {
+  flex: 1; padding: 30px 40px;
+  font-size: 28px; color: #000000; line-height: 1.8;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.column:first-child { padding-left: 0; }
+.column:last-child { padding-right: 0; }
+.column-title { font-size: 36px; font-weight: 700; color: #0052D9; margin-bottom: 24px; }
+.column-divider { width: 2px; background: #DFEBFA; flex-shrink: 0; }
+.column-list {
+  list-style: none; padding: 0;
+  font-size: 26px; line-height: 2.0;
+}
+.column-list li { padding-left: 20px; position: relative; }
+.column-list li::before {
+  content: '•'; position: absolute; left: 0;
+  color: #0052D9; font-weight: 700;
+}
+.column-list li strong { color: #0052D9; }
+.column-note {
+  margin-top: 20px; font-size: 24px; color: #797979;
+  font-style: italic;
+}
+
+/* ============================================
+   CONTENT BODY (text-based slides)
+   ============================================ */
+.content-body {
+  position: absolute; left: 98px; top: 180px; right: 98px; bottom: 70px;
+  font-size: 30px; color: #000000; line-height: 1.8;
+  display: flex; flex-direction: column; justify-content: center; gap: 36px;
+}
+
+/* Strategy Lab flow */
+.strategy-intro { margin-bottom: 20px; }
+.sub-heading {
+  font-size: 36px; font-weight: 700; color: #0052D9; margin-bottom: 16px;
+}
+.strategy-intro p { font-size: 28px; color: #44546A; line-height: 1.7; }
+
+.strategy-flow {
+  display: flex; align-items: center; gap: 0;
+  background: #F8F9FD; border-radius: 12px; padding: 36px 28px;
+}
+.flow-step {
+  flex: 1; display: flex; align-items: center; gap: 16px;
+  padding: 0 16px;
+}
+.flow-num {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: #0052D9; color: #FFFFFF;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700; flex-shrink: 0;
+}
+.flow-text { display: flex; flex-direction: column; }
+.flow-text strong { font-size: 28px; color: #000; font-weight: 700; }
+.flow-text span { font-size: 22px; color: #797979; margin-top: 4px; }
+.flow-arrow {
+  font-size: 36px; color: #0052D9; font-weight: 700;
+  padding: 0 8px; flex-shrink: 0;
+}
+
+/* ============================================
+   CALLOUT BAR
+   ============================================ */
+.slide-callout {
+  position: absolute; left: 98px; right: 98px; bottom: 70px;
+  background: #DFEBFA; border-radius: 8px; padding: 20px 32px;
+  font-size: 26px; font-weight: 700; color: #0052D9;
+  text-align: center; z-index: 2;
+}
+
+/* ============================================
+   ENDING SLIDE
+   ============================================ */
+.ending-slide { background: #0052DA; }
+.ending-pattern {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; mix-blend-mode: soft-light; opacity: 0.5;
+}
+.thanks-text {
+  position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 120px; font-weight: 700; color: #FFFFFF; z-index: 1;
+}
+.ending-subtitle {
+  position: absolute; top: 58%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 36px; font-weight: 300; color: #FFFFFF; opacity: 0.8; z-index: 1;
+}
+.ending-logo {
+  position: absolute; left: 78px; bottom: 74px;
+  height: 31px; width: auto; z-index: 1;
+}
+
+/* ============================================
+   PER-SLIDE OVERRIDES
+   ============================================ */
+
+/* Slide 5 & 20: Comparison slides */
+[data-slide="5"] .comparison,
+[data-slide="20"] .comparison {
+  top: 190px;
+}
+
+/* Slide 7 & 10: Timeline with callout */
+[data-slide="7"] .timeline,
+[data-slide="10"] .timeline {
+  bottom: 140px;
+}
+
+/* Slide 12: Strategy Lab */
+[data-slide="12"] .content-body {
+  top: 180px; gap: 28px;
+}
+
+/* Slide 13: Stats - smaller number for "~1分钟" */
+[data-slide="13"] .stat-number {
+  font-size: 80px;
+}
+
+/* Slide 17: 8-card grid */
+[data-slide="17"] .card-grid.four-cards-2row {
+  top: 190px;
+}
+
+/* Slide 22: 6-step timeline */
+[data-slide="22"] .timeline .timeline-item {
+  padding: 0 8px;
+}
+[data-slide="22"] .timeline-content h4 { font-size: 26px; }
+[data-slide="22"] .timeline-content p { font-size: 22px; }
