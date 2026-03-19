@@ -382,6 +382,7 @@ function renderStatus() {
     <div class="stat-chip notebook"><span class="dot blue"></span> ${notebooks} Notebook/CLI</div>
     <div style="flex:1"></div>
     <button class="btn btn-secondary" onclick="refreshAll()" style="flex:none;padding:6px 14px;font-size:12px;">🔄 刷新状态</button>
+    <button class="btn btn-stop" onclick="shutdownPortal()" style="flex:none;padding:6px 14px;font-size:12px;">⏻ 关闭 Portal</button>
   `;
 }
 
@@ -513,6 +514,22 @@ async function refreshAll() {
   showToast('刷新中...', 'info');
   await loadModules();
   showToast('状态已刷新', 'success');
+}
+
+async function shutdownPortal() {
+  if (!confirm('确定要关闭 Portal 吗？所有由 Portal 管理的子进程也会被停止。')) return;
+  try {
+    await fetch(`${API}/api/shutdown`, { method: 'POST' });
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;color:var(--text2);font-family:sans-serif;">
+        <div style="font-size:48px;margin-bottom:16px;">⏻</div>
+        <h2 style="color:var(--text);margin-bottom:8px;">Portal 已关闭</h2>
+        <p>请在终端运行 <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;">python portal.py</code> 重新启动</p>
+      </div>
+    `;
+  } catch(e) {
+    showToast('关闭失败: ' + e.message, 'error');
+  }
 }
 
 function showToast(msg, type='info') {

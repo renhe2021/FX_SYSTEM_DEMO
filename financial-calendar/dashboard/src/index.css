@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-white text-gray-800 font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+}
+
+@layer components {
+  /* Popup overlay */
+  .popup-overlay {
+    @apply fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .popup-card {
+    @apply bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 max-w-lg w-full mx-4;
+    animation: popIn 0.25s ease-out;
+  }
+
+  /* Clickable illustration card */
+  .illust-card {
+    @apply bg-white rounded-xl border border-gray-200 p-5 cursor-pointer
+           transition-all duration-200 hover:shadow-lg hover:border-blue-300 hover:-translate-y-0.5;
+  }
+
+  .illust-card-active {
+    @apply illust-card border-blue-400 shadow-lg shadow-blue-100 ring-2 ring-blue-100;
+  }
+
+  /* Flow node */
+  .flow-node {
+    @apply px-4 py-3 rounded-xl border-2 text-center text-sm font-semibold
+           transition-all duration-300 cursor-pointer hover:shadow-md;
+  }
+
+  /* Tag / badge */
+  .tag {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .tag-red { @apply tag bg-red-50 text-red-600 border border-red-200; }
+  .tag-amber { @apply tag bg-amber-50 text-amber-600 border border-amber-200; }
+  .tag-green { @apply tag bg-emerald-50 text-emerald-600 border border-emerald-200; }
+  .tag-blue { @apply tag bg-blue-50 text-blue-600 border border-blue-200; }
+  .tag-purple { @apply tag bg-purple-50 text-purple-600 border border-purple-200; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

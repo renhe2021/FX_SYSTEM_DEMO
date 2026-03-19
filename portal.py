@@ -212,6 +212,27 @@ MODULES = [
             "民国文化沙龙",
         ],
     },
+    {
+        "id": "financial-calendar",
+        "name": "金融日历系统",
+        "name_en": "Financial Calendar Dashboard",
+        "icon": "📅",
+        "port": 5173,
+        "category": "quant",
+        "category_label": "量化与策略",
+        "description": "金融日历驱动的 PAMAS 点差拉宽 + ROMS 敞口平仓模拟，交互式可视化 Dashboard",
+        "data_format": "经济日历事件 Excel / JSON",
+        "entry": "run.py",
+        "dir": "financial-calendar",
+        "features": [
+            "经济事件日历",
+            "PAMAS Spread Widening",
+            "ROMS 敞口平仓信号",
+            "Pipeline 可视化",
+            "时间线播放器",
+            "手动覆盖模拟",
+        ],
+    },
 ]
 
 # 子进程管理
@@ -336,6 +357,29 @@ def api_stop(module_id):
             return jsonify({"error": str(e)}), 500
 
     return jsonify({"status": "not_running"})
+
+
+@app.route('/api/shutdown', methods=['POST'])
+def api_shutdown():
+    """关闭 Portal 服务"""
+    # 先停掉所有由 Portal 管理的子进程
+    for mid, proc in list(_processes.items()):
+        if proc and proc.poll() is None:
+            proc.terminate()
+            try:
+                proc.wait(timeout=3)
+            except:
+                proc.kill()
+    _processes.clear()
+
+    def _shutdown():
+        import time
+        time.sleep(0.5)
+        os._exit(0)
+
+    import threading
+    threading.Thread(target=_shutdown, daemon=True).start()
+    return jsonify({"status": "shutting_down", "message": "Portal 正在关闭..."})
 
 
 # ═══ 启动 ═══

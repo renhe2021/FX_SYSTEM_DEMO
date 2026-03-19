@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="21.0.0">
+  <diagram id="category-framework" name="AI 实践分类框架">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="AI 怎么改变我的工作方式 — 四大板块" style="text;html=1;fontSize=28;fontStyle=1;fillColor=none;strokeColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="900" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="g1" value="📊 分析提效 — 工具箱思维" style="swimlane;startSize=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=16;fontStyle=1;rounded=1;arcSize=8;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="350" height="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="pnl" value="PnL Analysis&#xa;月报分析 2h→2min" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="g1">
+          <mxGeometry x="20" y="60" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="markup" value="Markup Pricing&#xa;加价定价模拟" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="g1">
+          <mxGeometry x="185" y="60" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="re" value="Reverse Engineer&#xa;15版迭代反推参数" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="g1">
+          <mxGeometry x="20" y="140" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="fxr" value="FX Report&#xa;研报生成" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C3C3C3;fontSize=13;fontColor=#999999;" vertex="1" parent="g1">
+          <mxGeometry x="185" y="140" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m1" value="方法论：先解决问题 → 再沉淀 Skill" style="text;html=1;fontSize=12;fontStyle=2;fillColor=#FFF2CC;strokeColor=#D6B656;rounded=1;whiteSpace=wrap;align=center;verticalAlign=middle;" vertex="1" parent="g1">
+          <mxGeometry x="20" y="230" width="315" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="m1b" value="快速解法 → 迭代优化 → 通用复用" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=center;whiteSpace=wrap;fontColor=#6c8ebf;" vertex="1" parent="g1">
+          <mxGeometry x="20" y="280" width="315" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="g2" value="📈 交易决策 — 从手搓到 AI 辅助" style="swimlane;startSize=40;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=16;fontStyle=1;rounded=1;arcSize=8;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="100" width="350" height="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="bmad" value="BMAD Quant&#xa;449文件量化系统" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#82b366;fontSize=13;" vertex="1" parent="g2">
+          <mxGeometry x="20" y="60" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="strat" value="Strategy Lab&#xa;策略回测热力图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#82b366;fontSize=13;" vertex="1" parent="g2">
+          <mxGeometry x="185" y="60" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="cal" value="Financial Calendar&#xa;金融日历 Dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#82b366;fontSize=13;" vertex="1" parent="g2">
+          <mxGeometry x="20" y="140" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="wd" value="WeData 接入&#xa;7大数据平台" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#82b366;fontSize=13;" vertex="1" parent="g2">
+          <mxGeometry x="185" y="140" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m2" value="方法论：手搓 → Claude → CodeBuddy" style="text;html=1;fontSize=12;fontStyle=2;fillColor=#FFF2CC;strokeColor=#D6B656;rounded=1;whiteSpace=wrap;align=center;verticalAlign=middle;" vertex="1" parent="g2">
+          <mxGeometry x="20" y="230" width="315" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="m2b" value="不同复杂度 → 不同工具" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=center;whiteSpace=wrap;fontColor=#82b366;" vertex="1" parent="g2">
+          <mxGeometry x="20" y="280" width="315" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="g3" value="📚 知识沉淀 — 让 AI 越用越懂你" style="swimlane;startSize=40;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=16;fontStyle=1;rounded=1;arcSize=8;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="100" width="350" height="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="skills" value="8 个 Skill 模块&#xa;央行/危机/理论..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="g3">
+          <mxGeometry x="20" y="60" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="mem" value="Memory 系统&#xa;21条持久化记忆" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="g3">
+          <mxGeometry x="185" y="60" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ref" value="Reflection 引擎&#xa;自动反思+归档" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="g3">
+          <mxGeometry x="100" y="140" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m3" value="方法论：给 AI 建知识库和记忆" style="text;html=1;fontSize=12;fontStyle=2;fillColor=#FFF2CC;strokeColor=#D6B656;rounded=1;whiteSpace=wrap;align=center;verticalAlign=middle;" vertex="1" parent="g3">
+          <mxGeometry x="20" y="230" width="315" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="m3b" value="不每次从零开始 → 越用越准" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=center;whiteSpace=wrap;fontColor=#9673a6;" vertex="1" parent="g3">
+          <mxGeometry x="20" y="280" width="315" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="g4" value="🤖 Agent 探索 — 踩坑故事" style="swimlane;startSize=40;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=16;fontStyle=1;rounded=1;arcSize=8;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="100" width="350" height="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="soros" value="Soros Agent&#xa;19工具+6步流程" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#d79b00;fontSize=13;" vertex="1" parent="g4">
+          <mxGeometry x="20" y="60" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="lhyin" value="林徽因 Agent&#xa;框架通用性验证" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#d79b00;fontSize=13;" vertex="1" parent="g4">
+          <mxGeometry x="185" y="60" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="traps" value="踩坑：Token 限制&#xa;知识注入 / 幻觉" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#d79b00;fontSize=13;" vertex="1" parent="g4">
+          <mxGeometry x="20" y="140" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="future" value="老查理 / OpenClaw&#xa;（探索中）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C3C3C3;fontSize=13;fontColor=#999999;dashed=1;" vertex="1" parent="g4">
+          <mxGeometry x="185" y="140" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="m4" value="方法论：Agent 不是万能的" style="text;html=1;fontSize=12;fontStyle=2;fillColor=#FFF2CC;strokeColor=#D6B656;rounded=1;whiteSpace=wrap;align=center;verticalAlign=middle;" vertex="1" parent="g4">
+          <mxGeometry x="20" y="230" width="315" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="m4b" value="什么场景适合 → 什么是伪需求" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=center;whiteSpace=wrap;fontColor=#d79b00;" vertex="1" parent="g4">
+          <mxGeometry x="20" y="280" width="315" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#999999;strokeWidth=2;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;endArrow=classic;" edge="1" parent="1" source="g1" target="g2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn23" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#999999;strokeWidth=2;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;endArrow=classic;" edge="1" parent="1" source="g2" target="g3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn34" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#999999;strokeWidth=2;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;endArrow=classic;" edge="1" parent="1" source="g3" target="g4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="bottom" value="🎯 核心：按工作类型分类，每类有独立的方法论 | 让不同岗位的人都能找到可借鉴的经验" style="text;html=1;fontSize=14;fontStyle=1;fillColor=#F0F5FF;strokeColor=#0052D9;rounded=1;whiteSpace=wrap;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="200" y="500" width="1200" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="stats" value="总计 11 个模块 | 9 个 Web 服务 | 8 个知识模块 | 19 个 AI 工具 | 15 个版本的迭代故事" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;align=center;whiteSpace=wrap;fontColor=#797979;" vertex="1" parent="1">
+          <mxGeometry x="300" y="560" width="1000" height="30" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

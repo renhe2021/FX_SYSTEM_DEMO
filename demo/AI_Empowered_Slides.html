@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 赋能 FX 工作方式三级跳</title>
+
+<!-- Fonts: Cormorant Garamond (display serif) + Source Serif 4 (body serif) + DM Sans (UI/labels) -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   CSS CUSTOM PROPERTIES (THEME)
+   Paper & Ink Pro — Editorial + Professional
+   =========================================== */
+:root {
+    /* === Colors === */
+    --bg-cream: #faf9f6;
+    --bg-warm: #f5f3ee;
+    --bg-charcoal: #1a1a1a;
+    --bg-dark-warm: #2a2622;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555;
+    --text-muted: #999;
+    --text-light: #faf9f6;
+    --accent-crimson: #b8283b;
+    --accent-crimson-soft: rgba(184, 40, 59, 0.08);
+    --accent-gold: #c9a96e;
+    --accent-line: #d6d2ca;
+    --accent-line-dark: rgba(250, 249, 246, 0.12);
+
+    /* === Typography — ALL use clamp() === */
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: 'DM Sans', system-ui, sans-serif;
+    --title-size: clamp(2rem, 5.5vw, 4.2rem);
+    --h2-size: clamp(1.4rem, 3.5vw, 2.5rem);
+    --h3-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    --body-size: clamp(0.8rem, 1.4vw, 1.1rem);
+    --small-size: clamp(0.6rem, 0.9vw, 0.78rem);
+    --label-size: clamp(0.55rem, 0.8vw, 0.7rem);
+
+    /* === Spacing === */
+    --slide-padding: clamp(2rem, 5vw, 5rem);
+    --content-gap: clamp(0.8rem, 2vw, 2rem);
+    --element-gap: clamp(0.3rem, 1vw, 0.8rem);
+
+    /* === Animation === */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.6s;
+    --duration-slow: 1s;
+}
+
+/* ===========================================
+   VIEWPORT FITTING: MANDATORY BASE STYLES
+   =========================================== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+.slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.slide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 100%;
+    overflow: hidden;
+    padding: var(--slide-padding);
+}
+
+img, .image-container {
+    max-width: 100%;
+    max-height: min(50vh, 400px);
+    object-fit: contain;
+}
+
+/* ===========================================
+   SHARED LAYOUT COMPONENTS
+   =========================================== */
+
+/* --- Top navigation bar --- */
+.slide-nav {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: clamp(40px, 6vh, 56px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--slide-padding);
+    z-index: 5;
+}
+.slide-nav .section-label {
+    font-family: var(--font-ui);
+    font-size: var(--label-size);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+.slide-nav .page-label {
+    font-family: var(--font-ui);
+    font-size: var(--label-size);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+}
+
+/* --- Bottom rule --- */
+.slide-footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: clamp(36px, 5vh, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--slide-padding);
+    border-top: 1px solid var(--accent-line);
+    z-index: 5;
+}
+.slide-footer span {
+    font-family: var(--font-ui);
+    font-size: var(--label-size);
+    letter-spacing: 0.06em;
+}
+
+/* --- Horizontal rule --- */
+.hr {
+    width: clamp(40px, 5vw, 70px);
+    height: 2px;
+    background: var(--accent-crimson);
+    margin: var(--element-gap) 0;
+}
+
+/* --- Section number (large watermark) --- */
+.section-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(6rem, 15vw, 14rem);
+    line-height: 0.85;
+    position: absolute;
+    opacity: 0.04;
+    pointer-events: none;
+}
+
+/* ===========================================
+   LIGHT SLIDES (cream background)
+   =========================================== */
+.slide-light {
+    background: var(--bg-cream);
+    color: var(--text-primary);
+}
+.slide-light .slide-nav .section-label { color: var(--accent-crimson); }
+.slide-light .slide-nav .page-label { color: var(--text-muted); }
+.slide-light .slide-footer { border-top-color: var(--accent-line); }
+.slide-light .slide-footer span { color: var(--text-muted); }
+
+/* ===========================================
+   DARK SLIDES (charcoal background)
+   =========================================== */
+.slide-dark {
+    background: var(--bg-charcoal);
+    color: var(--text-light);
+}
+.slide-dark .slide-nav .section-label { color: var(--accent-gold); }
+.slide-dark .slide-nav .page-label { color: rgba(250,249,246,0.4); }
+.slide-dark .slide-footer { border-top-color: var(--accent-line-dark); }
+.slide-dark .slide-footer span { color: rgba(250,249,246,0.4); }
+.slide-dark .hr { background: var(--accent-gold); }
+
+/* ===========================================
+   TYPOGRAPHY
+   =========================================== */
+.display-title {
+    font-family: var(--font-display);
+    font-size: var(--title-size);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+}
+.display-title em {
+    font-style: italic;
+    color: var(--accent-crimson);
+}
+.slide-dark .display-title em { color: var(--accent-gold); }
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: var(--h2-size);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.body-text {
+    font-family: var(--font-body);
+    font-size: var(--body-size);
+    line-height: 1.65;
+    color: var(--text-secondary);
+}
+.slide-dark .body-text { color: rgba(250,249,246,0.65); }
+
+.label-tag {
+    font-family: var(--font-ui);
+    font-size: var(--label-size);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-crimson);
+}
+.slide-dark .label-tag { color: var(--accent-gold); }
+
+/* --- Pull quote --- */
+.pull-quote {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+    font-style: italic;
+    line-height: 1.55;
+    border-left: 3px solid var(--accent-crimson);
+    padding-left: clamp(0.8rem, 2vw, 1.5rem);
+    max-width: 55ch;
+}
+.slide-dark .pull-quote { border-left-color: var(--accent-gold); }
+
+/* --- Level badge --- */
+.level-badge {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-size: var(--small-size);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: clamp(3px, 0.4vh, 6px) clamp(10px, 1.5vw, 18px);
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+.badge-l1 { background: rgba(59,130,246,0.08); color: #2563eb; border: 1px solid rgba(59,130,246,0.2); }
+.badge-l2 { background: rgba(124,58,237,0.08); color: #7c3aed; border: 1px solid rgba(124,58,237,0.2); }
+.badge-l3 { background: rgba(14,165,165,0.08); color: #0ea5a5; border: 1px solid rgba(14,165,165,0.2); }
+.badge-next { background: rgba(201,169,110,0.1); color: var(--accent-gold); border: 1px solid rgba(201,169,110,0.25); }
+
+/* ===========================================
+   CARD COMPONENTS
+   =========================================== */
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(8px, 1.2vw, 16px);
+    margin-top: var(--element-gap);
+}
+@media (max-width: 700px) { .module-grid { grid-template-columns: 1fr; } }
+
+.module-card {
+    background: rgba(0,0,0,0.02);
+    border: 1px solid var(--accent-line);
+    border-radius: clamp(4px, 0.5vw, 8px);
+    padding: clamp(10px, 1.5vw, 18px);
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(8px, 1vw, 14px);
+}
+.slide-dark .module-card {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.08);
+}
+.module-card .card-icon {
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    flex-shrink: 0;
+    line-height: 1;
+}
+.module-card .card-title {
+    font-family: var(--font-ui);
+    font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+.module-card .card-desc {
+    font-family: var(--font-body);
+    font-size: var(--small-size);
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+.slide-dark .module-card .card-desc { color: rgba(250,249,246,0.45); }
+
+/* --- Stat card --- */
+.stat-row {
+    display: flex;
+    gap: clamp(16px, 3vw, 40px);
+    margin-top: var(--content-gap);
+}
+.stat-item .stat-num {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent-crimson);
+}
+.slide-dark .stat-item .stat-num { color: var(--accent-gold); }
+.stat-item .stat-label {
+    font-family: var(--font-ui);
+    font-size: var(--small-size);
+    color: var(--text-muted);
+    margin-top: clamp(2px, 0.3vh, 6px);
+}
+
+/* --- Compare block --- */
+.compare-block {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2vw, 30px);
+    margin-top: var(--content-gap);
+}
+.compare-side {
+    flex: 1;
+    padding: clamp(12px, 1.5vw, 20px);
+    border-radius: clamp(4px, 0.5vw, 8px);
+}
+.compare-before {
+    background: rgba(220,38,38,0.04);
+    border: 1px solid rgba(220,38,38,0.12);
+}
+.compare-after {
+    background: rgba(22,163,74,0.04);
+    border: 1px solid rgba(22,163,74,0.15);
+}
+.compare-arrow {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+/* --- Numbered list --- */
+.method-list {
+    list-style: none;
+    counter-reset: method;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 2vh, 24px);
+    margin-top: var(--content-gap);
+}
+.method-list li {
+    counter-increment: method;
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(10px, 1.5vw, 20px);
+}
+.method-list li::before {
+    content: counter(method, decimal-leading-zero);
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    font-weight: 700;
+    color: var(--accent-crimson);
+    flex-shrink: 0;
+    line-height: 1.2;
+}
+.slide-dark .method-list li::before { color: var(--accent-gold); }
+
+/* ===========================================
+   ANIMATIONS (triggered by .visible)
+   =========================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+.reveal:nth-child(1) { transition-delay: 0.05s; }
+.reveal:nth-child(2) { transition-delay: 0.15s; }
+.reveal:nth-child(3) { transition-delay: 0.25s; }
+.reveal:nth-child(4) { transition-delay: 0.35s; }
+.reveal:nth-child(5) { transition-delay: 0.45s; }
+.reveal:nth-child(6) { transition-delay: 0.55s; }
+
+/* Line grow animation */
+.line-reveal {
+    width: 0;
+    transition: width var(--duration-slow) var(--ease-out-expo);
+}
+.slide.visible .line-reveal {
+    width: clamp(40px, 5vw, 70px);
+}
+
+/* ===========================================
+   DECORATIVE ELEMENTS
+   =========================================== */
+.corner-mark {
+    position: absolute;
+    font-family: var(--font-display);
+    font-size: var(--small-size);
+    font-style: italic;
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+.corner-mark.tl { top: clamp(12px, 2vh, 24px); left: var(--slide-padding); }
+.corner-mark.br { bottom: clamp(12px, 2vh, 24px); right: var(--slide-padding); }
+
+/* Vertical accent line */
+.v-accent {
+    position: absolute;
+    width: 2px;
+    height: clamp(40px, 8vh, 80px);
+    background: var(--accent-crimson);
+    opacity: 0.15;
+}
+.slide-dark .v-accent { background: var(--accent-gold); }
+
+/* ===========================================
+   PROGRESS BAR & NAV DOTS
+   =========================================== */
+.progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent-crimson);
+    z-index: 1000;
+    transition: width 0.3s ease;
+}
+
+.nav-dots {
+    position: fixed;
+    right: clamp(12px, 2vw, 24px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 0.8vh, 10px);
+    z-index: 1000;
+}
+.nav-dot {
+    width: clamp(6px, 0.6vw, 8px);
+    height: clamp(6px, 0.6vw, 8px);
+    border-radius: 50%;
+    background: rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+}
+.nav-dot.active {
+    background: var(--accent-crimson);
+    transform: scale(1.4);
+}
+.nav-dot:hover { background: var(--accent-crimson); opacity: 0.7; }
+
+/* ===========================================
+   INLINE EDITING
+   =========================================== */
+.edit-hotzone {
+    position: fixed; top: 0; left: 0;
+    width: 80px; height: 80px;
+    z-index: 10000;
+    cursor: pointer;
+}
+.edit-toggle {
+    position: fixed;
+    top: clamp(8px, 1.5vh, 16px);
+    left: clamp(8px, 1.5vw, 16px);
+    background: var(--bg-charcoal);
+    color: var(--text-light);
+    border: none;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-family: var(--font-ui);
+    font-size: var(--label-size);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10001;
+}
+.edit-toggle.show,
+.edit-toggle.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.edit-toggle.active { background: var(--accent-crimson); }
+
+[contenteditable="true"] {
+    outline: 2px dashed rgba(184, 40, 59, 0.3);
+    outline-offset: 4px;
+    border-radius: 2px;
+    cursor: text;
+}
+
+/* ===========================================
+   RESPONSIVE BREAKPOINTS
+   =========================================== */
+@media (max-height: 700px) {
+    :root {
+        --slide-padding: clamp(1rem, 3vw, 2.5rem);
+        --content-gap: clamp(0.5rem, 1.5vw, 1rem);
+        --title-size: clamp(1.5rem, 4.5vw, 2.8rem);
+        --h2-size: clamp(1.1rem, 3vw, 1.8rem);
+    }
+}
+@media (max-height: 600px) {
+    :root {
+        --slide-padding: clamp(0.8rem, 2.5vw, 1.5rem);
+        --title-size: clamp(1.3rem, 4vw, 2.2rem);
+        --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+    }
+    .nav-dots, .corner-mark { display: none; }
+}
+@media (max-height: 500px) {
+    :root {
+        --slide-padding: clamp(0.5rem, 2vw, 1rem);
+        --title-size: clamp(1.1rem, 3.5vw, 1.8rem);
+    }
+}
+@media (max-width: 600px) {
+    :root { --title-size: clamp(1.5rem, 8vw, 2.5rem); }
+    .module-grid { grid-template-columns: 1fr; }
+    .compare-block { flex-direction: column; }
+    .stat-row { flex-direction: column; gap: clamp(12px, 2vh, 20px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+    html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- === PROGRESS BAR === -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- === NAV DOTS === -->
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+<!-- === EDIT CONTROLS === -->
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="编辑模式 (E)">✏️ Edit</button>
+
+<!-- ====================================================================
+     SLIDE 01 — TITLE SLIDE
+     ==================================================================== -->
+<section class="slide slide-light" data-section="封面">
+    <div class="slide-nav">
+        <span class="section-label">AI × Finance</span>
+        <span class="page-label">Internal Presentation · 2026</span>
+    </div>
+
+    <div class="section-num" style="right: var(--slide-padding); top: 10vh;">§</div>
+    <div class="v-accent" style="left: var(--slide-padding); top: 30vh;"></div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <div class="label-tag reveal">跨境金融技术团队</div>
+        <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
+            AI 赋能 FX 工作方式<br/><em>三级跳</em>
+        </h1>
+        <div class="hr line-reveal" style="margin-top: var(--content-gap);"></div>
+        <p class="body-text reveal" style="max-width: 50ch;">
+            从效率工具到决策引擎，再到 AI Agent —— 一个外汇交易员的三次工作方式升级
+        </p>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>15 Slides · 45 min</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 02 — PAIN POINT (Quote)
+     ==================================================================== -->
+<section class="slide slide-dark" data-section="开场">
+    <div class="slide-nav">
+        <span class="section-label">Prologue</span>
+        <span class="page-label">02</span>
+    </div>
+
+    <div class="section-num" style="left: var(--slide-padding); bottom: 5vh;">"</div>
+
+    <div class="slide-content" style="align-items: center; text-align: center;">
+        <div class="pull-quote reveal" style="border-left: none; text-align: center; padding-left: 0;">
+            每天被 Excel 追着跑的日子，<br/>你受够了吗？
+        </div>
+        <p class="body-text reveal" style="margin-top: var(--content-gap); opacity: 0.5;">
+            — 一个外汇交易员的自白
+        </p>
+    </div>
+
+    <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
+        <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
+        <span style="color: rgba(250,249,246,0.3);">02 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 03 — THREE-LEVEL FRAMEWORK
+     ==================================================================== -->
+<section class="slide slide-light" data-section="框架">
+    <div class="slide-nav">
+        <span class="section-label">Framework</span>
+        <span class="page-label">03</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <div class="label-tag reveal">升级路径</div>
+        <h2 class="section-title reveal">AI 赋能三级跳</h2>
+        <div class="hr line-reveal"></div>
+
+        <div style="display: flex; flex-direction: column; gap: clamp(16px, 2.5vh, 28px); margin-top: var(--content-gap);">
+            <div class="reveal" style="display: flex; align-items: center; gap: clamp(12px, 2vw, 24px);">
+                <span style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #2563eb; min-width: 2.5ch;">L1</span>
+                <div>
+                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">效率工具</div>
+                    <div class="body-text">替代手工，自动化重复劳动</div>
+                </div>
+            </div>
+            <div class="reveal" style="padding-left: 1.2ch; color: var(--text-muted); font-family: var(--font-display); font-size: var(--body-size);">↓ 痛点：工具各干各的，缺乏联动</div>
+            <div class="reveal" style="display: flex; align-items: center; gap: clamp(12px, 2vw, 24px);">
+                <span style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #7c3aed; min-width: 2.5ch;">L2</span>
+                <div>
+                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">决策引擎</div>
+                    <div class="body-text">数据驱动，系统化辅助判断</div>
+                </div>
+            </div>
+            <div class="reveal" style="padding-left: 1.2ch; color: var(--text-muted); font-family: var(--font-display); font-size: var(--body-size);">↓ 痛点：数据有了，判断还是靠人</div>
+            <div class="reveal" style="display: flex; align-items: center; gap: clamp(12px, 2vw, 24px);">
+                <span style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #0ea5a5; min-width: 2.5ch;">L3</span>
+                <div>
+                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">AI Agent</div>
+                    <div class="body-text">智能大脑，让 AI 像专家一样思考</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>03 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 04 — LEVEL 1 TITLE
+     ==================================================================== -->
+<section class="slide slide-light" data-section="L1 效率工具">
+    <div class="slide-nav">
+        <span class="section-label">Level 1</span>
+        <span class="page-label">04</span>
+    </div>
+
+    <div class="section-num" style="right: 5vw; top: 8vh;">01</div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l1 reveal">Level 1 · 效率工具层</span>
+        <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
+            让工具<br/><em>替你加班</em>
+        </h1>
+        <div class="hr line-reveal" style="margin-top: var(--content-gap);"></div>
+        <p class="body-text reveal">把重复劳动自动化，释放你的时间去做更有价值的事</p>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>04 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 05 — L1 DEEP DIVE: PnL Analysis
+     ==================================================================== -->
+<section class="slide slide-light" data-section="L1 效率工具">
+    <div class="slide-nav">
+        <span class="section-label">Level 1 · PnL Analysis</span>
+        <span class="page-label">05</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l1 reveal">Case Study</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">PnL 损益分析：360× 效率提升</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="compare-block reveal">
+            <div class="compare-side compare-before">
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); font-weight: 600; color: #dc2626; margin-bottom: 6px;">BEFORE</div>
+                <div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600; text-decoration: line-through; opacity: 0.6;">手动 Excel 分析</div>
+                <div class="body-text" style="font-size: var(--small-size);">3 小时 / 次，容易出错</div>
+            </div>
+            <span class="compare-arrow">→</span>
+            <div class="compare-side compare-after">
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); font-weight: 600; color: #16a34a; margin-bottom: 6px;">AFTER</div>
+                <div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">CSV 上传一键出报表</div>
+                <div class="body-text" style="font-size: var(--small-size);">9 维度自动分析，30 秒搞定</div>
+            </div>
+        </div>
+
+        <div class="stat-row reveal">
+            <div class="stat-item">
+                <div class="stat-num">360×</div>
+                <div class="stat-label">效率提升</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">9</div>
+                <div class="stat-label">分析维度</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">0</div>
+                <div class="stat-label">人工失误</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>05 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 06 — L1 FAMILY PORTRAIT
+     ==================================================================== -->
+<section class="slide slide-light" data-section="L1 效率工具">
+    <div class="slide-nav">
+        <span class="section-label">Level 1 · Overview</span>
+        <span class="page-label">06</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l1 reveal">效率工具全家福</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">四大效率利器</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="module-grid reveal">
+            <div class="module-card">
+                <span class="card-icon">📊</span>
+                <div>
+                    <div class="card-title">PnL 损益分析</div>
+                    <div class="card-desc">CSV → 9 维度自动报表</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">💰</span>
+                <div>
+                    <div class="card-title">加价定价模拟器</div>
+                    <div class="card-desc">6 种策略模拟收入影响</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">📝</span>
+                <div>
+                    <div class="card-title">FX 研报制作平台</div>
+                    <div class="card-desc">数据 → 投行级 PDF 报告</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🔧</span>
+                <div>
+                    <div class="card-title">逆向工程脚本集</div>
+                    <div class="card-desc">市场数据解析自动化</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>06 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 07 — TRANSITION QUOTE (L1 → L2)
+     ==================================================================== -->
+<section class="slide slide-dark" data-section="过渡">
+    <div class="slide-nav">
+        <span class="section-label">Transition</span>
+        <span class="page-label">07</span>
+    </div>
+
+    <div class="slide-content" style="align-items: center; text-align: center;">
+        <div class="pull-quote reveal" style="border-left: none; padding-left: 0; text-align: center;">
+            工具有了，数据各干各的。<br/>能不能让数据帮我做决策？
+        </div>
+        <p class="body-text reveal" style="margin-top: var(--content-gap); color: var(--accent-gold); font-family: var(--font-ui); font-size: var(--small-size); letter-spacing: 0.15em;">
+            升级触发点 →
+        </p>
+    </div>
+
+    <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
+        <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
+        <span style="color: rgba(250,249,246,0.3);">07 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 08 — LEVEL 2 TITLE
+     ==================================================================== -->
+<section class="slide slide-light" data-section="L2 决策引擎">
+    <div class="slide-nav">
+        <span class="section-label">Level 2</span>
+        <span class="page-label">08</span>
+    </div>
+
+    <div class="section-num" style="right: 5vw; top: 8vh;">02</div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l2 reveal">Level 2 · 决策引擎层</span>
+        <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
+            让数据<br/><em>帮你决策</em>
+        </h1>
+        <div class="hr line-reveal" style="margin-top: var(--content-gap);"></div>
+        <p class="body-text reveal">用数据辅助判断，从被动响应到主动预判</p>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>08 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 09 — L2 DEEP DIVE: Financial Calendar
+     ==================================================================== -->
+<section class="slide slide-light" data-section="L2 决策引擎">
+    <div class="slide-nav">
+        <span class="section-label">Level 2 · Financial Calendar</span>
+        <span class="page-label">09</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l2 reveal">Case Study</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">金融日历系统：非农之夜</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="module-grid reveal">
+            <div class="module-card">
+                <span class="card-icon">📅</span>
+                <div>
+                    <div class="card-title">日历驱动</div>
+                    <div class="card-desc">自动识别重大经济事件</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">📈</span>
+                <div>
+                    <div class="card-title">点差拉宽模拟</div>
+                    <div class="card-desc">PAMAS 参数实时计算</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🛡️</span>
+                <div>
+                    <div class="card-title">敞口平仓信号</div>
+                    <div class="card-desc">ROMS 风险自动预警</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🎛️</span>
+                <div>
+                    <div class="card-title">手动覆盖</div>
+                    <div class="card-desc">人机协作，保留最终决策权</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>09 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 10 — L2 FAMILY PORTRAIT
+     ==================================================================== -->
+<section class="slide slide-light" data-section="L2 决策引擎">
+    <div class="slide-nav">
+        <span class="section-label">Level 2 · Overview</span>
+        <span class="page-label">10</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l2 reveal">决策引擎全家福</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">四大决策引擎</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="module-grid reveal">
+            <div class="module-card">
+                <span class="card-icon">📅</span>
+                <div>
+                    <div class="card-title">金融日历系统</div>
+                    <div class="card-desc">事件驱动风控模拟</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🧪</span>
+                <div>
+                    <div class="card-title">策略回测实验室</div>
+                    <div class="card-desc">CSV → 选策略 → 回测验证</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">📈</span>
+                <div>
+                    <div class="card-title">BMAD 量化系统</div>
+                    <div class="card-desc">全功能量化分析平台</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🔬</span>
+                <div>
+                    <div class="card-title">WeData 大数据分析</div>
+                    <div class="card-desc">Hive 数据湖 Notebook</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>10 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 11 — TRANSITION QUOTE (L2 → L3)
+     ==================================================================== -->
+<section class="slide slide-dark" data-section="过渡">
+    <div class="slide-nav">
+        <span class="section-label">Transition</span>
+        <span class="page-label">11</span>
+    </div>
+
+    <div class="slide-content" style="align-items: center; text-align: center;">
+        <div class="pull-quote reveal" style="border-left: none; padding-left: 0; text-align: center;">
+            数据有了，判断还是靠人。<br/>能不能让 AI 来？
+        </div>
+        <p class="body-text reveal" style="margin-top: var(--content-gap); color: var(--accent-gold); font-family: var(--font-ui); font-size: var(--small-size); letter-spacing: 0.15em;">
+            升级触发点 →
+        </p>
+    </div>
+
+    <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
+        <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
+        <span style="color: rgba(250,249,246,0.3);">11 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 12 — LEVEL 3 TITLE
+     ==================================================================== -->
+<section class="slide slide-dark" data-section="L3 AI Agent">
+    <div class="slide-nav">
+        <span class="section-label">Level 3</span>
+        <span class="page-label">12</span>
+    </div>
+
+    <div class="section-num" style="right: 5vw; top: 8vh; color: rgba(250,249,246,0.04);">03</div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l3 reveal">Level 3 · AI Agent 层</span>
+        <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
+            让 AI<br/><em>帮你思考</em>
+        </h1>
+        <div class="hr line-reveal" style="margin-top: var(--content-gap);"></div>
+        <p class="body-text reveal">从一个 Agent 到投委会辩论，让 AI 像专家一样思考</p>
+    </div>
+
+    <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
+        <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
+        <span style="color: rgba(250,249,246,0.3);">12 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 13 — SOROS AGENT
+     ==================================================================== -->
+<section class="slide slide-dark" data-section="L3 AI Agent">
+    <div class="slide-nav">
+        <span class="section-label">Level 3 · Soros Agent</span>
+        <span class="page-label">13</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l3 reveal">Soros FX Agent</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">一个 Agent = 一位专家</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="module-grid reveal">
+            <div class="module-card">
+                <span class="card-icon">🧠</span>
+                <div>
+                    <div class="card-title">反射性理论</div>
+                    <div class="card-desc">市场情绪 ↔ 基本面双向循环</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">💾</span>
+                <div>
+                    <div class="card-title">记忆系统</div>
+                    <div class="card-desc">40+ 记忆文件，越用越聪明</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🔄</span>
+                <div>
+                    <div class="card-title">反思引擎</div>
+                    <div class="card-desc">交易复盘，自我进化</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🛠️</span>
+                <div>
+                    <div class="card-title">24 种技能</div>
+                    <div class="card-desc">工具调用 + WeData 大数据</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
+        <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
+        <span style="color: rgba(250,249,246,0.3);">13 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 14 — OLD CHARLIE MULTI-AGENT
+     ==================================================================== -->
+<section class="slide slide-dark" data-section="L3 AI Agent">
+    <div class="slide-nav">
+        <span class="section-label">Level 3 · Multi-Agent</span>
+        <span class="page-label">14</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-l3 reveal">老查理投委会</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">5+1 Agent 辩论模式</h2>
+        <div class="hr line-reveal"></div>
+        <p class="body-text reveal">一个人的判断 → 五位专家辩论 → PM 裁决</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: clamp(6px, 1vw, 12px); margin-top: var(--element-gap);" class="reveal">
+            <div class="module-card">
+                <span class="card-icon">📖</span>
+                <div><div class="card-title">Value</div><div class="card-desc">价值投资</div></div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🚀</span>
+                <div><div class="card-title">Growth</div><div class="card-desc">成长投资</div></div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">📐</span>
+                <div><div class="card-title">Quant</div><div class="card-desc">量化分析</div></div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🔮</span>
+                <div><div class="card-title">Contrarian</div><div class="card-desc">逆向思维</div></div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🛡️</span>
+                <div><div class="card-title">Risk + PM</div><div class="card-desc">风控 + 裁决</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
+        <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
+        <span style="color: rgba(250,249,246,0.3);">14 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 15 — OPENCLAW + CLOSING
+     ==================================================================== -->
+<section class="slide slide-light" data-section="展望">
+    <div class="slide-nav">
+        <span class="section-label">What's Next</span>
+        <span class="page-label">15</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-next reveal">Next · OpenClaw</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">通用 Agent 开发框架</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="module-grid reveal">
+            <div class="module-card">
+                <span class="card-icon">🧩</span>
+                <div>
+                    <div class="card-title">标准化</div>
+                    <div class="card-desc">统一 Agent 开发范式</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🔌</span>
+                <div>
+                    <div class="card-title">可插拔</div>
+                    <div class="card-desc">工具/记忆/策略灵活组合</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: var(--content-gap); padding-top: var(--content-gap); border-top: 1px solid var(--accent-line);" class="reveal">
+            <h2 class="section-title" style="margin-bottom: var(--element-gap);">核心方法论</h2>
+            <ol class="method-list">
+                <li><div><div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">从痛点出发，不造轮子</div></div></li>
+                <li><div><div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">AI 是副驾驶，不是替代</div></div></li>
+                <li><div><div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">小步迭代，层层升级</div></div></li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>15 / 15</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 16 — Q&A / END
+     ==================================================================== -->
+<section class="slide slide-dark" data-section="Q&A">
+    <div class="slide-nav">
+        <span class="section-label">Fin.</span>
+        <span class="page-label"></span>
+    </div>
+
+    <div class="v-accent" style="left: var(--slide-padding); top: 25vh; background: var(--accent-gold);"></div>
+
+    <div class="slide-content" style="align-items: center; text-align: center;">
+        <div class="label-tag reveal" style="color: var(--accent-gold);">Thank You</div>
+        <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
+            不是更努力<br/><em>而是更聪明</em>
+        </h1>
+        <div class="hr line-reveal" style="margin: var(--content-gap) auto; background: var(--accent-gold);"></div>
+        <p class="body-text reveal" style="max-width: 40ch;">
+            AI 不会取代你，但会用 AI 的人会。
+        </p>
+        <p class="body-text reveal" style="margin-top: var(--content-gap); font-family: var(--font-ui); font-size: var(--small-size); color: rgba(250,249,246,0.4); letter-spacing: 0.12em;">
+            Q & A · OPEN DISCUSSION
+        </p>
+    </div>
+
+    <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
+        <span style="color: rgba(250,249,246,0.3);">FX System Demo · 跨境金融技术团队</span>
+        <span style="color: rgba(250,249,246,0.3);">2026</span>
+    </div>
+</section>
+
+
+<!-- ====================================================================
+     JAVASCRIPT: Slide Controller + Inline Editing
+     ==================================================================== -->
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = [...document.querySelectorAll('.slide')];
+        this.currentSlide = 0;
+        this.isTransitioning = false;
+        this.totalSlides = this.slides.length;
+
+        this.setupIntersectionObserver();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.setupProgressBar();
+        this.setupNavDots();
+
+        // Mark first slide visible
+        this.slides[0].classList.add('visible');
+    }
+
+    /* --- Intersection Observer for scroll-triggered animations --- */
+    setupIntersectionObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    const idx = this.slides.indexOf(entry.target);
+                    if (idx !== -1) {
+                        this.currentSlide = idx;
+                        this.updateNavDots();
+                        this.updateProgressBar();
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        this.slides.forEach(slide => observer.observe(slide));
+    }
+
+    /* --- Keyboard: arrows, space, page up/down --- */
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute('contenteditable') === 'true') return;
+
+            switch(e.key) {
+                case 'ArrowDown':
+                case 'ArrowRight':
+                case ' ':
+                case 'PageDown':
+                    e.preventDefault();
+                    this.goTo(this.currentSlide + 1);
+                    break;
+                case 'ArrowUp':
+                case 'ArrowLeft':
+                case 'PageUp':
+                    e.preventDefault();
+                    this.goTo(this.currentSlide - 1);
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    this.goTo(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    this.goTo(this.totalSlides - 1);
+                    break;
+            }
+        });
+    }
+
+    /* --- Touch/swipe --- */
+    setupTouchNav() {
+        let startY = 0;
+        document.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            const diff = startY - e.changedTouches[0].clientY;
+            if (Math.abs(diff) > 50) {
+                diff > 0 ? this.goTo(this.currentSlide + 1) : this.goTo(this.currentSlide - 1);
+            }
+        }, { passive: true });
+    }
+
+    /* --- Mouse wheel --- */
+    setupWheelNav() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', (e) => {
+            const now = Date.now();
+            if (now - lastWheel < 800) return;
+            lastWheel = now;
+            if (e.deltaY > 0) this.goTo(this.currentSlide + 1);
+            else if (e.deltaY < 0) this.goTo(this.currentSlide - 1);
+        }, { passive: true });
+    }
+
+    /* --- Progress bar --- */
+    setupProgressBar() {
+        this.progressBar = document.getElementById('progressBar');
+        this.updateProgressBar();
+    }
+
+    updateProgressBar() {
+        if (!this.progressBar) return;
+        const pct = ((this.currentSlide + 1) / this.totalSlides) * 100;
+        this.progressBar.style.width = pct + '%';
+    }
+
+    /* --- Nav dots --- */
+    setupNavDots() {
+        const container = document.getElementById('navDots');
+        this.slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+            dot.addEventListener('click', () => this.goTo(i));
+            container.appendChild(dot);
+        });
+        this.dots = [...container.querySelectorAll('.nav-dot')];
+    }
+
+    updateNavDots() {
+        this.dots.forEach((d, i) => d.classList.toggle('active', i === this.currentSlide));
+    }
+
+    /* --- Navigate to slide --- */
+    goTo(index) {
+        if (index < 0 || index >= this.totalSlides) return;
+        this.currentSlide = index;
+        this.slides[index].scrollIntoView({ behavior: 'smooth' });
+        this.updateNavDots();
+        this.updateProgressBar();
+    }
+}
+
+/* ===========================================
+   INLINE EDITOR (opt-in)
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.editableSelectors = '.display-title, .section-title, .body-text, .pull-quote, .card-title, .card-desc, .label-tag, .stat-num, .stat-label';
+        this.setupToggle();
+        this.setupHotzone();
+        this.setupKeyboard();
+        this.loadSavedContent();
+    }
+
+    setupToggle() {
+        const btn = document.getElementById('editToggle');
+        btn.addEventListener('click', () => this.toggleEditMode());
+    }
+
+    setupHotzone() {
+        const hotzone = document.getElementById('editHotzone');
+        const btn = document.getElementById('editToggle');
+        let hideTimeout = null;
+
+        hotzone.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+            btn.classList.add('show');
+        });
+        hotzone.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (!this.isActive) btn.classList.remove('show');
+            }, 400);
+        });
+        btn.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        btn.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (!this.isActive) btn.classList.remove('show');
+            }, 400);
+        });
+        hotzone.addEventListener('click', () => this.toggleEditMode());
+    }
+
+    setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) {
+                this.toggleEditMode();
+            }
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                this.saveContent();
+            }
+        });
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        const btn = document.getElementById('editToggle');
+        btn.classList.toggle('active', this.isActive);
+        btn.textContent = this.isActive ? '💾 Save (Ctrl+S)' : '✏️ Edit';
+
+        document.querySelectorAll(this.editableSelectors).forEach(el => {
+            el.setAttribute('contenteditable', this.isActive ? 'true' : 'false');
+        });
+
+        if (!this.isActive) this.saveContent();
+    }
+
+    saveContent() {
+        const data = {};
+        document.querySelectorAll(this.editableSelectors).forEach((el, i) => {
+            data[`el_${i}`] = el.innerHTML;
+        });
+        localStorage.setItem('slides_content', JSON.stringify(data));
+    }
+
+    loadSavedContent() {
+        const saved = localStorage.getItem('slides_content');
+        if (!saved) return;
+        try {
+            const data = JSON.parse(saved);
+            document.querySelectorAll(this.editableSelectors).forEach((el, i) => {
+                if (data[`el_${i}`]) el.innerHTML = data[`el_${i}`];
+            });
+        } catch(e) { /* ignore */ }
+    }
+}
+
+/* === Init === */
+const presentation = new SlidePresentation();
+const editor = new InlineEditor();
+</script>
+
+</body>
+</html>

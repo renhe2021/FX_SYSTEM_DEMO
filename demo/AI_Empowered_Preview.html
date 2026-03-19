@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 赋能三级跳 — 从工具箱到智能大脑</title>
+  
+  <!-- TailwindCSS CDN -->
+  <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/3.0.23/tailwind.min.js"></script>
+  
+  <!-- 字体 -->
+  <link href="https://fonts.loli.net/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans SC', 'Inter', sans-serif;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+    }
+    
+    .slides-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0a0a0a;
+    }
+    
+    .slide {
+      width: 100%;
+      height: 100%;
+      max-width: 450px;
+      max-height: 800px;
+      aspect-ratio: 9/16;
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      background: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+    }
+    
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .slide.prev {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    
+    /* 动态光斑 */
+    .light-spot {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    
+    .light-spot-blue {
+      width: 300px;
+      height: 300px;
+      background: #3b82f6;
+      animation: float1 20s ease-in-out infinite;
+    }
+    
+    .light-spot-purple {
+      width: 250px;
+      height: 250px;
+      background: #8b5cf6;
+      animation: float2 25s ease-in-out infinite;
+    }
+    
+    .light-spot-cyan {
+      width: 200px;
+      height: 200px;
+      background: #06b6d4;
+      animation: float3 18s ease-in-out infinite;
+    }
+
+    .light-spot-green {
+      width: 220px;
+      height: 220px;
+      background: #10b981;
+      animation: float2 22s ease-in-out infinite;
+    }
+
+    .light-spot-amber {
+      width: 180px;
+      height: 180px;
+      background: #f59e0b;
+      animation: float1 16s ease-in-out infinite;
+    }
+    
+    @keyframes float1 {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-50px, 30px); }
+      50% { transform: translate(30px, 50px); }
+      75% { transform: translate(50px, -20px); }
+    }
+    
+    @keyframes float2 {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(40px, -40px); }
+      66% { transform: translate(-30px, 30px); }
+    }
+    
+    @keyframes float3 {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.2); }
+    }
+    
+    .slide-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* 三级跳可视化 */
+    .level-badge {
+      display: inline-block;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .level-1 { background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: #60a5fa; }
+    .level-2 { background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4); color: #a78bfa; }
+    .level-3 { background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; }
+    .level-next { background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; }
+
+    /* 跳级箭头动画 */
+    .jump-arrow {
+      display: inline-block;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* 数据高亮 */
+    .data-highlight {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 对比样式 */
+    .compare-before {
+      color: #ef4444;
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .compare-after {
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    /* 模块卡片 */
+    .module-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin: 6px 0;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .module-card .emoji {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .module-card .name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+    .module-card .desc {
+      font-size: 0.7rem;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    
+    /* 进度条 */
+    .progress-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 100;
+    }
+    
+    .progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .progress-dot.active {
+      background: #fff;
+      transform: scale(1.3);
+    }
+    
+    .progress-dot:hover {
+      background: rgba(255,255,255,0.6);
+    }
+    
+    .page-number {
+      position: fixed;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.4);
+      z-index: 100;
+    }
+
+    /* 键盘提示 */
+    .key-hint {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.2);
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="slides-container">
+    
+    <!-- ==================== 1. 封面页 ==================== -->
+    <div class="slide active">
+      <div class="light-spot light-spot-blue" style="top:-100px;right:-100px;"></div>
+      <div class="light-spot light-spot-purple" style="bottom:-80px;left:-80px;"></div>
+      <div class="slide-content">
+        <p class="text-sm font-light text-gray-500 mb-6 tracking-widest">AI × FINANCE</p>
+        <h1 class="text-4xl font-black mb-6 leading-tight">
+          AI 赋能<br>三级跳
+        </h1>
+        <p class="text-lg font-light text-gray-400 mb-8">从工具箱到智能大脑的进化之路</p>
+        <div class="mt-8">
+          <p class="text-xs text-gray-600">跨境金融技术团队</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 2. 痛点共鸣页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-purple" style="top:20%;right:-60px;"></div>
+      <div class="slide-content">
+        <span class="text-6xl text-gray-600 block mb-4">"</span>
+        <p class="text-2xl font-bold mb-6 leading-relaxed">
+          每天被 Excel<br>追着跑的日子<br>你受够了吗？
+        </p>
+        <span class="text-base font-light text-gray-500">— 一个外汇交易员的自白</span>
+      </div>
+    </div>
+
+    <!-- ==================== 3. 三级跳框架页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-blue" style="top:-80px;left:-60px;"></div>
+      <div class="light-spot light-spot-cyan" style="bottom:-60px;right:-60px;"></div>
+      <div class="slide-content">
+        <h2 class="text-2xl font-bold mb-10">升级路径</h2>
+        <div class="space-y-6">
+          <div class="flex items-center gap-4">
+            <span class="text-3xl font-black data-highlight">L1</span>
+            <div class="text-left">
+              <p class="text-lg font-bold text-blue-400">效率工具</p>
+              <p class="text-xs text-gray-500">替代手工，自动化重复劳动</p>
+            </div>
+          </div>
+          <div class="text-center"><span class="jump-arrow text-gray-600 text-2xl">↓</span></div>
+          <div class="flex items-center gap-4">
+            <span class="text-3xl font-black data-highlight">L2</span>
+            <div class="text-left">
+              <p class="text-lg font-bold text-purple-400">决策引擎</p>
+              <p class="text-xs text-gray-500">数据驱动，系统化辅助判断</p>
+            </div>
+          </div>
+          <div class="text-center"><span class="jump-arrow text-gray-600 text-2xl">↓</span></div>
+          <div class="flex items-center gap-4">
+            <span class="text-3xl font-black data-highlight">L3</span>
+            <div class="text-left">
+              <p class="text-lg font-bold text-cyan-400">AI Agent</p>
+              <p class="text-xs text-gray-500">智能大脑，让 AI 像专家一样思考</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 4. Level 1 标题冲击页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-blue" style="top:30%;left:-80px;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-1">LEVEL 1</span>
+        <h1 class="text-4xl font-black leading-tight">
+          让工具<br>替你加班
+        </h1>
+        <p class="text-base font-light text-gray-500 mt-6">效率工具层</p>
+      </div>
+    </div>
+
+    <!-- ==================== 5. Level 1 对比页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-blue" style="bottom:-60px;right:-40px;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-1">PnL Analysis</span>
+        <div class="space-y-8 mt-4">
+          <div>
+            <p class="compare-before text-xl mb-2">手动 Excel 分析</p>
+            <p class="text-xs text-gray-600">3 小时 / 次，容易出错</p>
+          </div>
+          <div class="text-3xl text-gray-600">→</div>
+          <div>
+            <p class="compare-after text-xl mb-2">CSV 上传一键出报表</p>
+            <p class="text-xs text-gray-600">9 维度自动分析，30 秒搞定</p>
+          </div>
+        </div>
+        <p class="text-5xl font-black data-highlight mt-8">360x</p>
+        <p class="text-sm text-gray-500">效率提升</p>
+      </div>
+    </div>
+
+    <!-- ==================== 6. Level 1 全家福 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-blue" style="top:-60px;right:-80px;opacity:0.2;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-1">效率工具全家福</span>
+        <div class="mt-4 space-y-2 w-full">
+          <div class="module-card">
+            <span class="emoji">📊</span>
+            <div><p class="name">PnL 损益分析</p><p class="desc">CSV → 9 维度自动报表</p></div>
+          </div>
+          <div class="module-card">
+            <span class="emoji">💰</span>
+            <div><p class="name">加价定价模拟器</p><p class="desc">6 种策略模拟收入影响</p></div>
+          </div>
+          <div class="module-card">
+            <span class="emoji">📝</span>
+            <div><p class="name">FX 研报制作平台</p><p class="desc">数据 → 投行级 PDF</p></div>
+          </div>
+          <div class="module-card">
+            <span class="emoji">🔧</span>
+            <div><p class="name">逆向工程脚本集</p><p class="desc">市场数据解析自动化</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 7. 升级契机页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-purple" style="top:40%;right:-60px;"></div>
+      <div class="slide-content">
+        <span class="text-6xl text-gray-600 block mb-4">"</span>
+        <p class="text-xl font-bold mb-6 leading-relaxed">
+          工具有了<br>数据各干各的<br>没人帮我做决策
+        </p>
+        <span class="text-base font-light text-gray-500">升级触发点 →</span>
+      </div>
+    </div>
+
+    <!-- ==================== 8. Level 2 标题冲击页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-purple" style="top:20%;left:-80px;"></div>
+      <div class="light-spot light-spot-cyan" style="bottom:20%;right:-60px;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-2">LEVEL 2</span>
+        <h1 class="text-4xl font-black leading-tight">
+          让数据<br>帮你决策
+        </h1>
+        <p class="text-base font-light text-gray-500 mt-6">决策引擎层</p>
+      </div>
+    </div>
+
+    <!-- ==================== 9. Level 2 金融日历亮点 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-purple" style="top:-40px;left:-60px;"></div>
+      <div class="light-spot light-spot-cyan" style="bottom:-80px;right:-40px;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-2">金融日历系统</span>
+        <h2 class="text-2xl font-bold mb-6 mt-2">🗓️ 非农之夜</h2>
+        <div class="space-y-4 text-left w-full">
+          <div class="module-card" style="border-color:rgba(139,92,246,0.3);">
+            <span class="emoji">📅</span>
+            <div><p class="name">日历驱动</p><p class="desc">自动识别重大经济事件</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(139,92,246,0.3);">
+            <span class="emoji">📈</span>
+            <div><p class="name">点差拉宽模拟</p><p class="desc">PAMAS 参数实时计算</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(139,92,246,0.3);">
+            <span class="emoji">🛡️</span>
+            <div><p class="name">敞口平仓信号</p><p class="desc">ROMS 风险自动预警</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(139,92,246,0.3);">
+            <span class="emoji">🎛️</span>
+            <div><p class="name">手动覆盖</p><p class="desc">人机协作，保留最终决策权</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 10. Level 2 全家福 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-purple" style="top:-80px;right:-60px;opacity:0.2;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-2">决策引擎全家福</span>
+        <div class="mt-4 space-y-2 w-full">
+          <div class="module-card">
+            <span class="emoji">📅</span>
+            <div><p class="name">金融日历系统</p><p class="desc">事件驱动风控模拟</p></div>
+          </div>
+          <div class="module-card">
+            <span class="emoji">🧪</span>
+            <div><p class="name">策略回测实验室</p><p class="desc">CSV → 选策略 → 回测</p></div>
+          </div>
+          <div class="module-card">
+            <span class="emoji">📈</span>
+            <div><p class="name">BMAD 量化系统</p><p class="desc">全功能量化平台</p></div>
+          </div>
+          <div class="module-card">
+            <span class="emoji">🔬</span>
+            <div><p class="name">WeData 大数据分析</p><p class="desc">Hive 数据湖 Notebook</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 11. 升级契机页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-cyan" style="top:30%;left:-40px;"></div>
+      <div class="slide-content">
+        <span class="text-6xl text-gray-600 block mb-4">"</span>
+        <p class="text-xl font-bold mb-6 leading-relaxed">
+          数据有了<br>判断还是靠人<br>能不能让 AI 来？
+        </p>
+        <span class="text-base font-light text-gray-500">升级触发点 →</span>
+      </div>
+    </div>
+
+    <!-- ==================== 12. Level 3 标题冲击页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-cyan" style="top:15%;left:-60px;"></div>
+      <div class="light-spot light-spot-green" style="bottom:15%;right:-60px;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-3">LEVEL 3</span>
+        <h1 class="text-4xl font-black leading-tight">
+          让 AI<br>帮你思考
+        </h1>
+        <p class="text-base font-light text-gray-500 mt-6">AI Agent 层</p>
+      </div>
+    </div>
+
+    <!-- ==================== 13. Soros Agent ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-cyan" style="top:-60px;left:-60px;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-3">索罗斯 FX Agent</span>
+        <p class="text-5xl mb-6">🦅</p>
+        <h2 class="text-xl font-bold mb-6">一个 Agent = 一位专家</h2>
+        <div class="space-y-3 text-left w-full">
+          <div class="module-card" style="border-color:rgba(6,182,212,0.3);">
+            <span class="emoji">🧠</span>
+            <div><p class="name">反射性理论</p><p class="desc">市场情绪 ↔ 基本面双向循环</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(6,182,212,0.3);">
+            <span class="emoji">💾</span>
+            <div><p class="name">记忆系统</p><p class="desc">40+ 记忆文件，越用越聪明</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(6,182,212,0.3);">
+            <span class="emoji">🔄</span>
+            <div><p class="name">反思引擎</p><p class="desc">交易复盘，自我进化</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(6,182,212,0.3);">
+            <span class="emoji">🛠️</span>
+            <div><p class="name">24 种技能</p><p class="desc">工具调用 + WeData 大数据</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 14. 老查理 Multi-Agent ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-green" style="top:-40px;right:-60px;"></div>
+      <div class="light-spot light-spot-cyan" style="bottom:-60px;left:-40px;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-3">老查理投委会</span>
+        <h2 class="text-xl font-bold mb-4">5+1 Agent 辩论模式</h2>
+        <p class="text-xs text-gray-500 mb-6">一个人的判断 → 五位专家辩论</p>
+        <div class="space-y-2 w-full text-left">
+          <div class="module-card" style="border-color:rgba(16,185,129,0.3);">
+            <span class="emoji">📖</span>
+            <div><p class="name">Value Agent</p><p class="desc">价值投资流派</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(16,185,129,0.3);">
+            <span class="emoji">🚀</span>
+            <div><p class="name">Growth Agent</p><p class="desc">成长投资流派</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(16,185,129,0.3);">
+            <span class="emoji">📐</span>
+            <div><p class="name">Quant Agent</p><p class="desc">量化数据分析</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(16,185,129,0.3);">
+            <span class="emoji">🔮</span>
+            <div><p class="name">Contrarian Agent</p><p class="desc">逆向思维检验</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(16,185,129,0.3);">
+            <span class="emoji">🛡️</span>
+            <div><p class="name">Risk + PM</p><p class="desc">风控否决 + 最终裁决</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 15. OpenClaw 预告 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-amber" style="top:20%;left:-60px;"></div>
+      <div class="light-spot light-spot-cyan" style="bottom:20%;right:-60px;"></div>
+      <div class="slide-content">
+        <span class="level-badge level-next">NEXT</span>
+        <h1 class="text-3xl font-black mb-4 leading-tight">
+          OpenClaw
+        </h1>
+        <p class="text-base font-light text-gray-400 mb-8">通用 Agent 开发框架</p>
+        <div class="space-y-4 text-left w-full">
+          <div class="module-card" style="border-color:rgba(245,158,11,0.3);">
+            <span class="emoji">🧩</span>
+            <div><p class="name">标准化</p><p class="desc">统一 Agent 开发范式</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(245,158,11,0.3);">
+            <span class="emoji">🔌</span>
+            <div><p class="name">可插拔</p><p class="desc">工具/记忆/策略灵活组合</p></div>
+          </div>
+          <div class="module-card" style="border-color:rgba(245,158,11,0.3);">
+            <span class="emoji">🌐</span>
+            <div><p class="name">开源共建</p><p class="desc">从 FX 走向更多场景</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 16. 数据总结页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-blue" style="top:-80px;left:-40px;"></div>
+      <div class="light-spot light-spot-purple" style="bottom:-60px;right:-40px;"></div>
+      <div class="slide-content">
+        <h2 class="text-xl font-bold text-gray-400 mb-8">成果速览</h2>
+        <div class="space-y-8">
+          <div>
+            <p class="text-5xl font-black data-highlight">11+</p>
+            <p class="text-sm text-gray-500 mt-1">AI 赋能工具</p>
+          </div>
+          <div>
+            <p class="text-5xl font-black data-highlight">3</p>
+            <p class="text-sm text-gray-500 mt-1">能力跃迁层级</p>
+          </div>
+          <div>
+            <p class="text-5xl font-black data-highlight">1</p>
+            <p class="text-sm text-gray-500 mt-1">人完成的全部</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 17. 方法论提炼页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-purple" style="top:30%;left:-80px;"></div>
+      <div class="slide-content">
+        <h2 class="text-2xl font-bold mb-10">核心方法论</h2>
+        <ul class="space-y-6 text-left w-full">
+          <li class="text-lg text-gray-300 flex items-start gap-3">
+            <span class="text-blue-400 font-black text-xl flex-shrink-0">01</span>
+            <span>从痛点出发，不造轮子</span>
+          </li>
+          <li class="text-lg text-gray-300 flex items-start gap-3">
+            <span class="text-purple-400 font-black text-xl flex-shrink-0">02</span>
+            <span>AI 是副驾驶，不是替代</span>
+          </li>
+          <li class="text-lg text-gray-300 flex items-start gap-3">
+            <span class="text-cyan-400 font-black text-xl flex-shrink-0">03</span>
+            <span>小步迭代，层层升级</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== 18. 结尾页 ==================== -->
+    <div class="slide">
+      <div class="light-spot light-spot-blue" style="top:-80px;right:-60px;"></div>
+      <div class="light-spot light-spot-purple" style="bottom:-60px;left:-60px;"></div>
+      <div class="light-spot light-spot-cyan" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+      <div class="slide-content">
+        <h1 class="text-3xl font-black mb-6 leading-tight">
+          不是更努力<br>而是更聪明
+        </h1>
+        <p class="text-lg font-light text-gray-400 mb-8">AI 不会取代你，但会用 AI 的人会</p>
+        <div class="mt-8">
+          <p class="text-sm text-gray-600">Q & A</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <!-- 进度条 -->
+  <div class="progress-bar" id="progressBar"></div>
+  
+  <!-- 页码 -->
+  <div class="page-number" id="pageNumber">1 / 18</div>
+
+  <!-- 键盘提示 -->
+  <div class="key-hint">← → 翻页 | 触摸滑动</div>
+  
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    const pageNumber = document.getElementById('pageNumber');
+    let currentSlide = 0;
+    
+    // 初始化进度条
+    slides.forEach((_, index) => {
+      const dot = document.createElement('div');
+      dot.className = `progress-dot ${index === 0 ? 'active' : ''}`;
+      dot.addEventListener('click', () => goToSlide(index));
+      progressBar.appendChild(dot);
+    });
+    
+    function updateSlides() {
+      slides.forEach((slide, index) => {
+        slide.classList.remove('active', 'prev');
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else if (index < currentSlide) {
+          slide.classList.add('prev');
+        }
+      });
+      
+      document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
+      
+      pageNumber.textContent = `${currentSlide + 1} / ${slides.length}`;
+    }
+    
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    }
+    
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    }
+    
+    function goToSlide(index) {
+      currentSlide = index;
+      updateSlides();
+    }
+    
+    // 键盘控制
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+    
+    // 触摸滑动
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+    });
+    
+    document.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    });
+
+    // 3秒后隐藏键盘提示
+    setTimeout(() => {
+      document.querySelector('.key-hint').style.opacity = '0';
+      document.querySelector('.key-hint').style.transition = 'opacity 1s';
+    }, 3000);
+  </script>
+</body>
+</html>

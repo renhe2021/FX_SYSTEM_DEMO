@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Style C: Swiss Modern</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800;900&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* === RESET & BASE === */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; font-family: 'Nunito', sans-serif; }
+
+  /* === COLORS === */
+  :root {
+    --bg-white: #ffffff;
+    --text-black: #0a0a0a;
+    --text-gray: #666;
+    --accent-red: #ff3300;
+    --grid-color: rgba(0,0,0,0.06);
+    --title-size: clamp(2rem, 5.5vw, 4.5rem);
+    --body-size: clamp(0.8rem, 1.4vw, 1.1rem);
+    --small-size: clamp(0.6rem, 1vw, 0.8rem);
+  }
+
+  /* === SLIDE === */
+  .slide {
+    width: 100vw; height: 100vh; height: 100dvh;
+    overflow: hidden;
+    background: var(--bg-white);
+    position: relative;
+    display: flex;
+  }
+
+  /* === GRID BACKGROUND === */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: clamp(30px, 5vw, 60px) clamp(30px, 5vw, 60px);
+    opacity: 0;
+    animation: gridIn 1.2s ease forwards 0.1s;
+  }
+
+  @keyframes gridIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* === LEFT COLUMN (Red accent) === */
+  .left-accent {
+    width: clamp(60px, 8vw, 120px);
+    height: 100%;
+    background: var(--accent-red);
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(1.5rem, 3vh, 3rem) 0;
+    animation: slideRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform: translateX(-100%);
+  }
+
+  @keyframes slideRight {
+    to { transform: translateX(0); }
+  }
+
+  .left-accent .year {
+    writing-mode: vertical-rl;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-size: clamp(0.7rem, 1.2vw, 1rem);
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.2em;
+  }
+
+  .left-accent .dot {
+    width: clamp(8px, 1vw, 12px);
+    height: clamp(8px, 1vw, 12px);
+    border-radius: 50%;
+    background: white;
+  }
+
+  /* === MAIN CONTENT === */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 6rem);
+    padding-left: clamp(2rem, 4vw, 5rem);
+    position: relative;
+    z-index: 2;
+  }
+
+  .section-num {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-size: clamp(5rem, 12vw, 10rem);
+    color: rgba(0,0,0,0.04);
+    position: absolute;
+    right: clamp(1rem, 4vw, 4rem);
+    top: clamp(0.5rem, 2vh, 2rem);
+    line-height: 1;
+    opacity: 0;
+    animation: numIn 0.8s ease forwards 0.3s;
+  }
+
+  @keyframes numIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .tag {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: var(--small-size);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-red);
+    margin-bottom: clamp(0.8rem, 2vh, 1.5rem);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+
+  h1 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-size: var(--title-size);
+    color: var(--text-black);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: clamp(0.8rem, 2vh, 1.5rem);
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.5s;
+  }
+
+  .red-bar {
+    width: clamp(40px, 5vw, 70px);
+    height: clamp(4px, 0.5vh, 6px);
+    background: var(--accent-red);
+    margin-bottom: clamp(0.8rem, 2vh, 1.5rem);
+    opacity: 0;
+    animation: barGrow 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.65s;
+  }
+
+  @keyframes barGrow {
+    from { opacity: 0; width: 0; }
+    to { opacity: 1; width: clamp(40px, 5vw, 70px); }
+  }
+
+  .subtitle {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(0.85rem, 1.5vw, 1.15rem);
+    font-weight: 500;
+    color: var(--text-gray);
+    line-height: 1.6;
+    max-width: 55ch;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.75s;
+  }
+
+  /* === BOTTOM BAR === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: clamp(40px, 6vh, 60px);
+    background: var(--text-black);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(1.5rem, 4vw, 4rem);
+    z-index: 3;
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
+    transform: translateY(100%);
+  }
+
+  @keyframes slideUp {
+    to { transform: translateY(0); }
+  }
+
+  .bottom-bar span {
+    font-family: 'Archivo', sans-serif;
+    font-size: var(--small-size);
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .bottom-bar .page {
+    color: var(--accent-red);
+  }
+
+  /* === GEOMETRIC SHAPE === */
+  .geo-circle {
+    position: absolute;
+    right: clamp(3rem, 8vw, 8rem);
+    bottom: clamp(5rem, 12vh, 10rem);
+    width: clamp(60px, 10vw, 140px);
+    height: clamp(60px, 10vw, 140px);
+    border: clamp(3px, 0.4vw, 5px) solid var(--accent-red);
+    border-radius: 50%;
+    opacity: 0;
+    animation: circleIn 0.8s ease forwards 0.9s;
+  }
+
+  @keyframes circleIn {
+    from { opacity: 0; transform: scale(0.5) rotate(-90deg); }
+    to { opacity: 0.15; transform: scale(1) rotate(0deg); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === STYLE LABEL === */
+  .style-label {
+    position: fixed;
+    top: clamp(8px, 1.5vh, 16px);
+    right: clamp(8px, 1.5vw, 16px);
+    background: rgba(0,0,0,0.06);
+    color: var(--text-gray);
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: clamp(0.55rem, 0.9vw, 0.75rem);
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    z-index: 10;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.2s !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="style-label">STYLE C — SWISS MODERN</div>
+  <div class="slide">
+    <!-- Left Red Accent Bar -->
+    <div class="left-accent">
+      <div class="year">2026</div>
+      <div class="dot"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+      <div class="section-num">01</div>
+      <div class="tag">Internal Presentation</div>
+      <h1>AI 赋能<br/>FX 工作方式<br/>三级跳</h1>
+      <div class="red-bar"></div>
+      <p class="subtitle">效率工具 → 决策引擎 → AI Agent<br/>一个外汇交易员的三次工作方式升级</p>
+      <div class="geo-circle"></div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="bottom-bar">
+      <span>FX System Demo</span>
+      <span class="page">01 / 15</span>
+    </div>
+  </div>
+</body>
+</html>

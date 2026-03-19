@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Style A: Notebook Tabs</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* === RESET & BASE === */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; font-family: 'DM Sans', sans-serif; }
+
+  /* === COLORS === */
+  :root {
+    --bg-outer: #2d2d2d;
+    --bg-page: #f8f6f1;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666;
+    --tab-1: #98d4bb;
+    --tab-2: #c7b8ea;
+    --tab-3: #f4b8c5;
+    --tab-4: #a8d8ea;
+    --tab-5: #ffe6a7;
+    --title-size: clamp(1.8rem, 4.5vw, 3.5rem);
+    --body-size: clamp(0.8rem, 1.4vw, 1.1rem);
+    --small-size: clamp(0.6rem, 1vw, 0.8rem);
+  }
+
+  /* === SLIDE === */
+  .slide {
+    width: 100vw; height: 100vh; height: 100dvh;
+    overflow: hidden;
+    background: var(--bg-outer);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  /* === PAPER CARD === */
+  .paper {
+    width: min(88vw, 1100px);
+    height: min(82vh, 680px);
+    background: var(--bg-page);
+    border-radius: clamp(8px, 1.2vw, 16px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.15);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 5rem);
+    padding-left: clamp(3.5rem, 7vw, 7rem);
+    animation: paperIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes paperIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* === BINDER HOLES === */
+  .binder-holes {
+    position: absolute;
+    left: clamp(12px, 2vw, 28px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 4vh, 45px);
+  }
+  .binder-hole {
+    width: clamp(10px, 1.2vw, 16px);
+    height: clamp(10px, 1.2vw, 16px);
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    background: var(--bg-outer);
+    animation: holeIn 0.4s ease forwards;
+    opacity: 0;
+  }
+  .binder-hole:nth-child(1) { animation-delay: 0.6s; }
+  .binder-hole:nth-child(2) { animation-delay: 0.7s; }
+  .binder-hole:nth-child(3) { animation-delay: 0.8s; }
+
+  @keyframes holeIn {
+    from { opacity: 0; transform: scale(0); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* === TABS === */
+  .tabs {
+    position: absolute;
+    right: calc(-1 * clamp(18px, 2.5vw, 36px));
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(4px, 0.6vh, 8px);
+  }
+  .tab {
+    width: clamp(18px, 2.5vw, 36px);
+    border-radius: 0 clamp(4px, 0.6vw, 8px) clamp(4px, 0.6vw, 8px) 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    font-size: clamp(0.45rem, 0.8vh, 0.65rem);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    opacity: 0;
+    animation: tabSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .tab:nth-child(1) { background: var(--tab-1); height: clamp(50px, 8vh, 80px); animation-delay: 0.9s; }
+  .tab:nth-child(2) { background: var(--tab-2); height: clamp(60px, 10vh, 100px); animation-delay: 1.0s; }
+  .tab:nth-child(3) { background: var(--tab-3); height: clamp(75px, 12vh, 120px); animation-delay: 1.1s; }
+  .tab:nth-child(4) { background: var(--tab-4); height: clamp(60px, 10vh, 100px); animation-delay: 1.2s; }
+  .tab:nth-child(5) { background: var(--tab-5); height: clamp(50px, 8vh, 80px); animation-delay: 1.3s; }
+
+  @keyframes tabSlide {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* === CONTENT === */
+  .tag {
+    font-size: var(--small-size);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    margin-bottom: clamp(0.5rem, 1.5vh, 1.2rem);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+
+  h1 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: var(--title-size);
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.15;
+    margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.5s;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: #7c6aad;
+  }
+
+  .subtitle {
+    font-size: clamp(0.85rem, 1.6vw, 1.2rem);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 65ch;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.7s;
+  }
+
+  .divider {
+    width: clamp(40px, 6vw, 80px);
+    height: 3px;
+    background: var(--tab-2);
+    margin: clamp(0.8rem, 2vh, 1.5rem) 0;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.65s;
+  }
+
+  .footer-info {
+    position: absolute;
+    bottom: clamp(1rem, 3vh, 2.5rem);
+    left: clamp(3.5rem, 7vw, 7rem);
+    font-size: var(--small-size);
+    color: var(--text-secondary);
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.9s;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === STYLE LABEL === */
+  .style-label {
+    position: fixed;
+    top: clamp(8px, 1.5vh, 16px);
+    left: clamp(8px, 1.5vw, 16px);
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: clamp(0.55rem, 0.9vw, 0.75rem);
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.08em;
+    backdrop-filter: blur(8px);
+    z-index: 10;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.2s !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="style-label">STYLE A — NOTEBOOK TABS</div>
+  <div class="slide">
+    <div class="paper">
+      <!-- Binder holes -->
+      <div class="binder-holes">
+        <div class="binder-hole"></div>
+        <div class="binder-hole"></div>
+        <div class="binder-hole"></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab">开场</div>
+        <div class="tab">效率工具</div>
+        <div class="tab">决策引擎</div>
+        <div class="tab">AI Agent</div>
+        <div class="tab">展望</div>
+      </div>
+
+      <!-- Content -->
+      <div class="tag">Internal Presentation · 2026</div>
+      <h1>AI 赋能 FX 工作方式<br/><em>三级跳</em></h1>
+      <div class="divider"></div>
+      <p class="subtitle">从效率工具到决策引擎，再到 AI Agent —— 一个外汇交易员的 AI 升级之路</p>
+      <div class="footer-info">FX SYSTEM DEMO · 15 Slides · 45 min</div>
+    </div>
+  </div>
+</body>
+</html>
