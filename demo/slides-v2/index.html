@@ -18,13 +18,13 @@
       </div>
       <div class="cover-content">
         <img src="assets/media/tencent-logo-white.png" alt="Tencent" class="cover-logo">
-        <h1 class="cover-title">AI 怎么改变我的工作方式</h1>
-        <p class="cover-subtitle">一个外汇民工的 AI 实战经验分享</p>
+        <h1 class="cover-title">CodeBuddy 怎么改变我的工作方式</h1>
+        <p class="cover-subtitle">一个外汇民工的经验分享</p>
       </div>
     </div>
 
     <!-- ============================================================
-         P2: 先说说我的工作 + 三幕预告
+         P2: 先说说我的工作 + 新三幕预告
          ============================================================ -->
     <div class="slide" data-slide="2">
       <div class="slide-header">
@@ -33,22 +33,19 @@
       </div>
       <h2 class="content-heading">先说说我的工作</h2>
       <div class="s2-body">
-        <p class="s2-intro">外汇交易台，日常就是跟报表、定价、策略、市场情报打交道。<br>过去一年用 AI 折腾了不少东西，今天分三个层次聊：</p>
+        <p class="s2-intro">外汇交易台，日常就是跟报表、定价、策略、市场情报打交道，<br>还要跟产研同学提需求、推功能上线。过去一年用 AI 折腾了不少，今天分三个维度聊：</p>
         <div class="s2-toc-grid">
           <div class="s2-toc-card s2-toc-blue">
             <span class="s2-toc-num">01</span>
-            <h3>从提需求到自己造</h3>
-            <p>思维转变 + 工具箱建设</p>
+            <h3>分析与交易</h3>
           </div>
           <div class="s2-toc-card s2-toc-green">
             <span class="s2-toc-num">02</span>
-            <h3>深度实战：策略回测引擎</h3>
-            <p>从想法到可视化的完整案例</p>
+            <h3>文字与表达</h3>
           </div>
           <div class="s2-toc-card s2-toc-purple">
             <span class="s2-toc-num">03</span>
-            <h3>从工具到 AI 助手</h3>
-            <p>知识体系 + Agent 探索 + 踩坑</p>
+            <h3>知识沉淀</h3>
           </div>
         </div>
       </div>
@@ -59,7 +56,7 @@
     </div>
 
     <!-- ============================================================
-         P3: 第一幕 Section Divider — 从提需求到自己造
+         P3: 第一幕 Section Divider — 算得清
          ============================================================ -->
     <div class="slide section-divider" data-slide="3">
       <div class="section-pattern">
@@ -70,20 +67,19 @@
           <span class="section-num">01</span>
         </div>
         <div class="section-text">
-          <h2 class="section-title">从提需求到自己造</h2>
-          <p class="section-desc">做工具的成本变了，思维方式也该变了</p>
+          <h2 class="section-title">分析与交易</h2>
         </div>
       </div>
       <span class="page-number">03</span>
     </div>
 
     <!-- ============================================================
-         P4: 思维方式转变（从PPT原版搬回）
+         P4: 思维方式转变（复用原 P4）
          ============================================================ -->
     <div class="slide" data-slide="4">
       <div class="slide-header">
         <div class="badge"><span>01</span></div>
-        <span class="section-label">从提需求到自己造</span>
+        <span class="section-label">分析与交易</span>
       </div>
       <h2 class="content-heading">核心变化：做工具的成本崩塌了</h2>
       <div class="s4-body">
@@ -91,26 +87,31 @@
           <div class="s4-col s4-col-old">
             <div class="s4-col-label">以前</div>
             <ul>
-              <li>有想法 → 提需求 → 排期 → 开发 → 上线</li>
-              <li>周期：几周到几个月</li>
-              <li>成本高：开发资源稀缺</li>
-              <li>改不动：改一版又是一轮</li>
+              <li><strong>想找人做：</strong>提需求 → 找产品 → 找研发 → 排期</li>
+              <li>交易台需求太小众、不通用 → 经常被砍</li>
+              <li><strong>想自己做：</strong>先用 Notebook 手搓，能跑但很糙</li>
+              <li>想升级成像样的工具，精力不够、重构成本太高</li>
             </ul>
+            <div class="s4-notebook">
+              <img src="assets/media/p4-notebook-screenshot.png" alt="WeData Notebook 手搓代码" class="s4-notebook-img">
+              <span class="s4-notebook-caption">当时在 WeData 上手搓的回测代码</span>
+            </div>
           </div>
           <div class="s4-divider"></div>
           <div class="s4-col s4-col-new">
             <div class="s4-col-label">现在</div>
             <ul>
-              <li>有想法 → 描述问题 → AI 写 → 迭代 → 上手用</li>
-              <li>周期：几十分钟到几小时</li>
-              <li>成本低：你自己就是开发</li>
-              <li>随时改：改 prompt，重跑</li>
+              <li>描述问题 → AI 写 → 迭代几轮 → 直接用</li>
+              <li>想改就改，几十分钟到几小时</li>
             </ul>
+            <div class="s4-notebook">
+              <img src="assets/media/p4-codebuddy-screenshot.png" alt="CodeBuddy 对话" class="s4-notebook-img">
+              <span class="s4-notebook-caption">在 CodeBuddy 里几句话描述，同一个回测工具</span>
+            </div>
           </div>
         </div>
         <div class="s4-shift">
           <p>从 <strong>「我需要什么功能」</strong> → <strong>「我要解决什么问题」</strong></p>
-          <p class="s4-shift-sub">方法论：先聊 Plan → 几轮讨论细化需求 → 敲定方案 → AI 实施 → 你来验收</p>
         </div>
       </div>
       <div class="slide-footer">
@@ -120,34 +121,22 @@
     </div>
 
     <!-- ============================================================
-         P5: 方法论 — 工具箱思维
+         P5: 策略回测引擎 — 从一个策略开始
          ============================================================ -->
     <div class="slide" data-slide="5">
       <div class="slide-header">
         <div class="badge"><span>01</span></div>
-        <span class="section-label">从提需求到自己造</span>
+        <span class="section-label">分析与交易</span>
       </div>
-      <h2 class="content-heading">方法论：先解决问题，再沉淀工具</h2>
-      <div class="s5-method">
-        <div class="s5-wrong">
-          <span class="s5-icon">❌</span>
-          <p>不要一上来就想做一个「平台」</p>
-        </div>
-        <div class="s5-right">
-          <span class="s5-icon">✅</span>
-          <p>遇到重复性的活 → 先写最快的解法 → 跑通了沉淀成工具 → 下次直接复用</p>
-        </div>
-        <div class="s5-flow">
-          <div class="s5-step">遇到<br>问题</div>
-          <svg class="s5-arrow" viewBox="0 0 40 20"><path d="M0 10 L30 10 L25 4 M30 10 L25 16" stroke="#0052D9" stroke-width="2" fill="none"/></svg>
-          <div class="s5-step">快速<br>解法</div>
-          <svg class="s5-arrow" viewBox="0 0 40 20"><path d="M0 10 L30 10 L25 4 M30 10 L25 16" stroke="#0052D9" stroke-width="2" fill="none"/></svg>
-          <div class="s5-step">验证<br>可行</div>
-          <svg class="s5-arrow" viewBox="0 0 40 20"><path d="M0 10 L30 10 L25 4 M30 10 L25 16" stroke="#0052D9" stroke-width="2" fill="none"/></svg>
-          <div class="s5-step">沉淀<br>工具</div>
-          <svg class="s5-arrow" viewBox="0 0 40 20"><path d="M0 10 L30 10 L25 4 M30 10 L25 16" stroke="#0052D9" stroke-width="2" fill="none"/></svg>
-          <div class="s5-step s5-step-hi">复用</div>
-        </div>
+      <h2 class="content-heading">例子：周末预锁价策略</h2>
+      <div class="s5-intro">
+        <p>周五晚间锁汇需求集中，点差拉大 —— 能不能提前锁价赚价差？</p>
+      </div>
+      <div class="s9-diagram">
+        <img src="assets/media/p9-strategy-example-ai.png" alt="策略示例：周末预锁价" class="s9-diagram-img">
+      </div>
+      <div class="s5-expand-note">
+        <p>跑通了 → 参数怎么选？</p>
       </div>
       <div class="slide-footer">
         <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
@@ -156,168 +145,16 @@
     </div>
 
     <!-- ============================================================
-         P6: 讲透一个例子 — FIXING 价差分析
+         P6: 参数扫描热力图
          ============================================================ -->
     <div class="slide" data-slide="6">
       <div class="slide-header">
         <div class="badge"><span>01</span></div>
-        <span class="section-label">从提需求到自己造</span>
+        <span class="section-label">分析与交易</span>
       </div>
-      <h2 class="content-heading">例子：FIXING 价差分析</h2>
-      <div class="s6-case">
-        <div class="s6-before-after">
-          <div class="s6-ba-col s6-ba-before">
-            <div class="s6-ba-label">痛点</div>
-            <ul>
-              <li>境内外 FIXING 定盘价经常有价差</li>
-              <li>想知道价差有没有规律、能不能系统性利用</li>
-              <li>以前要自己写 Python 拉数据、做统计</li>
-              <li>回测逻辑复杂，写代码 + 调试周期长</li>
-            </ul>
-          </div>
-          <div class="s6-ba-arrow">
-            <svg viewBox="0 0 60 30" width="60" height="30"><path d="M5 15 L45 15 L40 8 M45 15 L40 22" stroke="#0052D9" stroke-width="3" fill="none"/></svg>
-          </div>
-          <div class="s6-ba-col s6-ba-after">
-            <div class="s6-ba-label">现在</div>
-            <ul>
-              <li>描述想分析的价差逻辑</li>
-              <li>AI 写数据清洗 + 统计分析代码</li>
-              <li>几轮讨论优化回测策略</li>
-              <li>输出 <strong>完整回测报告 + 可视化</strong></li>
-            </ul>
-          </div>
-        </div>
-        <div class="s6-detail-label">怎么做的？</div>
-        <div class="s6-detail-tags">
-          <span class="s6-dtag">描述分析思路</span>
-          <span class="s6-dtag">讨论回测逻辑</span>
-          <span class="s6-dtag">AI 写分析代码</span>
-          <span class="s6-dtag">迭代优化策略</span>
-          <span class="s6-dtag">1 天搞定</span>
-        </div>
-      </div>
-      <div class="slide-footer">
-        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
-        <span class="page-number">06</span>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         P7: 工具箱全景 — 7个工具分3类
-         ============================================================ -->
-    <div class="slide" data-slide="7">
-      <div class="slide-header">
-        <div class="badge"><span>01</span></div>
-        <span class="section-label">从提需求到自己造</span>
-      </div>
-      <h2 class="content-heading">同一个思路，一年做了这些</h2>
-      <div class="s7-panorama">
-        <div class="s7-category">
-          <div class="s7-cat-label s7-cat-blue">分析 & 可视化</div>
-          <div class="s7-cat-items">
-            <span class="s7-tag">损益分析</span>
-            <span class="s7-tag">反推定价参数</span>
-            <span class="s7-tag">持仓敞口监控</span>
-            <span class="s7-tag">月度经营报表</span>
-            <span class="s7-tag">客户成交回顾</span>
-            <span class="s7-tag">数据清洗工具集</span>
-          </div>
-        </div>
-        <div class="s7-category">
-          <div class="s7-cat-label s7-cat-green">策略 & 定价</div>
-          <div class="s7-cat-items">
-            <span class="s7-tag">Strategy Lab 回测平台</span>
-            <span class="s7-tag">加点定价引擎</span>
-            <span class="s7-tag">FIXING 价差回测</span>
-            <span class="s7-tag">港币套利分析</span>
-          </div>
-        </div>
-        <div class="s7-category">
-          <div class="s7-cat-label s7-cat-purple">展示 & 沟通</div>
-          <div class="s7-cat-items">
-            <span class="s7-tag">金融日历需求</span>
-            <span class="s7-tag">外汇研报生成</span>
-            <span class="s7-tag">汇率播报小程序</span>
-            <span class="s7-tag">演示文稿生成</span>
-          </div>
-        </div>
-      </div>
-      <div class="s7-bottom-note">
-        <p>大脑（Token）公司已经给了，<strong>真正的难点是数据</strong> —— 清理好数据，工具才跑得起来</p>
-      </div>
-      <div class="slide-footer">
-        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
-        <span class="page-number">07</span>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         P8: 第二幕 Section Divider — 策略回测引擎
-         ============================================================ -->
-    <div class="slide section-divider" data-slide="8">
-      <div class="section-pattern">
-        <img src="assets/media/pattern-stripes.png" alt="" class="section-pattern-img">
-      </div>
-      <div class="section-content">
-        <div class="section-number-circle" style="background:#2BA471;">
-          <span class="section-num">02</span>
-        </div>
-        <div class="section-text">
-          <h2 class="section-title" style="color:#2BA471;">深度实战：策略回测引擎</h2>
-          <p class="section-desc">一个完整案例，从策略想法到回测验证到可视化</p>
-        </div>
-      </div>
-      <span class="page-number">08</span>
-    </div>
-
-    <!-- ============================================================
-         P9: 策略示例 — 周末预锁价（先讲策略是什么）
-         ============================================================ -->
-    <div class="slide" data-slide="9">
-      <div class="slide-header">
-        <div class="badge badge-green"><span>02</span></div>
-        <span class="section-label" style="color:#2BA471;">策略回测引擎</span>
-      </div>
-      <h2 class="content-heading" style="color:#2BA471;">策略示例：周末预锁价</h2>
-      <div class="s9-diagram">
-        <img src="assets/media/p9-strategy-example-ai.png" alt="策略示例：周末预锁价" class="s9-diagram-img">
-      </div>
-      <div class="slide-footer">
-        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
-        <span class="page-number">09</span>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         P10: Strategy Lab — 架构设计（再讲怎么做）
-         ============================================================ -->
-    <div class="slide" data-slide="10">
-      <div class="slide-header">
-        <div class="badge badge-green"><span>02</span></div>
-        <span class="section-label" style="color:#2BA471;">策略回测引擎</span>
-      </div>
-      <h2 class="content-heading" style="color:#2BA471;">Strategy Lab — 架构设计</h2>
-      <div class="s10-diagram">
-        <img src="assets/media/p10-architecture.png" alt="Strategy Lab 架构设计" class="s10-diagram-img">
-      </div>
-      <div class="slide-footer">
-        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
-        <span class="page-number">10</span>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         P11: 参数扫描热力图
-         ============================================================ -->
-    <div class="slide" data-slide="11">
-      <div class="slide-header">
-        <div class="badge badge-green"><span>02</span></div>
-        <span class="section-label" style="color:#2BA471;">策略回测引擎</span>
-      </div>
-      <h2 class="content-heading" style="color:#2BA471;">回测引擎 — 参数扫描</h2>
+      <h2 class="content-heading">同一个策略 — 参数扫描找最优</h2>
       <div class="s11-body">
-        <div class="s11-context">把第9页的参数喂进第10页的引擎，全量扫一遍 →</div>
+        <div class="s11-context">两个核心参数，全量扫一遍 →</div>
         <div class="s11-params">
           <div class="s11-param">
             <span class="s11-pname">信号强弱（置信度）</span>
@@ -330,42 +167,36 @@
         </div>
         <div class="s11-heatmap">
           <div class="s11-grid">
-            <!-- Row 1 -->
             <div class="s11-cell" style="background:rgba(43,164,113,0.08)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.12)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.20)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.15)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.10)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.06)"></div>
-            <!-- Row 2 -->
             <div class="s11-cell" style="background:rgba(43,164,113,0.15)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.25)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.40)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.35)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.20)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.12)"></div>
-            <!-- Row 3 -->
             <div class="s11-cell" style="background:rgba(43,164,113,0.22)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.45)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.70)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.60)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.35)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.18)"></div>
-            <!-- Row 4 -->
             <div class="s11-cell" style="background:rgba(43,164,113,0.18)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.50)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.80)"></div>
             <div class="s11-cell s11-best" style="background:rgba(43,164,113,0.95)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.55)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.25)"></div>
-            <!-- Row 5 -->
             <div class="s11-cell" style="background:rgba(43,164,113,0.12)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.30)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.55)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.50)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.30)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.15)"></div>
-            <!-- Row 6 -->
             <div class="s11-cell" style="background:rgba(43,164,113,0.06)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.15)"></div>
             <div class="s11-cell" style="background:rgba(43,164,113,0.30)"></div>
@@ -377,10 +208,183 @@
             <span class="s11-axis-x">信号强弱（置信度）→</span>
             <span class="s11-axis-y">二次确认（灵敏度）↑</span>
           </div>
-          <p class="s11-caption">↑ 热力图示意：颜色最深 = 最优参数组合（★）</p>
+          <p class="s11-caption">颜色越深 = 收益越好</p>
         </div>
         <div class="s11-insight">
-          <p>网格搜索 = 全量参数组合一起跑，<strong>最优区域一目了然</strong></p>
+          <p>跑通一个 → <strong>抽象成引擎 → 换策略换参数就能跑</strong></p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
+        <span class="page-number">06</span>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         P7: LIVE DEMO
+         ============================================================ -->
+    <div class="slide s13-demo" data-slide="7">
+      <div class="s13-content">
+        <div class="s13-badge">LIVE</div>
+        <h1 class="s13-title">周末预锁价回测系统</h1>
+        <a class="s13-link" href="http://localhost:8899" target="_blank">点击进入 Portal</a>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         P8: 工具箱全景 + Portal 截图
+         ============================================================ -->
+    <div class="slide" data-slide="8">
+      <div class="slide-header">
+        <div class="badge"><span>01</span></div>
+        <span class="section-label">分析与交易</span>
+      </div>
+      <h2 class="content-heading">同一个思路，一年做了这些</h2>
+      <div class="s8-split">
+        <div class="s8-left">
+          <div class="s7-category">
+            <div class="s7-cat-label s7-cat-blue">分析 & 可视化</div>
+            <div class="s7-cat-items">
+              <span class="s7-tag">损益分析</span>
+              <span class="s7-tag">反推定价参数</span>
+              <span class="s7-tag">持仓敞口监控</span>
+              <span class="s7-tag">月度经营报表</span>
+              <span class="s7-tag">客户成交回顾</span>
+              <span class="s7-tag">数据清洗工具集</span>
+            </div>
+          </div>
+          <div class="s7-category">
+            <div class="s7-cat-label s7-cat-green">策略 & 定价</div>
+            <div class="s7-cat-items">
+              <span class="s7-tag">Strategy Lab 回测平台</span>
+              <span class="s7-tag">加点定价引擎</span>
+              <span class="s7-tag">FIXING 价差回测</span>
+              <span class="s7-tag">港币套利分析</span>
+            </div>
+          </div>
+        </div>
+        <div class="s8-right">
+          <img src="assets/media/p8-portal-screenshot.png" alt="Portal 面板截图" class="s8-portal-img">
+        </div>
+      </div>
+      <div class="slide-footer">
+        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
+        <span class="page-number">08</span>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         P9: 第二幕 Section Divider — 文字与表达
+         ============================================================ -->
+    <div class="slide section-divider" data-slide="9">
+      <div class="section-pattern">
+        <img src="assets/media/pattern-stripes.png" alt="" class="section-pattern-img">
+      </div>
+      <div class="section-content">
+        <div class="section-number-circle" style="background:#2BA471;">
+          <span class="section-num">02</span>
+        </div>
+        <div class="section-text">
+          <h2 class="section-title" style="color:#2BA471;">文字与表达</h2>
+        </div>
+      </div>
+      <span class="page-number">09</span>
+    </div>
+
+    <!-- ============================================================
+         P10: 方法论 — 先让想法看得见
+         ============================================================ -->
+    <div class="slide" data-slide="10">
+      <div class="slide-header">
+        <div class="badge badge-green"><span>02</span></div>
+        <span class="section-label" style="color:#2BA471;">文字与表达</span>
+      </div>
+      <h2 class="content-heading" style="color:#2BA471;">方法论：先让想法看得见</h2>
+      <div class="s10-body">
+        <!-- 痛点 -->
+        <div class="s10-pain">
+          <div class="s10-pain-text">
+            <p><strong>痛点：</strong>你心里想的东西，写成文档，到对方那里总有偏差</p>
+          </div>
+        </div>
+        <!-- 发现 -->
+        <div class="s10-discover">
+          <div class="s10-discover-text">
+            <p><strong>换个方式：</strong>先跟 AI 把想法聊出来，做成能演示的东西</p>
+          </div>
+        </div>
+        <!-- 三步流 -->
+        <div class="s10-flow">
+          <div class="s10-step">
+            <div class="s10-step-circle">说出<br>想法</div>
+            <p class="s10-step-label">跟 AI 聊，把想法捋清楚</p>
+          </div>
+          <svg class="s10-arrow" viewBox="0 0 60 20"><path d="M0 10 L48 10 L42 4 M48 10 L42 16" stroke="#2BA471" stroke-width="2.5" fill="none"/></svg>
+          <div class="s10-step">
+            <div class="s10-step-circle">从小<br>到大</div>
+            <p class="s10-step-label">先跑通一个，再扩展</p>
+          </div>
+          <svg class="s10-arrow" viewBox="0 0 60 20"><path d="M0 10 L48 10 L42 4 M48 10 L42 16" stroke="#2BA471" stroke-width="2.5" fill="none"/></svg>
+          <div class="s10-step">
+            <div class="s10-step-circle">让它<br>看得见</div>
+            <p class="s10-step-label">变成能演示的原型</p>
+          </div>
+        </div>
+        <!-- 金句 -->
+        <div class="s10-takeaway">
+          <p>多一个沟通方式，少一点来回对齐 —— <strong>至少在我这里，挺管用的</strong></p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
+        <span class="page-number">10</span>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         P11: 例子 — 金融日历
+         ============================================================ -->
+    <div class="slide" data-slide="11">
+      <div class="slide-header">
+        <div class="badge badge-green"><span>02</span></div>
+        <span class="section-label" style="color:#2BA471;">文字与表达</span>
+      </div>
+      <h2 class="content-heading" style="color:#2BA471;">例子：金融日历</h2>
+      <div class="s11-new-body">
+        <!-- 它是什么 -->
+        <div class="s11-origin">
+          <p><strong>它是什么：</strong>接入 Bloomberg 经济日历，根据事件重要性（非农、FOMC、CPI……），<br>自动控制定价系统拉宽点差、风控系统减仓对冲 —— 以前这些全靠手动，忙的时候容易漏。</p>
+        </div>
+        <!-- 两栏 -->
+        <div class="s11-cols">
+          <div class="s11-col-left">
+            <div class="s11-col-title">跟 CodeBuddy 聊了什么</div>
+            <div class="s11-detail">
+              <div class="s11-detail-desc">用 iWiki MCP 让它读内部文档<br>搞懂定价管线（PAMAS）和对冲逻辑（ROMS）</div>
+            </div>
+            <div class="s11-detail">
+              <div class="s11-detail-desc">聊清楚业务逻辑：<br>哪些事件要覆盖、响应参数怎么定、<br>五阶段怎么走、恢复曲线怎么衰减</div>
+            </div>
+            <div class="s11-detail">
+              <div class="s11-detail-desc"><strong>我想做什么：</strong>一个交互式的场景走查<br>选事件 → 看五阶段响应 → 定价/风控双轨展示<br>能直接拿去给产品研发演示</div>
+            </div>
+          </div>
+          <div class="s11-col-divider"></div>
+          <div class="s11-col-right">
+            <div class="s11-col-title">最后出了什么</div>
+            <div class="s11-result-item">
+              <span class="s11-result-num">1</span>
+              <p>一份完整的设计文档<br>架构、数据表、场景分析、接口定义都有</p>
+            </div>
+            <div class="s11-result-item">
+              <span class="s11-result-num">2</span>
+              <p>一个可交互的 Demo 界面<br>选事件、走场景、看定价/风控双轨响应</p>
+            </div>
+            <div class="s11-result-item">
+              <span class="s11-result-num">3</span>
+              <p>拿着文档 + Demo 去跟产品研发讨论<br>对着同一个东西聊，效率完全不一样</p>
+            </div>
+          </div>
         </div>
       </div>
       <div class="slide-footer">
@@ -390,28 +394,45 @@
     </div>
 
     <!-- ============================================================
-         P12: LIVE DEMO
+         P12: 金融日历 DEMO 展示
          ============================================================ -->
-    <div class="slide s13-demo" data-slide="12">
-      <div class="s13-content">
-        <div class="s13-badge">LIVE</div>
-        <h1 class="s13-title">现场演示</h1>
-        <p class="s13-subtitle">Strategy Lab — 选策略 → 配参数 → 跑回测 → 看结果</p>
-        <a class="s13-link" href="http://localhost:8899" target="_blank">点击进入 Demo</a>
+    <div class="slide s12-demo" data-slide="12">
+      <div class="s12-content">
+        <div class="s12-badge">DEMO</div>
+        <h1 class="s12-title">金融日历</h1>
+        <a class="s12-link" href="http://localhost:5173" target="_blank">点击进入 Demo</a>
       </div>
     </div>
 
     <!-- ============================================================
-         P13: 方法论 — 复杂系统的通用化路径
+         P13: 其他文字类工作 — PPT / 语言美化器（幽默版）
          ============================================================ -->
     <div class="slide" data-slide="13">
       <div class="slide-header">
         <div class="badge badge-green"><span>02</span></div>
-        <span class="section-label" style="color:#2BA471;">策略回测引擎</span>
+        <span class="section-label" style="color:#2BA471;">文字与表达</span>
       </div>
-      <h2 class="content-heading" style="color:#2BA471;">方法论：复杂的东西，怎么做？怎么通用？</h2>
-      <div class="s13-diagram">
-        <img src="assets/media/p13-methodology-nano.png" alt="方法论：复杂系统的通用化路径" class="s13-diagram-img">
+      <h2 class="content-heading" style="color:#2BA471;">还有哪些文字类工作？</h2>
+      <div class="s7-panorama">
+        <div class="s7-category">
+          <div class="s7-cat-label s7-cat-green">报告 & 演示</div>
+          <div class="s7-cat-items">
+            <span class="s7-tag">FX 研报 — 一键生成多语言客户报告</span>
+            <span class="s7-tag">分享 PPT — 你正在看的这个就是 AI 做的</span>
+            <span class="s7-tag">架构图 / Draw.io — 描述需求自动出图</span>
+          </div>
+        </div>
+        <div class="s7-category">
+          <div class="s7-cat-label s7-cat-green">日常沟通</div>
+          <div class="s7-cat-items">
+            <span class="s7-tag">语言美化器 — 帮我把话说得委婉一点</span>
+            <span class="s7-tag">邮件润色 — 特别是给客户、跨部门的正式邮件</span>
+            <span class="s7-tag">会议纪要 — 丢进去自动整理要点和 Action Items</span>
+          </div>
+        </div>
+      </div>
+      <div class="s7-bottom-note">
+        <p>AI 不是替你说，而是<strong>帮你把想说的话说得更好</strong> —— 尤其在你不擅长的场合</p>
       </div>
       <div class="slide-footer">
         <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
@@ -420,7 +441,7 @@
     </div>
 
     <!-- ============================================================
-         P14: 第三幕 Section Divider — 从工具到 AI 助手
+         P14: 第三幕 Section Divider — 知识沉淀
          ============================================================ -->
     <div class="slide section-divider" data-slide="14">
       <div class="section-pattern">
@@ -431,48 +452,37 @@
           <span class="section-num">03</span>
         </div>
         <div class="section-text">
-          <h2 class="section-title" style="color:#7B61FF;">从工具到 AI 助手</h2>
-          <p class="section-desc">让 AI 有知识、有记忆、能进化</p>
+          <h2 class="section-title" style="color:#7B61FF;">知识沉淀</h2>
         </div>
       </div>
       <span class="page-number">14</span>
     </div>
 
     <!-- ============================================================
-         P15: 知识体系建设
+         P15: 用 CodeBuddy 搭了两个 Agent
          ============================================================ -->
     <div class="slide" data-slide="15">
       <div class="slide-header">
         <div class="badge badge-purple"><span>03</span></div>
-        <span class="section-label" style="color:#7B61FF;">从工具到 AI 助手</span>
+        <span class="section-label" style="color:#7B61FF;">知识沉淀</span>
       </div>
-      <h2 class="content-heading" style="color:#7B61FF;">先有知识体系，才有好的 Agent</h2>
+      <h2 class="content-heading" style="color:#7B61FF;">用 CodeBuddy 搭了两个 Agent</h2>
       <div class="s15-body">
-        <div class="s15-skills">
-          <h3>8 个技能模块</h3>
-          <div class="s15-tags">
-            <span class="s15-tag">央行政策</span>
-            <span class="s15-tag">货币危机</span>
-            <span class="s15-tag">反射性理论</span>
-            <span class="s15-tag">宏观理论</span>
-            <span class="s15-tag">经典战役</span>
-            <span class="s15-tag">外汇分析</span>
-            <span class="s15-tag">腾讯大数据</span>
-            <span class="s15-tag">交易历史</span>
+        <div class="s15-agents-row">
+          <!-- Soros Agent -->
+          <div class="s15-agent-card s15-agent-soros">
+            <div class="s15-card-title">🦈 Soros Agent<span class="s15-card-sub">外汇交易助理</span></div>
+            <div class="s15-screenshot-wrap">
+              <img src="assets/media/索罗斯.png" alt="Soros Agent" class="s15-screenshot-img">
+            </div>
           </div>
-        </div>
-        <div class="s15-memory">
-          <h3>Memory 系统</h3>
-          <div class="s15-stats">
-            <div class="s15-stat"><span class="s15-num">10</span><span class="s15-lbl">条交易手册</span></div>
-            <div class="s15-stat"><span class="s15-num">6</span><span class="s15-lbl">条市场洞察</span></div>
-            <div class="s15-stat"><span class="s15-num">2</span><span class="s15-lbl">条外汇观点</span></div>
-            <div class="s15-stat"><span class="s15-num">3</span><span class="s15-lbl">条历史教训</span></div>
+          <!-- 林徽因 Agent -->
+          <div class="s15-agent-card s15-agent-lhy">
+            <div class="s15-card-title">🏛️ 林徽因 Agent<span class="s15-card-sub">拓展认知边界</span></div>
+            <div class="s15-screenshot-wrap">
+              <img src="assets/media/linhuiyin.png" alt="林徽因 Agent" class="s15-screenshot-img">
+            </div>
           </div>
-        </div>
-        <div class="s15-reflection">
-          <h3>Reflection 引擎</h3>
-          <p>自动评估分析质量 → 高分归档知识库 → 越用越精准</p>
         </div>
       </div>
       <div class="slide-footer">
@@ -482,42 +492,40 @@
     </div>
 
     <!-- ============================================================
-         P16: Soros Agent — 架构 + 日常 + 踩坑
+         P16: 然后就翻车了
          ============================================================ -->
     <div class="slide" data-slide="16">
       <div class="slide-header">
         <div class="badge badge-purple"><span>03</span></div>
-        <span class="section-label" style="color:#7B61FF;">从工具到 AI 助手</span>
+        <span class="section-label" style="color:#7B61FF;">知识沉淀</span>
       </div>
-      <h2 class="content-heading" style="color:#7B61FF;">Soros Agent — 我的 AI 分析师</h2>
+      <h2 class="content-heading" style="color:#7B61FF;">然后就翻车了</h2>
       <div class="s16-body">
-        <div class="s16-top">
-          <div class="s16-stats">
-            <div class="s16-stat"><span class="s16-num">19</span><span class="s16-lbl">个工具</span></div>
-            <div class="s16-stat"><span class="s16-num">8</span><span class="s16-lbl">个技能模块</span></div>
-            <div class="s16-stat"><span class="s16-num">5</span><span class="s16-lbl">轮自主调用</span></div>
+        <!-- 第一行：膨胀 + 做了什么 -->
+        <div class="s16-row-top">
+          <div class="s16-hubris">
+            <p>📈 前面太顺了，觉得 CodeBuddy 无所不能 — 那就搞个大的：<strong>手搓一整套知识库系统</strong></p>
+          </div>
+          <div class="s16-what-built">
+            <span class="s16-built-tag">8 Skill · 25KB+</span>
+            <span class="s16-built-tag">5 层记忆</span>
+            <span class="s16-built-tag">19 工具</span>
+            <span class="s16-built-tag">全量注入 Prompt</span>
           </div>
         </div>
-        <div class="s16-usage">
-          <div class="s16-use-card">
-            <h4>早间简报</h4>
-            <p>每天开盘前问一句「今天有什么要注意的？」<br>自动搜新闻 + 查数据 + 给判断</p>
+        <!-- 第二行：翻车结果 + 额度截图 -->
+        <div class="s16-row-mid">
+          <div class="s16-fail">
+            <p>💥 System Prompt 40KB+ — 还没分析，上下文就满了<br>越喂越笨，知识越多能思考的空间越小</p>
           </div>
-          <div class="s16-use-card">
-            <h4>半小时预测</h4>
-            <p>每半小时预测一次涨跌<br>一上午结束后自动复盘，对比预测 vs 实际</p>
-          </div>
-          <div class="s16-use-card">
-            <h4>突发事件</h4>
-            <p>美联储放鹰？日央行干预？<br>随时问，自动拉相关数据给出概率判断</p>
+          <div class="s16-screenshot">
+            <img src="assets/media/broken.png" alt="额度用爆截图" class="s16-screenshot-img">
+            <p class="s16-screenshot-caption">108,035 / 100,000 — 额度直接超了</p>
           </div>
         </div>
-        <div class="s16-fail">
-          <div class="s16-fail-mark">!</div>
-          <div class="s16-fail-body">
-            <h4>然后就翻车了……</h4>
-            <p>想让它更「博学」，喂了 <strong>5 本完整外汇经典</strong>进去 → <strong>Token 直接爆了</strong>，还没开始分析就脑容量塞满了</p>
-          </div>
+        <!-- 底部：根因一句话 -->
+        <div class="s16-root-cause">
+          <p><strong>「造工具」和「当工具」是两回事</strong></p>
         </div>
       </div>
       <div class="slide-footer">
@@ -527,34 +535,22 @@
     </div>
 
     <!-- ============================================================
-         P17: 林徽因 Agent + OpenClaw 一嘴 + 通用性
+         P17: 吃一堑长一智
          ============================================================ -->
     <div class="slide" data-slide="17">
       <div class="slide-header">
         <div class="badge badge-purple"><span>03</span></div>
-        <span class="section-label" style="color:#7B61FF;">从工具到 AI 助手</span>
+        <span class="section-label" style="color:#7B61FF;">知识沉淀</span>
       </div>
-      <h2 class="content-heading" style="color:#7B61FF;">Agent 的通用性 — 换个人设就是新助手</h2>
+      <h2 class="content-heading" style="color:#7B61FF;">吃一堑长一智</h2>
       <div class="s17-body">
-        <div class="s17-cols">
-          <div class="s17-col">
-            <h3>林徽因 Agent</h3>
-            <p>通晓历史、哲学、美学的 AI 助手</p>
-            <p>每天推送一段有趣的内容，扩展认知边界</p>
-            <div class="s17-example">
-              <p>"今天聊聊佛光寺的斗拱 —— 那可是我和思成骑驴走了三天才找到的……"</p>
-            </div>
-            <p class="s17-tech">技术上：同一套 Agent 架构，换个 System Prompt 就跑起来了</p>
+        <div class="s17-items">
+          <div class="s17-item">
+            <h3>找到对的组合，而不是囫囵吞枣全丢给它</h3>
+            <p>CodeBuddy + MCP + Skill 可能是更好的路径<br>后来 OpenClaw 出来了，也许是一个解法 — 还在探索</p>
           </div>
-          <div class="s17-col-div"></div>
-          <div class="s17-col">
-            <h3>OpenClaw（试水中）</h3>
-            <p>全自主交易 Agent —— 自己判断、自己下单</p>
-            <p>目前还在实验阶段，跑模拟盘</p>
-            <div class="s17-openclaw-note">
-              <p>理想很丰满，现实是：<br>市场比 AI 复杂得多，离真正自主还很远</p>
-            </div>
-            <p class="s17-tech">有兴趣的可以会后聊</p>
+          <div class="s17-item">
+            <h3>对技术保持好奇心和敬畏心</h3>
           </div>
         </div>
       </div>
@@ -565,45 +561,28 @@
     </div>
 
     <!-- ============================================================
-         P18: 方法论 — Agent 四步法
+         P18: 总结
          ============================================================ -->
     <div class="slide" data-slide="18">
       <div class="slide-header">
-        <div class="badge badge-purple"><span>03</span></div>
-        <span class="section-label" style="color:#7B61FF;">从工具到 AI 助手</span>
+        <div class="badge"><span>04</span></div>
+        <span class="section-label">总结</span>
       </div>
-      <h2 class="content-heading" style="color:#7B61FF;">方法论：搭 Agent 的四步</h2>
-      <div class="s18-steps">
-        <div class="s18-card">
-          <div class="s18-num">1</div>
-          <h3>定角色</h3>
-          <p>人设 + 能力边界<br>它擅长什么、不擅长什么</p>
+      <div class="s19-cards">
+        <div class="s19-card s19-c1">
+          <div class="s19-num">一</div>
+          <h3>分析与交易</h3>
+          <p>一个痛点一个工具<br>先跑通一个，再扩展</p>
         </div>
-        <svg class="s18-arrow" viewBox="0 0 40 20"><path d="M0 10 L30 10 L25 4 M30 10 L25 16" stroke="#7B61FF" stroke-width="3" fill="none"/></svg>
-        <div class="s18-card">
-          <div class="s18-num">2</div>
-          <h3>注入知识</h3>
-          <p>领域知识 + 技能模块<br>但别一次塞太多（教训）</p>
+        <div class="s19-card s19-c2">
+          <div class="s19-num">二</div>
+          <h3>文字与表达</h3>
+          <p>先做 Demo 再沟通<br>做的过程就是在沟通</p>
         </div>
-        <svg class="s18-arrow" viewBox="0 0 40 20"><path d="M0 10 L30 10 L25 4 M30 10 L25 16" stroke="#7B61FF" stroke-width="3" fill="none"/></svg>
-        <div class="s18-card">
-          <div class="s18-num">3</div>
-          <h3>接工具</h3>
-          <p>外部数据 + 内部平台<br>让它能查、能算、能存</p>
-        </div>
-        <svg class="s18-arrow" viewBox="0 0 40 20"><path d="M0 10 L30 10 L25 4 M30 10 L25 16" stroke="#7B61FF" stroke-width="3" fill="none"/></svg>
-        <div class="s18-card">
-          <div class="s18-num">4</div>
-          <h3>持续进化</h3>
-          <p>Reflection + Memory<br>用得越多，越懂你的场景</p>
-        </div>
-      </div>
-      <div class="s18-pitfalls">
-        <h4>踩过的坑</h4>
-        <div class="s18-pit-items">
-          <span class="s18-pit">Token 有限 — 别当硕士培养，用 RAG 动态匹配</span>
-          <span class="s18-pit">任务拆细 — 越复杂越容易翻车，一步一步来</span>
-          <span class="s18-pit">幻觉问题 — 做了 Claim Verification 核实关键论点</span>
+        <div class="s19-card s19-c3">
+          <div class="s19-num">三</div>
+          <h3>知识沉淀</h3>
+          <p>找到对的组合<br>知道边界在哪</p>
         </div>
       </div>
       <div class="slide-footer">
@@ -613,90 +592,12 @@
     </div>
 
     <!-- ============================================================
-         P19: 三条方法论回顾
+         P19: Ending
          ============================================================ -->
-    <div class="slide" data-slide="19">
-      <div class="slide-header">
-        <div class="badge"><span>04</span></div>
-        <span class="section-label">总结</span>
-      </div>
-      <h2 class="content-heading">三条方法论</h2>
-      <div class="s19-cards">
-        <div class="s19-card s19-c1">
-          <div class="s19-num">一</div>
-          <h3>工具箱思维</h3>
-          <p>先解决眼前问题<br>再沉淀成通用工具<br>别一上来就想做平台</p>
-        </div>
-        <div class="s19-card s19-c2">
-          <div class="s19-num">二</div>
-          <h3>从具体到通用</h3>
-          <p>先做透一个场景<br>再拆模块、抽框架<br>通用性是长出来的，不是设计出来的</p>
-        </div>
-        <div class="s19-card s19-c3">
-          <div class="s19-num">三</div>
-          <h3>让 AI 有记忆</h3>
-          <p>知识 + 反思 + 记忆<br>让它越用越懂你的场景<br>这才是长期价值</p>
-        </div>
-      </div>
-      <div class="slide-footer">
-        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
-        <span class="page-number">19</span>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         P20: 给大家的建议
-         ============================================================ -->
-    <div class="slide" data-slide="20">
-      <div class="slide-header">
-        <div class="badge"><span>05</span></div>
-        <span class="section-label">给大家的建议</span>
-      </div>
-      <h2 class="content-heading">你不需要会写代码</h2>
-      <div class="s20-body">
-        <div class="s20-item">
-          <div class="s20-num">1</div>
-          <div class="s20-text">
-            <h3>重复性报表和文档</h3>
-            <p>用 AI 写模板、做汇总 —— 从最痛的点开始</p>
-          </div>
-        </div>
-        <div class="s20-item">
-          <div class="s20-num">2</div>
-          <div class="s20-text">
-            <h3>信息检索和分析</h3>
-            <p>把背景信息喂给 AI，让它帮你总结、对比、提炼</p>
-          </div>
-        </div>
-        <div class="s20-item">
-          <div class="s20-num">3</div>
-          <div class="s20-text">
-            <h3>知识管理</h3>
-            <p>把工作方法、常见问题整理成文档，作为 AI 的参考手册</p>
-          </div>
-        </div>
-        <div class="s20-item">
-          <div class="s20-num">4</div>
-          <div class="s20-text">
-            <h3>CodeBuddy</h3>
-            <p>用自然语言描述需求 → 它帮你写代码 → 你来验收和调优</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide-footer">
-        <img src="assets/media/footer-bar.png" alt="" class="footer-bar">
-        <span class="page-number">20</span>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         P21: Ending
-         ============================================================ -->
-    <div class="slide ending-slide" data-slide="21">
+    <div class="slide ending-slide" data-slide="19">
       <img src="assets/media/ending-pattern-grid.png" alt="" class="ending-pattern">
       <div class="ending-content">
-        <h1 class="ending-main">AI 最大的价值不是替代你</h1>
-        <p class="ending-sub">而是让你把时间花在真正需要判断力的事情上</p>
+        <h1 class="ending-main">"The Limit is Sky"</h1>
         <p class="ending-thanks">谢谢大家！</p>
       </div>
       <img src="assets/media/tencent-logo-white.png" alt="Tencent" class="ending-logo">

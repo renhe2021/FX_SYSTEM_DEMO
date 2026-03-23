@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 赋能 FX 工作方式三级跳</title>
+<title>AI 怎么改变我的工作方式</title>
 
 <!-- Fonts: Cormorant Garamond (display serif) + Source Serif 4 (body serif) + DM Sans (UI/labels) -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -247,9 +247,9 @@ img, .image-container {
     border-radius: 3px;
     text-transform: uppercase;
 }
-.badge-l1 { background: rgba(59,130,246,0.08); color: #2563eb; border: 1px solid rgba(59,130,246,0.2); }
-.badge-l2 { background: rgba(124,58,237,0.08); color: #7c3aed; border: 1px solid rgba(124,58,237,0.2); }
-.badge-l3 { background: rgba(14,165,165,0.08); color: #0ea5a5; border: 1px solid rgba(14,165,165,0.2); }
+.badge-p1 { background: rgba(59,130,246,0.08); color: #2563eb; border: 1px solid rgba(59,130,246,0.2); }
+.badge-p2 { background: rgba(124,58,237,0.08); color: #7c3aed; border: 1px solid rgba(124,58,237,0.2); }
+.badge-p3 { background: rgba(14,165,165,0.08); color: #0ea5a5; border: 1px solid rgba(14,165,165,0.2); }
 .badge-next { background: rgba(201,169,110,0.1); color: var(--accent-gold); border: 1px solid rgba(201,169,110,0.25); }
 
 /* ===========================================
@@ -368,6 +368,56 @@ img, .image-container {
     line-height: 1.2;
 }
 .slide-dark .method-list li::before { color: var(--accent-gold); }
+
+/* --- Three-step flow --- */
+.flow-steps {
+    display: flex;
+    align-items: stretch;
+    gap: clamp(4px, 0.8vw, 10px);
+    margin-top: var(--content-gap);
+}
+.flow-step {
+    flex: 1;
+    background: rgba(0,0,0,0.02);
+    border: 1px solid var(--accent-line);
+    border-radius: clamp(4px, 0.5vw, 8px);
+    padding: clamp(10px, 1.5vw, 18px);
+    text-align: center;
+}
+.slide-dark .flow-step {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.08);
+}
+.flow-step .step-num {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--accent-crimson);
+    line-height: 1;
+}
+.slide-dark .flow-step .step-num { color: var(--accent-gold); }
+.flow-step .step-title {
+    font-family: var(--font-ui);
+    font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+    font-weight: 600;
+    margin-top: clamp(4px, 0.5vh, 8px);
+}
+.flow-step .step-desc {
+    font-family: var(--font-body);
+    font-size: var(--small-size);
+    color: var(--text-muted);
+    margin-top: 2px;
+    line-height: 1.4;
+}
+.slide-dark .flow-step .step-desc { color: rgba(250,249,246,0.45); }
+.flow-arrow {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.8vw, 1.5rem);
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
 
 /* ===========================================
    ANIMATIONS (triggered by .visible)
@@ -532,6 +582,8 @@ img, .image-container {
     .module-grid { grid-template-columns: 1fr; }
     .compare-block { flex-direction: column; }
     .stat-row { flex-direction: column; gap: clamp(12px, 2vh, 20px); }
+    .flow-steps { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -555,12 +607,12 @@ img, .image-container {
 <button class="edit-toggle" id="editToggle" title="编辑模式 (E)">✏️ Edit</button>
 
 <!-- ====================================================================
-     SLIDE 01 — TITLE SLIDE
+     SLIDE 01 — TITLE SLIDE (封面)
      ==================================================================== -->
 <section class="slide slide-light" data-section="封面">
     <div class="slide-nav">
-        <span class="section-label">AI × Finance</span>
-        <span class="page-label">Internal Presentation · 2026</span>
+        <span class="section-label">AI × Work</span>
+        <span class="page-label">Internal Sharing · 2026</span>
     </div>
 
     <div class="section-num" style="right: var(--slide-padding); top: 10vh;">§</div>
@@ -569,22 +621,22 @@ img, .image-container {
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
         <div class="label-tag reveal">跨境金融技术团队</div>
         <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
-            AI 赋能 FX 工作方式<br/><em>三级跳</em>
+            AI 怎么改变<br/>我的<em>工作方式</em>
         </h1>
         <div class="hr line-reveal" style="margin-top: var(--content-gap);"></div>
         <p class="body-text reveal" style="max-width: 50ch;">
-            从效率工具到决策引擎，再到 AI Agent —— 一个外汇交易员的三次工作方式升级
+            算得清 · 讲得明 · 想得深 — 一个外汇交易员的三次工作方式升级
         </p>
     </div>
 
     <div class="slide-footer">
         <span>FX System Demo</span>
-        <span>15 Slides · 45 min</span>
+        <span>18 Slides · 40 min</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 02 — PAIN POINT (Quote)
+     SLIDE 02 — OPENING QUOTE (开场)
      ==================================================================== -->
 <section class="slide slide-dark" data-section="开场">
     <div class="slide-nav">
@@ -605,12 +657,12 @@ img, .image-container {
 
     <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
         <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
-        <span style="color: rgba(250,249,246,0.3);">02 / 15</span>
+        <span style="color: rgba(250,249,246,0.3);">02 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 03 — THREE-LEVEL FRAMEWORK
+     SLIDE 03 — NEW THREE-PART FRAMEWORK (新框架)
      ==================================================================== -->
 <section class="slide slide-light" data-section="框架">
     <div class="slide-nav">
@@ -619,32 +671,32 @@ img, .image-container {
     </div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <div class="label-tag reveal">升级路径</div>
-        <h2 class="section-title reveal">AI 赋能三级跳</h2>
+        <div class="label-tag reveal">三个场景</div>
+        <h2 class="section-title reveal">AI 改变工作的三个维度</h2>
         <div class="hr line-reveal"></div>
 
         <div style="display: flex; flex-direction: column; gap: clamp(16px, 2.5vh, 28px); margin-top: var(--content-gap);">
             <div class="reveal" style="display: flex; align-items: center; gap: clamp(12px, 2vw, 24px);">
-                <span style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #2563eb; min-width: 2.5ch;">L1</span>
+                <span style="font-size: clamp(2rem, 4vw, 3rem); min-width: 2ch;">📊</span>
                 <div>
-                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">效率工具</div>
-                    <div class="body-text">替代手工，自动化重复劳动</div>
+                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">算得清</div>
+                    <div class="body-text">数据分析、策略回测、定价模拟 — 让机器替你算</div>
                 </div>
             </div>
-            <div class="reveal" style="padding-left: 1.2ch; color: var(--text-muted); font-family: var(--font-display); font-size: var(--body-size);">↓ 痛点：工具各干各的，缺乏联动</div>
+            <div class="reveal" style="padding-left: 1.2ch; color: var(--text-muted); font-family: var(--font-display); font-size: var(--body-size);">↓ 算出来了，但怎么讲给别人听？</div>
             <div class="reveal" style="display: flex; align-items: center; gap: clamp(12px, 2vw, 24px);">
-                <span style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #7c3aed; min-width: 2.5ch;">L2</span>
+                <span style="font-size: clamp(2rem, 4vw, 3rem); min-width: 2ch;">📢</span>
                 <div>
-                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">决策引擎</div>
-                    <div class="body-text">数据驱动，系统化辅助判断</div>
+                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">讲得明</div>
+                    <div class="body-text">报告生成、可视化原型、PPT 制作 — 想清楚、看得见、讲出去</div>
                 </div>
             </div>
-            <div class="reveal" style="padding-left: 1.2ch; color: var(--text-muted); font-family: var(--font-display); font-size: var(--body-size);">↓ 痛点：数据有了，判断还是靠人</div>
+            <div class="reveal" style="padding-left: 1.2ch; color: var(--text-muted); font-family: var(--font-display); font-size: var(--body-size);">↓ 讲明白了，但深度思考还是靠人？</div>
             <div class="reveal" style="display: flex; align-items: center; gap: clamp(12px, 2vw, 24px);">
-                <span style="font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #0ea5a5; min-width: 2.5ch;">L3</span>
+                <span style="font-size: clamp(2rem, 4vw, 3rem); min-width: 2ch;">🧠</span>
                 <div>
-                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">AI Agent</div>
-                    <div class="body-text">智能大脑，让 AI 像专家一样思考</div>
+                    <div style="font-family: var(--font-ui); font-size: var(--h3-size); font-weight: 700;">想得深</div>
+                    <div class="body-text">AI Agent、专家辩论、知识积累 — 让 AI 像专家一样思考</div>
                 </div>
             </div>
         </div>
@@ -652,47 +704,51 @@ img, .image-container {
 
     <div class="slide-footer">
         <span>FX System Demo</span>
-        <span>03 / 15</span>
+        <span>03 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 04 — LEVEL 1 TITLE
+     PART 1: 算得清
      ==================================================================== -->
-<section class="slide slide-light" data-section="L1 效率工具">
+
+<!-- ====================================================================
+     SLIDE 04 — PART 1 TITLE (算得清)
+     ==================================================================== -->
+<section class="slide slide-light" data-section="Part 1 算得清">
     <div class="slide-nav">
-        <span class="section-label">Level 1</span>
+        <span class="section-label">Part 1</span>
         <span class="page-label">04</span>
     </div>
 
     <div class="section-num" style="right: 5vw; top: 8vh;">01</div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l1 reveal">Level 1 · 效率工具层</span>
+        <span class="level-badge badge-p1 reveal">Part 1 · 算得清</span>
         <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
-            让工具<br/><em>替你加班</em>
+            让机器<br/><em>替你算</em>
         </h1>
         <div class="hr line-reveal" style="margin-top: var(--content-gap);"></div>
-        <p class="body-text reveal">把重复劳动自动化，释放你的时间去做更有价值的事</p>
+        <p class="body-text reveal">数据分析、策略回测、定价模拟 — 从手算到自动化</p>
     </div>
 
     <div class="slide-footer">
         <span>FX System Demo</span>
-        <span>04 / 15</span>
+        <span>04 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 05 — L1 DEEP DIVE: PnL Analysis
+     SLIDE 05 — PnL Analysis CASE (复用原 Slide 05)
      ==================================================================== -->
-<section class="slide slide-light" data-section="L1 效率工具">
+<section class="slide slide-light" data-section="Part 1 算得清">
     <div class="slide-nav">
-        <span class="section-label">Level 1 · PnL Analysis</span>
+        <span class="section-label">Part 1 · PnL Analysis</span>
         <span class="page-label">05</span>
     </div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l1 reveal">Case Study</span>
+        <span class="level-badge badge-p1 reveal">Case Study</span>
         <h2 class="section-title reveal" style="margin-top: var(--element-gap);">PnL 损益分析：360× 效率提升</h2>
         <div class="hr line-reveal"></div>
 
@@ -728,30 +784,51 @@ img, .image-container {
 
     <div class="slide-footer">
         <span>FX System Demo</span>
-        <span>05 / 15</span>
+        <span>05 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 06 — L1 FAMILY PORTRAIT
+     SLIDE 06 — Strategy Lab CASE (复用原 slides-v2 素材)
      ==================================================================== -->
-<section class="slide slide-light" data-section="L1 效率工具">
+<section class="slide slide-light" data-section="Part 1 算得清">
     <div class="slide-nav">
-        <span class="section-label">Level 1 · Overview</span>
+        <span class="section-label">Part 1 · Strategy Lab</span>
         <span class="page-label">06</span>
     </div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l1 reveal">效率工具全家福</span>
-        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">四大效率利器</h2>
+        <span class="level-badge badge-p1 reveal">Case Study</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">策略回测：从拍脑袋到有数据</h2>
         <div class="hr line-reveal"></div>
 
-        <div class="module-grid reveal">
+        <div class="compare-block reveal">
+            <div class="compare-side compare-before">
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); font-weight: 600; color: #dc2626; margin-bottom: 6px;">BEFORE</div>
+                <div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600; text-decoration: line-through; opacity: 0.6;">凭经验设参数</div>
+                <div class="body-text" style="font-size: var(--small-size);">没人知道最优参数在哪</div>
+            </div>
+            <span class="compare-arrow">→</span>
+            <div class="compare-side compare-after">
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); font-weight: 600; color: #16a34a; margin-bottom: 6px;">AFTER</div>
+                <div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">网格扫描 + 热力图</div>
+                <div class="body-text" style="font-size: var(--small-size);">3 种策略 × 参数组合 → 最优解可视化</div>
+            </div>
+        </div>
+
+        <div class="module-grid reveal" style="margin-top: var(--content-gap);">
             <div class="module-card">
-                <span class="card-icon">📊</span>
+                <span class="card-icon">🧪</span>
                 <div>
-                    <div class="card-title">PnL 损益分析</div>
-                    <div class="card-desc">CSV → 9 维度自动报表</div>
+                    <div class="card-title">策略回测实验室</div>
+                    <div class="card-desc">通用引擎：选策略 → 配参数 → 回测</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">📈</span>
+                <div>
+                    <div class="card-title">BMAD 量化系统</div>
+                    <div class="card-desc">449 文件的完整量化交易平台</div>
                 </div>
             </div>
             <div class="module-card">
@@ -762,17 +839,10 @@ img, .image-container {
                 </div>
             </div>
             <div class="module-card">
-                <span class="card-icon">📝</span>
+                <span class="card-icon">🔬</span>
                 <div>
-                    <div class="card-title">FX 研报制作平台</div>
-                    <div class="card-desc">数据 → 投行级 PDF 报告</div>
-                </div>
-            </div>
-            <div class="module-card">
-                <span class="card-icon">🔧</span>
-                <div>
-                    <div class="card-title">逆向工程脚本集</div>
-                    <div class="card-desc">市场数据解析自动化</div>
+                    <div class="card-title">WeData 大数据</div>
+                    <div class="card-desc">7 个 Hive Notebook 全覆盖</div>
                 </div>
             </div>
         </div>
@@ -780,153 +850,298 @@ img, .image-container {
 
     <div class="slide-footer">
         <span>FX System Demo</span>
-        <span>06 / 15</span>
+        <span>06 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 07 — TRANSITION QUOTE (L1 → L2)
+     SLIDE 07 — PART 1 SUMMARY STATS (算得清小结)
+     ==================================================================== -->
+<section class="slide slide-light" data-section="Part 1 算得清">
+    <div class="slide-nav">
+        <span class="section-label">Part 1 · Summary</span>
+        <span class="page-label">07</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-p1 reveal">Part 1 小结</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">6 个工具，一套分析体系</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="stat-row reveal">
+            <div class="stat-item">
+                <div class="stat-num">6</div>
+                <div class="stat-label">分析工具</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-label">回测策略</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">7</div>
+                <div class="stat-label">大数据 Notebook</div>
+            </div>
+        </div>
+
+        <p class="body-text reveal" style="margin-top: var(--content-gap); max-width: 50ch;">
+            核心方法：<strong>一个痛点一个工具，做小做快做闭环。</strong><br/>
+            不需要大项目，周五晚上就能做一个。
+        </p>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>07 / 18</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 08 — TRANSITION 1 (算得清 → 讲得明)
      ==================================================================== -->
 <section class="slide slide-dark" data-section="过渡">
     <div class="slide-nav">
         <span class="section-label">Transition</span>
-        <span class="page-label">07</span>
+        <span class="page-label">08</span>
     </div>
 
     <div class="slide-content" style="align-items: center; text-align: center;">
         <div class="pull-quote reveal" style="border-left: none; padding-left: 0; text-align: center;">
-            工具有了，数据各干各的。<br/>能不能让数据帮我做决策？
+            数据算出来了，<br/>但怎么讲给别人听？
         </div>
         <p class="body-text reveal" style="margin-top: var(--content-gap); color: var(--accent-gold); font-family: var(--font-ui); font-size: var(--small-size); letter-spacing: 0.15em;">
-            升级触发点 →
+            场景升级 →
         </p>
     </div>
 
     <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
         <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
-        <span style="color: rgba(250,249,246,0.3);">07 / 15</span>
+        <span style="color: rgba(250,249,246,0.3);">08 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 08 — LEVEL 2 TITLE
+     PART 2: 讲得明
      ==================================================================== -->
-<section class="slide slide-light" data-section="L2 决策引擎">
+
+<!-- ====================================================================
+     SLIDE 09 — PART 2 TITLE (讲得明)
+     ==================================================================== -->
+<section class="slide slide-light" data-section="Part 2 讲得明">
     <div class="slide-nav">
-        <span class="section-label">Level 2</span>
-        <span class="page-label">08</span>
+        <span class="section-label">Part 2</span>
+        <span class="page-label">09</span>
     </div>
 
     <div class="section-num" style="right: 5vw; top: 8vh;">02</div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l2 reveal">Level 2 · 决策引擎层</span>
+        <span class="level-badge badge-p2 reveal">Part 2 · 讲得明</span>
         <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
-            让数据<br/><em>帮你决策</em>
+            想清楚、看得见<br/><em>讲出去</em>
         </h1>
         <div class="hr line-reveal" style="margin-top: var(--content-gap);"></div>
-        <p class="body-text reveal">用数据辅助判断，从被动响应到主动预判</p>
+        <p class="body-text reveal">AI 不只帮你做分析，还帮你把复杂的事情变成别人能懂的语言</p>
     </div>
 
     <div class="slide-footer">
         <span>FX System Demo</span>
-        <span>08 / 15</span>
+        <span>09 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 09 — L2 DEEP DIVE: Financial Calendar
+     SLIDE 10 — FX REPORT CASE (客户报告)
      ==================================================================== -->
-<section class="slide slide-light" data-section="L2 决策引擎">
+<section class="slide slide-light" data-section="Part 2 讲得明">
     <div class="slide-nav">
-        <span class="section-label">Level 2 · Financial Calendar</span>
-        <span class="page-label">09</span>
-    </div>
-
-    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l2 reveal">Case Study</span>
-        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">金融日历系统：非农之夜</h2>
-        <div class="hr line-reveal"></div>
-
-        <div class="module-grid reveal">
-            <div class="module-card">
-                <span class="card-icon">📅</span>
-                <div>
-                    <div class="card-title">日历驱动</div>
-                    <div class="card-desc">自动识别重大经济事件</div>
-                </div>
-            </div>
-            <div class="module-card">
-                <span class="card-icon">📈</span>
-                <div>
-                    <div class="card-title">点差拉宽模拟</div>
-                    <div class="card-desc">PAMAS 参数实时计算</div>
-                </div>
-            </div>
-            <div class="module-card">
-                <span class="card-icon">🛡️</span>
-                <div>
-                    <div class="card-title">敞口平仓信号</div>
-                    <div class="card-desc">ROMS 风险自动预警</div>
-                </div>
-            </div>
-            <div class="module-card">
-                <span class="card-icon">🎛️</span>
-                <div>
-                    <div class="card-title">手动覆盖</div>
-                    <div class="card-desc">人机协作，保留最终决策权</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="slide-footer">
-        <span>FX System Demo</span>
-        <span>09 / 15</span>
-    </div>
-</section>
-
-<!-- ====================================================================
-     SLIDE 10 — L2 FAMILY PORTRAIT
-     ==================================================================== -->
-<section class="slide slide-light" data-section="L2 决策引擎">
-    <div class="slide-nav">
-        <span class="section-label">Level 2 · Overview</span>
+        <span class="section-label">Part 2 · FX Report</span>
         <span class="page-label">10</span>
     </div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l2 reveal">决策引擎全家福</span>
-        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">四大决策引擎</h2>
+        <span class="level-badge badge-p2 reveal">Case Study</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">给客户写报告：从 2 天到 2 分钟</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="compare-block reveal">
+            <div class="compare-side compare-before">
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); font-weight: 600; color: #dc2626; margin-bottom: 6px;">BEFORE</div>
+                <div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600; text-decoration: line-through; opacity: 0.6;">手写研究报告</div>
+                <div class="body-text" style="font-size: var(--small-size);">收集数据 + 画图 + 写分析 = 2天</div>
+            </div>
+            <span class="compare-arrow">→</span>
+            <div class="compare-side compare-after">
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); font-weight: 600; color: #16a34a; margin-bottom: 6px;">AFTER</div>
+                <div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">AI 写 + 自动配图</div>
+                <div class="body-text" style="font-size: var(--small-size);">选客户 → 一键生成投行级 PDF，支持 6 种语言</div>
+            </div>
+        </div>
+
+        <div class="stat-row reveal">
+            <div class="stat-item">
+                <div class="stat-num">17+</div>
+                <div class="stat-label">已生成报告</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">6</div>
+                <div class="stat-label">语言支持</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">16</div>
+                <div class="stat-label">客户画像</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>10 / 18</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 11 — FINANCIAL CALENDAR CASE (可视化提需求)
+     ==================================================================== -->
+<section class="slide slide-light" data-section="Part 2 讲得明">
+    <div class="slide-nav">
+        <span class="section-label">Part 2 · Visualize to Communicate</span>
+        <span class="page-label">11</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-p2 reveal">Case Study</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">金融日历：先做 Demo 再提需求</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="flow-steps reveal">
+            <div class="flow-step">
+                <div class="step-num">①</div>
+                <div class="step-title">想清楚</div>
+                <div class="step-desc">写设计文档时，AI 帮你拆场景、画架构、想边界条件</div>
+            </div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">
+                <div class="step-num">②</div>
+                <div class="step-title">看得见</div>
+                <div class="step-desc">做交互 Dashboard，自己先验证逻辑是否合理</div>
+            </div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">
+                <div class="step-num">③</div>
+                <div class="step-title">讲出去</div>
+                <div class="step-desc">拿 Demo 给别人看，比纯文字有效 10 倍</div>
+            </div>
+        </div>
+
+        <p class="body-text reveal" style="margin-top: var(--content-gap); max-width: 55ch;">
+            <strong>核心洞察：</strong>不是写完文档才算沟通 — 先做一个交互原型，
+            在自己验证的同时，就完成了跟别人的沟通。
+        </p>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>11 / 18</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 12 — THIS PPT ITSELF (元叙事)
+     ==================================================================== -->
+<section class="slide slide-light" data-section="Part 2 讲得明">
+    <div class="slide-nav">
+        <span class="section-label">Part 2 · Meta</span>
+        <span class="page-label">12</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-p2 reveal">你正在看的这个 PPT</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">这个 PPT 也是 AI 做的</h2>
         <div class="hr line-reveal"></div>
 
         <div class="module-grid reveal">
             <div class="module-card">
-                <span class="card-icon">📅</span>
+                <span class="card-icon">📝</span>
                 <div>
-                    <div class="card-title">金融日历系统</div>
-                    <div class="card-desc">事件驱动风控模拟</div>
+                    <div class="card-title">AI 写演讲稿</div>
+                    <div class="card-desc">给出关键信息 → 完整演讲脚本 + 时间分配</div>
                 </div>
             </div>
             <div class="module-card">
-                <span class="card-icon">🧪</span>
+                <span class="card-icon">🎨</span>
                 <div>
-                    <div class="card-title">策略回测实验室</div>
-                    <div class="card-desc">CSV → 选策略 → 回测验证</div>
+                    <div class="card-title">AI 设计排版</div>
+                    <div class="card-desc">HTML/CSS 全页面，深浅色交替节奏感</div>
                 </div>
             </div>
             <div class="module-card">
-                <span class="card-icon">📈</span>
+                <span class="card-icon">🖼️</span>
                 <div>
-                    <div class="card-title">BMAD 量化系统</div>
-                    <div class="card-desc">全功能量化分析平台</div>
+                    <div class="card-title">AI 画插图</div>
+                    <div class="card-desc">中文描述 → 英文 Prompt → 信息图生成</div>
                 </div>
             </div>
             <div class="module-card">
-                <span class="card-icon">🔬</span>
+                <span class="card-icon">✅</span>
                 <div>
-                    <div class="card-title">WeData 大数据分析</div>
-                    <div class="card-desc">Hive 数据湖 Notebook</div>
+                    <div class="card-title">AI 写 Checklist</div>
+                    <div class="card-desc">演讲前准备清单 + 崩溃恢复方案</div>
+                </div>
+            </div>
+        </div>
+
+        <p class="body-text reveal" style="margin-top: var(--content-gap); max-width: 50ch;">
+            从构思到上台，总共不到 <strong>3 小时</strong>。以前做一份这样的 PPT 至少要 2 天。
+        </p>
+    </div>
+
+    <div class="slide-footer">
+        <span>FX System Demo</span>
+        <span>12 / 18</span>
+    </div>
+</section>
+
+<!-- ====================================================================
+     SLIDE 13 — PART 2 METHOD SUMMARY (讲得明方法论)
+     ==================================================================== -->
+<section class="slide slide-light" data-section="Part 2 讲得明">
+    <div class="slide-nav">
+        <span class="section-label">Part 2 · Methodology</span>
+        <span class="page-label">13</span>
+    </div>
+
+    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
+        <span class="level-badge badge-p2 reveal">Part 2 小结</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">讲得明 = 想清楚 + 看得见 + 讲出去</h2>
+        <div class="hr line-reveal"></div>
+
+        <div class="module-grid reveal" style="margin-top: var(--content-gap);">
+            <div class="module-card">
+                <span class="card-icon">💡</span>
+                <div>
+                    <div class="card-title">想清楚</div>
+                    <div class="card-desc">AI 帮你把模糊想法变成结构化文档 — PRD、设计文档、场景分析</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">👁️</span>
+                <div>
+                    <div class="card-title">看得见</div>
+                    <div class="card-desc">AI 帮你做交互原型 — Dashboard、架构图、概念可视化</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🗣️</span>
+                <div>
+                    <div class="card-title">讲出去</div>
+                    <div class="card-desc">AI 帮你翻译成别人能懂的语言 — 报告、PPT、演示</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <span class="card-icon">🔄</span>
+                <div>
+                    <div class="card-title">不是先写文档再做</div>
+                    <div class="card-desc">而是做的过程本身就是在沟通 — Demo 即文档</div>
                 </div>
             </div>
         </div>
@@ -934,71 +1149,75 @@ img, .image-container {
 
     <div class="slide-footer">
         <span>FX System Demo</span>
-        <span>10 / 15</span>
+        <span>13 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 11 — TRANSITION QUOTE (L2 → L3)
+     SLIDE 14 — TRANSITION 2 (讲得明 → 想得深)
      ==================================================================== -->
 <section class="slide slide-dark" data-section="过渡">
     <div class="slide-nav">
         <span class="section-label">Transition</span>
-        <span class="page-label">11</span>
+        <span class="page-label">14</span>
     </div>
 
     <div class="slide-content" style="align-items: center; text-align: center;">
         <div class="pull-quote reveal" style="border-left: none; padding-left: 0; text-align: center;">
-            数据有了，判断还是靠人。<br/>能不能让 AI 来？
+            算得清、讲得明，<br/>但深度思考还是只能靠人吗？
         </div>
         <p class="body-text reveal" style="margin-top: var(--content-gap); color: var(--accent-gold); font-family: var(--font-ui); font-size: var(--small-size); letter-spacing: 0.15em;">
-            升级触发点 →
+            终极升级 →
         </p>
     </div>
 
     <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
         <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
-        <span style="color: rgba(250,249,246,0.3);">11 / 15</span>
+        <span style="color: rgba(250,249,246,0.3);">14 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 12 — LEVEL 3 TITLE
+     PART 3: 想得深
      ==================================================================== -->
-<section class="slide slide-dark" data-section="L3 AI Agent">
+
+<!-- ====================================================================
+     SLIDE 15 — PART 3 TITLE (想得深)
+     ==================================================================== -->
+<section class="slide slide-dark" data-section="Part 3 想得深">
     <div class="slide-nav">
-        <span class="section-label">Level 3</span>
-        <span class="page-label">12</span>
+        <span class="section-label">Part 3</span>
+        <span class="page-label">15</span>
     </div>
 
     <div class="section-num" style="right: 5vw; top: 8vh; color: rgba(250,249,246,0.04);">03</div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l3 reveal">Level 3 · AI Agent 层</span>
+        <span class="level-badge badge-p3 reveal">Part 3 · 想得深</span>
         <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
             让 AI<br/><em>帮你思考</em>
         </h1>
         <div class="hr line-reveal" style="margin-top: var(--content-gap);"></div>
-        <p class="body-text reveal">从一个 Agent 到投委会辩论，让 AI 像专家一样思考</p>
+        <p class="body-text reveal">不是问一个问题得一个答案，而是让 AI 像专家一样持续思考</p>
     </div>
 
     <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
         <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
-        <span style="color: rgba(250,249,246,0.3);">12 / 15</span>
+        <span style="color: rgba(250,249,246,0.3);">15 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 13 — SOROS AGENT
+     SLIDE 16 — SOROS AGENT (复用原 Slide 13)
      ==================================================================== -->
-<section class="slide slide-dark" data-section="L3 AI Agent">
+<section class="slide slide-dark" data-section="Part 3 想得深">
     <div class="slide-nav">
-        <span class="section-label">Level 3 · Soros Agent</span>
-        <span class="page-label">13</span>
+        <span class="section-label">Part 3 · Soros Agent</span>
+        <span class="page-label">16</span>
     </div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l3 reveal">Soros FX Agent</span>
+        <span class="level-badge badge-p3 reveal">Soros FX Agent</span>
         <h2 class="section-title reveal" style="margin-top: var(--element-gap);">一个 Agent = 一位专家</h2>
         <div class="hr line-reveal"></div>
 
@@ -1027,35 +1246,39 @@ img, .image-container {
             <div class="module-card">
                 <span class="card-icon">🛠️</span>
                 <div>
-                    <div class="card-title">24 种技能</div>
-                    <div class="card-desc">工具调用 + WeData 大数据</div>
+                    <div class="card-title">19 个工具 · 8 技能模块</div>
+                    <div class="card-desc">5 轮自主调用，闭环分析</div>
                 </div>
             </div>
         </div>
+
+        <p class="body-text reveal" style="margin-top: var(--content-gap); max-width: 50ch;">
+            关键进化：不是 ChatGPT 式的一问一答，而是有<strong>记忆、反思、工具调用</strong>的持续思考。
+        </p>
     </div>
 
     <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
         <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
-        <span style="color: rgba(250,249,246,0.3);">13 / 15</span>
+        <span style="color: rgba(250,249,246,0.3);">16 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 14 — OLD CHARLIE MULTI-AGENT
+     SLIDE 17 — MULTI-AGENT DEBATE (复用原 Slide 14) + 展望
      ==================================================================== -->
-<section class="slide slide-dark" data-section="L3 AI Agent">
+<section class="slide slide-dark" data-section="Part 3 想得深">
     <div class="slide-nav">
-        <span class="section-label">Level 3 · Multi-Agent</span>
-        <span class="page-label">14</span>
+        <span class="section-label">Part 3 · Multi-Agent</span>
+        <span class="page-label">17</span>
     </div>
 
     <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-l3 reveal">老查理投委会</span>
-        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">5+1 Agent 辩论模式</h2>
+        <span class="level-badge badge-p3 reveal">老查理投委会 · 进行中</span>
+        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">一个专家不够？请五个来辩论</h2>
         <div class="hr line-reveal"></div>
         <p class="body-text reveal">一个人的判断 → 五位专家辩论 → PM 裁决</p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: clamp(6px, 1vw, 12px); margin-top: var(--element-gap);" class="reveal">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: clamp(6px, 1vw, 12px); margin-top: var(--element-gap);" class="reveal">
             <div class="module-card">
                 <span class="card-icon">📖</span>
                 <div><div class="card-title">Value</div><div class="card-desc">价值投资</div></div>
@@ -1074,66 +1297,23 @@ img, .image-container {
             </div>
             <div class="module-card">
                 <span class="card-icon">🛡️</span>
-                <div><div class="card-title">Risk + PM</div><div class="card-desc">风控 + 裁决</div></div>
+                <div><div class="card-title">Risk + PM</div><div class="card-desc">风控否决 + 裁决</div></div>
             </div>
         </div>
+
+        <p class="body-text reveal" style="margin-top: var(--content-gap); max-width: 50ch;">
+            终极形态：AI 不只是一个工具，而是一个<strong>有观点、能辩论、会进化</strong>的团队。
+        </p>
     </div>
 
     <div class="slide-footer" style="border-top-color: var(--accent-line-dark);">
         <span style="color: rgba(250,249,246,0.3);">FX System Demo</span>
-        <span style="color: rgba(250,249,246,0.3);">14 / 15</span>
+        <span style="color: rgba(250,249,246,0.3);">17 / 18</span>
     </div>
 </section>
 
 <!-- ====================================================================
-     SLIDE 15 — OPENCLAW + CLOSING
-     ==================================================================== -->
-<section class="slide slide-light" data-section="展望">
-    <div class="slide-nav">
-        <span class="section-label">What's Next</span>
-        <span class="page-label">15</span>
-    </div>
-
-    <div class="slide-content" style="padding-left: clamp(3rem, 8vw, 8rem);">
-        <span class="level-badge badge-next reveal">Next · OpenClaw</span>
-        <h2 class="section-title reveal" style="margin-top: var(--element-gap);">通用 Agent 开发框架</h2>
-        <div class="hr line-reveal"></div>
-
-        <div class="module-grid reveal">
-            <div class="module-card">
-                <span class="card-icon">🧩</span>
-                <div>
-                    <div class="card-title">标准化</div>
-                    <div class="card-desc">统一 Agent 开发范式</div>
-                </div>
-            </div>
-            <div class="module-card">
-                <span class="card-icon">🔌</span>
-                <div>
-                    <div class="card-title">可插拔</div>
-                    <div class="card-desc">工具/记忆/策略灵活组合</div>
-                </div>
-            </div>
-        </div>
-
-        <div style="margin-top: var(--content-gap); padding-top: var(--content-gap); border-top: 1px solid var(--accent-line);" class="reveal">
-            <h2 class="section-title" style="margin-bottom: var(--element-gap);">核心方法论</h2>
-            <ol class="method-list">
-                <li><div><div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">从痛点出发，不造轮子</div></div></li>
-                <li><div><div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">AI 是副驾驶，不是替代</div></div></li>
-                <li><div><div style="font-family: var(--font-ui); font-size: var(--body-size); font-weight: 600;">小步迭代，层层升级</div></div></li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="slide-footer">
-        <span>FX System Demo</span>
-        <span>15 / 15</span>
-    </div>
-</section>
-
-<!-- ====================================================================
-     SLIDE 16 — Q&A / END
+     SLIDE 18 — CLOSING + Q&A
      ==================================================================== -->
 <section class="slide slide-dark" data-section="Q&A">
     <div class="slide-nav">
@@ -1144,11 +1324,27 @@ img, .image-container {
     <div class="v-accent" style="left: var(--slide-padding); top: 25vh; background: var(--accent-gold);"></div>
 
     <div class="slide-content" style="align-items: center; text-align: center;">
-        <div class="label-tag reveal" style="color: var(--accent-gold);">Thank You</div>
+        <div class="label-tag reveal" style="color: var(--accent-gold);">Takeaway</div>
         <h1 class="display-title reveal" style="margin-top: var(--element-gap);">
             不是更努力<br/><em>而是更聪明</em>
         </h1>
         <div class="hr line-reveal" style="margin: var(--content-gap) auto; background: var(--accent-gold);"></div>
+
+        <div class="reveal" style="display: flex; gap: clamp(20px, 4vw, 50px); margin-bottom: var(--content-gap);">
+            <div style="text-align: center;">
+                <div style="font-size: clamp(1.5rem, 3vw, 2rem);">📊</div>
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); color: rgba(250,249,246,0.6); margin-top: 4px;">算得清</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: clamp(1.5rem, 3vw, 2rem);">📢</div>
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); color: rgba(250,249,246,0.6); margin-top: 4px;">讲得明</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: clamp(1.5rem, 3vw, 2rem);">🧠</div>
+                <div style="font-family: var(--font-ui); font-size: var(--small-size); color: rgba(250,249,246,0.6); margin-top: 4px;">想得深</div>
+            </div>
+        </div>
+
         <p class="body-text reveal" style="max-width: 40ch;">
             AI 不会取代你，但会用 AI 的人会。
         </p>
@@ -1308,7 +1504,7 @@ class SlidePresentation {
 class InlineEditor {
     constructor() {
         this.isActive = false;
-        this.editableSelectors = '.display-title, .section-title, .body-text, .pull-quote, .card-title, .card-desc, .label-tag, .stat-num, .stat-label';
+        this.editableSelectors = '.display-title, .section-title, .body-text, .pull-quote, .card-title, .card-desc, .label-tag, .stat-num, .stat-label, .step-title, .step-desc';
         this.setupToggle();
         this.setupHotzone();
         this.setupKeyboard();
@@ -1373,11 +1569,11 @@ class InlineEditor {
         document.querySelectorAll(this.editableSelectors).forEach((el, i) => {
             data[`el_${i}`] = el.innerHTML;
         });
-        localStorage.setItem('slides_content', JSON.stringify(data));
+        localStorage.setItem('slides_content_v2', JSON.stringify(data));
     }
 
     loadSavedContent() {
-        const saved = localStorage.getItem('slides_content');
+        const saved = localStorage.getItem('slides_content_v2');
         if (!saved) return;
         try {
             const data = JSON.parse(saved);

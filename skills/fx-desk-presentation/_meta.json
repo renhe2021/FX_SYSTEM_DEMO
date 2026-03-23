@@ -1,0 +1,7 @@
+{
+  "name": "fx-desk-presentation",
+  "description": "外汇交易台演示文稿设计规范。包含用户审美偏好（极简/去AI味/截图驱动）、Slide设计原则（Section Divider只留标题/Demo页不加副标题/不加底部金句）、演讲稿规范（口语化/像聊天不像读稿/不用bullet point）、历史教训记录、Word导出注意事项。适用于制作/修改内部技术分享PPT和演讲稿。",
+  "version": "1.0.0",
+  "author": "tencentren",
+  "tags": ["presentation", "slides", "speech", "fx-desk", "design-guidelines"]
+}

@@ -22,10 +22,9 @@
   --yellow-bg: rgba(251,191,36,.1);
   --blue: #60a5fa;
   --blue-bg: rgba(96,165,250,.1);
-  --pricing: #f59e0b;
-  --reporting: #6c7cff;
-  --quant: #34d399;
-  --data: #60a5fa;
+  --analysis: #0052D9;
+  --strategy: #2BA471;
+  --showcase: #7B61FF;
   --agent: #e879f9;
   --radius: 12px;
   --radius-sm: 8px;
@@ -115,10 +114,9 @@ body {
   width: 10px; height: 10px;
   border-radius: 3px;
 }
-.category-dot.pricing { background: var(--pricing); }
-.category-dot.reporting { background: var(--reporting); }
-.category-dot.quant { background: var(--quant); }
-.category-dot.data { background: var(--data); }
+.category-dot.analysis { background: var(--analysis); }
+.category-dot.strategy { background: var(--strategy); }
+.category-dot.showcase { background: var(--showcase); }
 .category-dot.agent { background: var(--agent); }
 .category-header h2 {
   font-size: 16px;
@@ -333,7 +331,7 @@ body {
 <div class="header">
   <div class="header-inner">
     <h1>🏠 <span>FX_SYSTEM</span> Portal</h1>
-    <p>Tenpay Global FX Platform — 所有工具集中管理</p>
+    <p>分析 & 可视化 · 策略 & 定价 · 展示 & 沟通 · AI Agent</p>
   </div>
 </div>
 
@@ -389,7 +387,7 @@ function renderStatus() {
 function renderCards() {
   // Group by category
   const categories = {};
-  const categoryOrder = ['pricing', 'reporting', 'quant', 'data', 'agent'];
+  const categoryOrder = ['analysis', 'strategy', 'showcase', 'agent'];
 
   modules.forEach(m => {
     if (!categories[m.category]) {

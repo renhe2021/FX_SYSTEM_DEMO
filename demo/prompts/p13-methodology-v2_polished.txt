@@ -1,0 +1,30 @@
+A professional methodology infographic for a presentation slide. Aspect ratio 1920x900. Pure white background. Minimalist, clean, and professional Tencent/Apple presentation style. The central theme, "复杂系统的通用化路径", is clearly and elegantly displayed, perhaps as a subtle header or within a dedicated title area. All text must be in clear, crisp, and highly legible Chinese characters, rendered sharply with a modern sans-serif font; absolutely no English text is allowed. Ensure ample negative space throughout the design, conveying a sense of sophisticated simplicity and professionalism. Use smooth transitions, precise lines, and very subtle, soft shadows for depth and a floating effect, avoiding any overt 3D renderings or strong visual gradients that detract from minimalism. Thin borders and light, muted color fills are preferred.
+
+**Upper Section: Three-step process cards (horizontal arrangement)**
+Three distinct floating cards, each with softly rounded corners and a subtle, soft shadow beneath to give a gentle lift, are arranged horizontally from left to right across the top half of the infographic. Elegant, thin arrows in the main green color (#2BA471) connect the cards, indicating a seamless flow from one step to the next.
+
+**Card 1 (Leftmost, Orange themed):**
+This card features a very light orange background panel (#FFF8F0). A prominent, solid 3px orange border (#E37318) elegantly frames the top edge of the card. Centered at the top, a large, perfectly circular badge with a solid, vibrant orange background (#E37318) contains a crisp white number "①". Below the badge, a bold, dark gray title (#333333) reads: "做透一个场景". Following this, a bold line of text in the main green color (#2BA471) states: "先跑通最小闭环". At the very bottom of the card, smaller, light gray italicized text (#888888) displays: "预锁价 → 数据 → 回测 → 结果".
+
+**Connecting Arrow 1:** A thin, clean arrow in the main green color (#2BA471) points directly from the right edge of Card 1 to the left edge of Card 2.
+
+**Card 2 (Center, Blue themed):**
+This card features a very light blue background panel (#F0F8FF). A prominent, solid 3px blue border (#0052D9) elegantly frames the top edge of the card. Centered at the top, a large, perfectly circular badge with a solid, vibrant blue background (#0052D9) contains a crisp white number "②". Below the badge, a bold, dark gray title (#333333) reads: "拆可复用零件". Below the title, four small, pill-shaped tags are neatly arranged in a 2x2 grid. Each tag has a very light blue background, a thin blue border (#0052D9), and blue text (#0052D9). The tags contain the text: "数据获取", "信号生成", "回测引擎", "结果输出". These tags should have distinct rounded corners and appear slightly raised.
+
+**Connecting Arrow 2:** A thin, clean arrow in the main green color (#2BA471) points directly from the right edge of Card 2 to the left edge of Card 3.
+
+**Card 3 (Rightmost, Green themed):**
+This card features a very light green background panel (#F0FFF4). A prominent, solid 3px green border (#2BA471) elegantly frames the top edge of the card. Centered at the top, a large, perfectly circular badge with a solid, vibrant green background (#2BA471) contains a crisp white number "③". Below the badge, a bold, dark gray title (#333333) reads: "抽象成框架". Following this, a bold line of text in the main green color (#2BA471) states: "新场景只需实现接口". At the very bottom of the card, smaller, light gray italicized text (#888888) displays: "换策略 → 改信号 → 引擎复用".
+
+**Lower Section: Generality Validation Effect (distinct content)**
+Below the three-step process, separated by significant negative space, a wide, horizontal panel with a very subtle light gray background (#F8F9FC) and elegantly rounded corners occupies the lower half of the infographic. This section is visually distinct from the upper part, designed to showcase the *result* or *effect* of the methodology rather than the *process*.
+
+Inside this panel, positioned on the far left, a small, solid dark green rounded rectangle tag (#2BA471) prominently displays crisp white text: "验证".
+
+To the right of the "验证" tag, three groups of "替换示例" (replacement examples) are arranged horizontally, perfectly centered within the panel. Each group consists of two lines of vertically stacked text. Between each of these three example groups, a thin, light gray vertical line gracefully separates them, providing clear visual division.
+
+**Example Group 1:** The top line of text (small, light gray #888888) reads: "场景一". The bottom line of text (bold, dark gray #333333) reads: "预锁价策略".
+**Example Group 2:** The top line of text (small, light gray #888888) reads: "场景二". The bottom line of text (bold, dark gray #333333) reads: "FIXING价差".
+**Example Group 3:** The top line of text (small, light gray #888888) reads: "场景三". The bottom line of text (bold, dark gray #333333) reads: "均线交叉".
+
+To the far right of the third example group, a prominent, clean green checkmark icon (✓) in the main green color (#2BA471) is displayed. Adjacent to the checkmark, bold green text (#2BA471) reads: "同一套引擎，零改动".
